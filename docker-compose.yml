@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build: ./services/backend
+    ports:
+      - 5000:5000
+    volumes:
+      - ./services/backend:/app
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
+  
+  frontend:
+    build: ./services/frontend
+    volumes:
+      - './services/frontend:/app'
+      - '/app/node_modules'
+    ports:
+      - 8080:8080
+  
+  pg_tileserv:
+    image: pramsey/pg_tileserv:latest
+
+    container_name: pg_tileserv
+
+    env_file:
+      - pg_tileserv.env
+
+    depends_on:
+      - brandenburg_db
+
+    ports:
+      - 7800:7800
+  
+  brandenburg_db:
+    image: postgis/postgis
+
+    container_name: brandenburg_db
+
+    volumes:
+      - ./data:/work
+      - brandenburg_db:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+
+    env_file:
+      - pg.env
+
+volumes:
+  brandenburg_db:
