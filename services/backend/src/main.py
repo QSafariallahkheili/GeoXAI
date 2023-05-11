@@ -26,7 +26,7 @@ dbConfig = {
 def connect():
   return psycopg2.connect(
     host='brandenburg_db',
-    port=5432, 
+    port=5433, 
     dbname='brandenburg', 
     user='postgres', 
     password='1234')
