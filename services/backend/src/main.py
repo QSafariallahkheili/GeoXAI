@@ -15,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 dbConfig = {
-    'host': getenv('DB_HOST', 'localhost'),
+    'host': getenv('DB_HOST', 'brandenburg_db'),
     'port': getenv('DB_PORT', 5432),
     'dbname': getenv('DB_NAME', 'brandenburg'),
     'user': getenv('DB_USER', 'berlinberlin'),
