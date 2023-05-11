@@ -25,11 +25,11 @@ dbConfig = {
 
 def connect():
   return psycopg2.connect(
-    host=dbConfig['host'],
-    port=dbConfig['port'], 
-    dbname=dbConfig['dbname'], 
-    user=dbConfig['user'], 
-    password=dbConfig['password'])
+    host='brandenburg_db',
+    port=5432, 
+    dbname='brandenburg', 
+    user='postgres', 
+    password='1234')
 @app.get("/")
 def home():
     conn = connect()
