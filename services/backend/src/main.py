@@ -9,14 +9,14 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://193.175.29.219:8080","http://193.175.29.219"],
+    allow_origins=["http://localhost:8080", "http://193.175.29.219:8080"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
 dbConfig = {
-    'host': getenv('DB_HOST', 'brandenburg_db'),
+    'host': 'brandenburg_db',
     'port': getenv('DB_PORT', 5432),
     'dbname': getenv('DB_NAME', 'brandenburg'),
     'user': getenv('DB_USER', 'postgres'),
@@ -25,11 +25,11 @@ dbConfig = {
 
 def connect():
   return psycopg2.connect(
-    host='brandenburg_db',
-    port=5433, 
-    dbname='brandenburg', 
-    user='postgres', 
-    password='1234')
+    host=dbConfig['host'],
+    port=dbConfig['port'], 
+    dbname=dbConfig['dbname'], 
+    user=dbConfig['user'], 
+    password=dbConfig['password'])
 @app.get("/")
 def home():
     conn = connect()
