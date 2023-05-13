@@ -12,7 +12,7 @@ const mapContainer = ref(null);
 const map = ref(null);
 
 onMounted(() => {
-  console.log("test")
+  console.log(process.env.VUE_APP_BASE_URI)
   map.value = new Map({
     container: mapContainer.value,
     style: 'https://api.maptiler.com/maps/a2eb63ba-7d0e-4b25-9cfc-9ef74d786ec4/style.json?key=XgdreUwN4V3uEHHZHsWO',
@@ -20,7 +20,7 @@ onMounted(() => {
     zoom: 7,
   });
 
-  HTTP.get('/')
+  HTTP.get('')
   .then((res) => {
     console.log(res.data)
   })
