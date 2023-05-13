@@ -45,7 +45,7 @@ services:
       - ./data:/work
       - brandenburg_db:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5433:5432
 
     env_file:
       - pg.env
