@@ -5,7 +5,7 @@
 
 <script setup>
 import { Map } from 'maplibre-gl';
-import axios from 'axios';
+import { HTTP } from '../utils/http-call';
 import { ref, onMounted, onUnmounted } from "vue";
 
 const mapContainer = ref(null);
@@ -20,7 +20,7 @@ onMounted(() => {
     zoom: 7,
   });
 
-  axios.get('/')
+  HTTP.get('/')
   .then((res) => {
     console.log(res.data)
   })
