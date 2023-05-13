@@ -9,5 +9,11 @@ RUN npm install @vue/cli@5.0.8 -g
 COPY package.json .
 COPY package-lock.json .
 RUN npm install
+COPY . .
 
-CMD ["npm", "run", "build"]
+ENV NODE_ENV=production
+RUN npm run build
+
+# Port to expose
+EXPOSE 8080
+CMD [ "npm", "start" ]
