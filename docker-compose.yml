@@ -20,7 +20,7 @@ services:
       - './services/frontend:/app'
       - '/app/node_modules'
     ports:
-      - 8080:8080
+      - 8080:80
   
   pg_tileserv:
     image: pramsey/pg_tileserv:latest
