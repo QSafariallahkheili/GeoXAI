@@ -15,7 +15,7 @@ RUN npm run build
 
 # production stage: create NGINX server
 FROM nginx:stable-alpine as production-stage
-
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build-stage ./app/dist /usr/share/nginx/html/
