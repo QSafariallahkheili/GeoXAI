@@ -15,9 +15,10 @@ RUN npm run build
 
 # production stage: create NGINX server
 FROM nginx:stable-alpine as production-stage
+
+COPY nginx.conf /etc/nginx/conf.d/nginx.conf
+
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d
-RUN rm -rf /usr/share/nginx/html/*
-ENV PORT = 8080
-EXPOSE 8080
+
+EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]
