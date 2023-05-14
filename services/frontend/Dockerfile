@@ -16,5 +16,7 @@ RUN npm run build
 # production stage: create NGINX server
 FROM nginx:stable-alpine as production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN rm -rf /usr/share/nginx/html/*
 CMD ["nginx", "-g", "daemon off;"]
