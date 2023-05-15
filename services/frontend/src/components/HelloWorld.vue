@@ -7,6 +7,9 @@
 import { Map } from 'maplibre-gl';
 import { HTTP } from '../utils/http-call';
 import { ref, onMounted, onUnmounted } from "vue";
+import { storeToRefs } from 'pinia'
+import { useMapStore } from '../stores/map'
+const { center, zoom, style } = storeToRefs(useMapStore())
 
 const mapContainer = ref(null);
 const map = ref(null);
@@ -15,9 +18,9 @@ onMounted(() => {
   console.log(process.env.VUE_APP_BASE_URI , "test push")
   map.value = new Map({
     container: mapContainer.value,
-    style: 'https://api.maptiler.com/maps/a2eb63ba-7d0e-4b25-9cfc-9ef74d786ec4/style.json?key=XgdreUwN4V3uEHHZHsWO',
-    center: [ 13.259101,52.538625],
-    zoom: 7,
+    style: style.value,
+    center: center.value,
+    zoom: zoom.value,
   });
 
   HTTP.get('')
