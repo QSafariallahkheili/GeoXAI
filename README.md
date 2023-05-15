@@ -13,7 +13,7 @@ The following four containers are created:
 - **brandenburg_db**  which is a database container
 - **fastapi-vue-frontend-1**  frontend container which is accessible at http://localhost:8080/ url
 - **pg_tileserv** the tileserver container accessible at http://localhost:7800/ 
-- **astapi-vue-backend-1** python middleware container whose api definitins are accessible at http://localhost:5000/docs#/
+- **fastapi-vue-backend-1** python middleware container whose api definitins are accessible at http://localhost:5000/docs#/
 
 To populate the database the following steps might be taken:
 
