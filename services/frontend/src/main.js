@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import "@mdi/font/css/materialdesignicons.min.css";
 import { createApp } from 'vue';
 import axios from 'axios';
 import { createPinia } from "pinia";
@@ -9,6 +10,7 @@ import router from './router';
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
@@ -20,6 +22,13 @@ axios.defaults.withCredentials = true;
 const vuetify = createVuetify({
     components,
     directives,
+    icons: {
+        defaultSet: 'mdi',
+        aliases,
+        sets: {
+          mdi,
+        },
+    },
 })
 
 app.use(router);
