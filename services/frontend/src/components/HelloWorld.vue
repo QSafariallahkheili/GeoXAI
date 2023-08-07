@@ -15,7 +15,7 @@ const mapContainer = ref(null);
 const map = ref(null);
 
 onMounted(() => {
-  console.log(process.env.VUE_APP_BASE_URI , "test push")
+  //console.log(process.env.VUE_APP_BASE_URI , "test push")
   map.value = new Map({
     container: mapContainer.value,
     style: style.value,
