@@ -43,18 +43,13 @@ const selectedItems = ref([]);
 const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility"]);
 
 const toggleClickedLayer = (layerName) => {
-//const index = selectedItems.value.indexOf(layerName);
 if (!selectedItems.value.includes(layerName)) {
-    console.log(selectedItems)
     emit("addLayerToMap", layerName)
     selectedItems.value.push(layerName);
 } else {
-    console.log("must toggle")
     emit("toggleLayerVisibility", layerName)
 }
 
-
-    //
 }
 const sendQuestRequest = async () => {
   const tablenamesfromDB =  await getTableNames()
