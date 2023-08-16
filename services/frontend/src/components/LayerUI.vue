@@ -16,7 +16,7 @@
                     <input
                         type="checkbox"
                         :value="item[0]"
-                        @change="toggleClickedLayer(item[0])"
+                        @change="toggleClickedLayer(item[0],item[1])"
                     >
                     
                     <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
@@ -39,12 +39,43 @@ import {
 
 let tableNames = ref(null)
 const selectedItems = ref([]);
+let style = ref(null)
+let layerType = ref(null)
 
 const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility"]);
 
-const toggleClickedLayer = (layerName) => {
+
+
+const toggleClickedLayer = (layerName, geomType) => {
 if (!selectedItems.value.includes(layerName)) {
-    emit("addLayerToMap", layerName)
+   
+    if (geomType == "MultiPolygon" || geomType == "Polygon"){
+        style.value = {
+            'fill-color': 'blue',
+            "fill-opacity": 0.7,
+            "fill-outline-color": "black",
+        }
+        layerType.value = "fill"
+    }
+    else if (geomType == "MultiLineString" || geomType == "LineString" || geomType == "Line"){
+        style.value = {
+            'line-width': 2,
+            'line-color': "#0000FF",
+            'line-opacity': 1,
+           
+        }
+        layerType.value = "line"
+    }
+    else if (geomType == "Point") {
+        style.value = {
+            'circle-color': '#00FF00',
+            'circle-stroke-color': 'white',
+            'circle-stroke-width': 1,
+            'circle-opacity': 1
+        } 
+        layerType.value = "circle"
+    }
+    emit("addLayerToMap", layerName, layerType, style)
     selectedItems.value.push(layerName);
 } else {
     emit("toggleLayerVisibility", layerName)

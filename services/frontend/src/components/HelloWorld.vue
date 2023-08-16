@@ -27,29 +27,25 @@ onMounted(() => {
   });
 
 })
-const addLayerToMap = (clickedLayerName)=>{
+const addLayerToMap = (clickedLayerName, layerType, style)=>{
   let vectorServer = process.env.VUE_APP_TILE_SERVER_URL+'/';
   let vectorSource = "public"+"."+clickedLayerName;
   let vectorSourceLayer = "public"+"."+clickedLayerName;
   let vectorUrl = vectorServer + vectorSourceLayer + "/{z}/{x}/{y}.pbf";
-    map.value.addSource(vectorSource, {
+  map.value.addSource(vectorSource, {
       "type": "vector",
       "tiles": [vectorUrl],
       "minzoom": 0,
       "maxzoom": 22
-    });
-    let layer = {
+  });
+  let layer = {
       "id": "public"+"."+clickedLayerName,
       "source": vectorSource,
       "source-layer": "public"+"."+clickedLayerName,
-      "type": "fill",
-      "paint":  {
-        "fill-color": "blue",
-        "fill-opacity": 1,
-        "fill-outline-color": "red"
-      }
-    };
-    map.value.addLayer(layer)  
+      "type": layerType.value,
+      "paint":  style.value
+  };
+  map.value.addLayer(layer)  
  
 }
 const toggleLayerVisibility = (clickedLayerName)=>{
