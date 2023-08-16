@@ -1,21 +1,24 @@
 <template>
   <div ref="mapContainer" style="height: 100vh;">
+    <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility"/>
   </div>
+  
 </template>
 
 <script setup>
 import { Map } from 'maplibre-gl';
-import { HTTP } from '../utils/http-call';
 import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
+import LayerUI from "@/components/LayerUI.vue";
 const { center, zoom, style } = storeToRefs(useMapStore())
 
 const mapContainer = ref(null);
 const map = ref(null);
 
+
 onMounted(() => {
-  //console.log(process.env.VUE_APP_BASE_URI , "test push")
+
   map.value = new Map({
     container: mapContainer.value,
     style: style.value,
@@ -23,17 +26,48 @@ onMounted(() => {
     zoom: zoom.value,
   });
 
-  HTTP.get('')
-  .then((res) => {
-    console.log(res.data)
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-
-  
-    
 })
+const addLayerToMap = (clickedLayerName)=>{
+  let vectorServer = process.env.VUE_APP_TILE_SERVER_URL+'/';
+  let vectorSource = "public"+"."+clickedLayerName;
+  let vectorSourceLayer = "public"+"."+clickedLayerName;
+  let vectorUrl = vectorServer + vectorSourceLayer + "/{z}/{x}/{y}.pbf";
+    map.value.addSource(vectorSource, {
+      "type": "vector",
+      "tiles": [vectorUrl],
+      "minzoom": 0,
+      "maxzoom": 22
+    });
+    let layer = {
+      "id": "public"+"."+clickedLayerName,
+      "source": vectorSource,
+      "source-layer": "public"+"."+clickedLayerName,
+      "type": "fill",
+      "paint":  {
+        "fill-color": "blue",
+        "fill-opacity": 1,
+        "fill-outline-color": "red"
+      }
+    };
+    map.value.addLayer(layer)  
+ 
+}
+const toggleLayerVisibility = (clickedLayerName)=>{
+    let visibility = map.value.getLayoutProperty(
+    'public'+'.'+clickedLayerName,
+    'visibility'
+  );
+  if (visibility == 'visible'){
+    map.value.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
+  }
+  else if (visibility == undefined){
+    map.value.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
+  }
+  else {
+    map.value.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'visible')
+  }
+
+}
 
 onUnmounted(() => {
       if (map.value) {
