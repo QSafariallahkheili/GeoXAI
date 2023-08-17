@@ -1,16 +1,40 @@
 <template>
  <div style="position: absolute; top: 10px;left: 10px; z-index: 10;" >
     <v-card
-    class="mx-auto" style="overflow-y: scroll;"
-    max-width="600"
-    max-height="400"
-  >
-  
+        class="mx-auto" style="overflow-y: scroll;"
+        max-width="600"
+        max-height="400"
+    >
+        <v-toolbar
+        color="white"
+        >
+   
+            <v-card-text >
+                <v-text-field
+                    
+                    placeholder="search layers by name"
+                    prepend-inner-icon="mdi-magnify"
+                    class="expanding-search"
+                    filled
+                    density="compact"
+                    clearable
+                    style="float:right; width: 100%;"
+                    variant="solo"
+                    single-line
+                    hide-details
+                    @click:clear="clearSearch"
+                    v-model="layerSearchText"
+                >
+                </v-text-field>
+            </v-card-text>
+               
+        </v-toolbar>
     <v-list lines="one">
-        <div v-for="(item,index) in tableNames" :key="index">
+        <div v-for="(item,index) in filteredItems" :key="index">
             <v-list-item
                 :prepend-avatar= "getIcon(item[1])"
             >
+            
             <template v-slot:subtitle >
                 <div style="text-align: left;">
                     <input
@@ -32,7 +56,7 @@
  </div>
 </template>
 <script setup>
-import { ref, onMounted, defineEmits} from "vue"
+import { ref, onMounted, defineEmits, computed} from "vue"
 import {
     getTableNames
 } from "../services/backend.calls";
@@ -41,6 +65,7 @@ let tableNames = ref(null)
 const selectedItems = ref([]);
 let style = ref(null)
 let layerType = ref(null)
+let layerSearchText= ref("")
 
 const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility"]);
 
@@ -102,6 +127,20 @@ const getIcon = (value)=> {
     }
 }
 
+const clearSearch =()=>{
+    layerSearchText.value = "";
+}
+
+const filteredItems = computed(() => {
+  if (!layerSearchText.value) {
+    return tableNames.value;
+  }
+
+  return tableNames.value.filter(item =>
+    item[0].toLowerCase().includes(layerSearchText.value.toLowerCase())
+  )
+  
+});
 
 onMounted(() => {
   sendQuestRequest();
@@ -112,8 +151,6 @@ onMounted(() => {
 
 <style>
 
-.layer-ui{
-    overflow-y: scroll;
-}
+
 
 </style>
