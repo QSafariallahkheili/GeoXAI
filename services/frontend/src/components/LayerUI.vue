@@ -2,7 +2,7 @@
  <div style="position: absolute; top: 10px;left: 10px; z-index: 10;" >
     <v-card
         class="mx-auto" style="overflow-y: scroll;"
-        max-width="600"
+        width="300"
         max-height="400"
     >
         <v-toolbar
@@ -11,8 +11,7 @@
    
             <v-card-text >
                 <v-text-field
-                    
-                    placeholder="search layers by name"
+                    placeholder="looking for ..."
                     prepend-inner-icon="mdi-magnify"
                     class="expanding-search"
                     filled
@@ -48,8 +47,9 @@
             </template>
             </v-list-item>
             <v-divider v-if="index < tableNames.length - 1"></v-divider>
-        </div>
 
+        </div>
+        
     </v-list>
   
   </v-card>
