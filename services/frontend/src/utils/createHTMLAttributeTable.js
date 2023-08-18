@@ -1,7 +1,7 @@
 export const createHTMLAttributeTable = (zoomLng, zoomLat, list) =>{
     
     const tableDiv = document.createElement('div');
-    tableDiv.style.cssText = 'max-height: 200px; max-width: 30vw; overflow: scroll;'
+    tableDiv.style.cssText = 'max-height: 200px; max-width: 30vw; overflow: scroll; background:transparent'
     const style = document.createElement('style');
     style.innerHTML = `::-webkit-scrollbar {display: none;}`;
     tableDiv.appendChild(style);
@@ -17,6 +17,8 @@ export const createHTMLAttributeTable = (zoomLng, zoomLat, list) =>{
         tr.appendChild(th1)
         tr.appendChild(th2)
         tbody.appendChild(tr)
+        th1.style.cssText = 'background:transparent'
+        th2.style.cssText = 'background:transparent; font-weight: normal;'
 
     }
     table.appendChild(tbody)

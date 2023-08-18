@@ -67,7 +67,8 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
     // modifyinh popup's default style
     document.getElementsByClassName('maplibregl-popup-content')[0].style.borderRadius="8px"
     document.getElementsByClassName('maplibregl-popup-content')[0].style.width="fit-content"
-
+    document.getElementsByClassName('maplibregl-popup-content')[0].style.background="rgba(255,255,255,0.6)"
+    document.getElementsByClassName('maplibregl-popup-content')[0].style.backdropFilter="blur(5px)"
   });
   map.on('mouseenter', "public"+"."+clickedLayerName, function() {
     map.getCanvas().style.cursor = 'pointer';

@@ -1,15 +1,13 @@
 <template>
- <div style="position: absolute; top: 10px;left: 10px; z-index: 10;" >
+ <div class="layer-ui" >
     <v-card
-        class="mx-auto" style="overflow-y: scroll;"
+        class="mx-auto" style="overflow-y: scroll; background: transparent;"
         width="300"
         max-height="400"
     >
-        <v-toolbar
-        color="white"
-        >
+        <v-toolbar>
    
-            <v-card-text >
+            <v-card-text>
                 <v-text-field
                     placeholder="looking for ..."
                     prepend-inner-icon="mdi-magnify"
@@ -28,31 +26,32 @@
             </v-card-text>
                
         </v-toolbar>
-    <v-list lines="one">
-        <div v-for="(item,index) in filteredItems" :key="index">
-            <v-list-item
-                :prepend-avatar= "getIcon(item[1])"
-            >
-            
-            <template v-slot:subtitle >
-                <div style="text-align: left;">
-                    <input
-                        type="checkbox"
-                        :value="item[0]"
-                        @change="toggleClickedLayer(item[0],item[1])"
-                    >
-                    
-                    <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
-                </div>
-            </template>
-            </v-list-item>
-            <v-divider v-if="index < tableNames.length - 1"></v-divider>
+        <v-list lines="one" style="overflow-y: scroll; background: transparent;">
+            <div v-for="(item,index) in filteredItems" :key="index">
+                <v-list-item
+                    :prepend-avatar= "getIcon(item[1])"
+                    size="x-small"
+                >
+                
+                <template v-slot:subtitle >
+                    <div style="text-align: left;">
+                        <input
+                            type="checkbox"
+                            :value="item[0]"
+                            @change="toggleClickedLayer(item[0],item[1])"
+                        >
+                        
+                        <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
+                    </div>
+                </template>
+                </v-list-item>
+                <v-divider v-if="index < tableNames.length - 1"></v-divider>
 
-        </div>
-        
-    </v-list>
+            </div>
+            
+        </v-list>
   
-  </v-card>
+    </v-card>
  </div>
 </template>
 <script setup>
@@ -149,8 +148,20 @@ onMounted(() => {
 
 </script>
 
-<style>
-
-
-
+<style scoped>
+.layer-ui{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background-color: rgba(255,255,255,0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    -moz-backdrop-filter: blur(5px);
+    -ms-backdrop-filter: blur(5px);
+   
+}
+img.v-img__img--cover.v-img__img{
+    width: 50%;
+}
 </style>
