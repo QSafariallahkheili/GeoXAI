@@ -5,7 +5,7 @@
         width="300"
         max-height="400"
     >
-        <v-toolbar>
+        <v-toolbar class="sticky">
    
             <v-card-text>
                 <v-text-field
@@ -163,7 +163,9 @@ onMounted(() => {
     -ms-backdrop-filter: blur(5px);
    
 }
-img.v-img__img--cover.v-img__img{
-    width: 50%;
+.sticky{
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 </style>
