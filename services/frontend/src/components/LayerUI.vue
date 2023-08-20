@@ -39,6 +39,7 @@
                             type="checkbox"
                             :value="item[0]"
                             @change="toggleClickedLayer(item[0],item[1])"
+                            :checked="selectedItems.includes(item[0])?true:fasle"
                         >
                         
                         <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
@@ -103,6 +104,7 @@ if (!selectedItems.value.includes(layerName)) {
     selectedItems.value.push(layerName);
 } else {
     emit("toggleLayerVisibility", layerName)
+    console.log(selectedItems)
 }
 
 }
