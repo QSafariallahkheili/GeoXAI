@@ -1,9 +1,6 @@
 <template>
- <div class="layer-ui" >
     <v-card
-        class="mx-auto" style="overflow-y: scroll; background: transparent;"
-        width="300"
-        max-height="400"
+        class="mx-auto layer-ui"  width="300" max-height="400"
     >
         <v-toolbar class="sticky">
    
@@ -53,7 +50,6 @@
         </v-list>
   
     </v-card>
- </div>
 </template>
 <script setup>
 import { ref, onMounted, defineEmits, computed} from "vue"
@@ -152,7 +148,7 @@ onMounted(() => {
 
 <style scoped>
 .layer-ui{
-    position: absolute;
+    overflow-y: scroll; background: transparent; border-radius: 8px;  position: absolute;
     top: 10px;
     left: 10px;
     z-index: 10;
@@ -161,6 +157,7 @@ onMounted(() => {
     -webkit-backdrop-filter: blur(5px);
     -moz-backdrop-filter: blur(5px);
     -ms-backdrop-filter: blur(5px);
+       
    
 }
 .sticky{
