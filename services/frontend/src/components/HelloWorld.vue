@@ -17,7 +17,8 @@ const { center, zoom, style } = storeToRefs(useMapStore())
 
 const mapContainer = ref(null);
 let map = null;
-
+let popup = null
+let selectedFeatureId = null;
 
 onMounted(() => {
 
@@ -27,6 +28,7 @@ onMounted(() => {
     center: center.value,
     zoom: zoom.value,
   });
+  
 
 })
 const addLayerToMap = (clickedLayerName, layerType, style)=>{
@@ -38,6 +40,7 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
     map.addSource(vectorSource, {
       "type": "vector",
       "tiles": [vectorUrl],
+      "promoteId":'id',
       "minzoom": 0,
       "maxzoom": 22
   });
@@ -49,11 +52,13 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
       "paint":  style.value
   };
   map.addLayer(layer)  
-  let popup = new Popup()
+
   map.on('click', "public"+"."+clickedLayerName, function(e) {
-    
+
+    popup?.remove()
+    popup = new Popup({ closeOnClick: false })
+
     const coordinates = [e.lngLat.lng, e.lngLat.lat]
-    console.log(e.features[0].properties)
     popup.setLngLat(coordinates)
     popup.setDOMContent(
       createHTMLAttributeTable(
@@ -63,13 +68,48 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
       )
     )
     popup.addTo(map);
-
+   
     // modifyinh popup's default style
     document.getElementsByClassName('maplibregl-popup-content')[0].style.borderRadius="8px"
     document.getElementsByClassName('maplibregl-popup-content')[0].style.width="fit-content"
     document.getElementsByClassName('maplibregl-popup-content')[0].style.background="rgba(255,255,255,0.6)"
     document.getElementsByClassName('maplibregl-popup-content')[0].style.backdropFilter="blur(5px)"
+
+    
+    if (e.features.length > 0) {
+      if (selectedFeatureId) {
+        map.removeFeatureState({
+          source: "public"+"."+clickedLayerName,
+          sourceLayer: "public"+"."+clickedLayerName,
+          id: selectedFeatureId
+        });
+      }
+
+      selectedFeatureId = e.features[0].id;
+
+      map.setFeatureState({
+        source: "public"+"."+clickedLayerName,
+        sourceLayer: "public"+"."+clickedLayerName,
+        id: selectedFeatureId,
+      }, {
+        clicked: true
+      });
+    }
+    popup.on("close", ()=>{
+      if (selectedFeatureId) {
+        map.removeFeatureState({
+          source: "public"+"."+clickedLayerName,
+          sourceLayer: "public"+"."+clickedLayerName,
+          id: selectedFeatureId
+        });
+      }
+    })
+
+
+    
   });
+  
+  
   map.on('mouseenter', "public"+"."+clickedLayerName, function() {
     map.getCanvas().style.cursor = 'pointer';
   });
