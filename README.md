@@ -23,3 +23,16 @@ docker exec -i brandenburg_db /bin/bash -c "PGPASSWORD=1234 psql --username post
 in which restores your locally dumped database into a database named "brandenburg".
 
 By populating the database, the tables with geometry columns are visible and interactable via tile server service accessible at http://localhost:7800/ 
+
+## Metadata table
+
+A table named metadata is created to populate the metadata information specific to each table.
+```
+ create table metadata (table_name text, details json);
+```
+In which the metadata information for each table (table_name) is saved as JSON. The JSON instance takes arbitrary column names and values. As an instance:
+
+```
+ insert into metadata select 'burnt_areas_2013_2023','{"source":"https://effis.jrc.ec.europa.eu/applications","description":"burnt Areas in brandenburg from 2015 to 2023"}';
+
+```
