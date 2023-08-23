@@ -3,6 +3,7 @@
     <AppLogo> </AppLogo>
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility"/>
   </div>
+  <MetadataDialog> </MetadataDialog>
   
 </template>
 
@@ -13,6 +14,7 @@ import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
 import LayerUI from "@/components/LayerUI.vue";
 import AppLogo from "@/components/AppLogo.vue";
+import MetadataDialog from "@/components/MetadataDialog.vue";
 
 import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
 
