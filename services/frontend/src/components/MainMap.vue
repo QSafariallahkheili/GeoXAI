@@ -1,5 +1,6 @@
 <template>
   <div ref="mapContainer" style="height: 100vh;">
+    <AppLogo> </AppLogo>
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility"/>
   </div>
   
@@ -11,6 +12,8 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
 import LayerUI from "@/components/LayerUI.vue";
+import AppLogo from "@/components/AppLogo.vue";
+
 import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
 
 const { center, zoom, style } = storeToRefs(useMapStore())
