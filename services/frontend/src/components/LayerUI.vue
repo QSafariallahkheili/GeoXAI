@@ -1,6 +1,6 @@
 <template>
     <v-card
-        class="mx-auto layer-ui"  width="300" max-height="400"
+        class="mx-auto layer-ui"  width="400" max-height="400"
     >
         <v-toolbar class="sticky">
    
@@ -42,6 +42,17 @@
                         <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
                     </div>
                 </template>
+                <template v-slot:append>
+
+                    <v-icon
+                        color="grey-lighten-1"
+                        icon="mdi-information"
+                        variant="text"
+                        density="compact"
+                        @click="showMetadata(item[2], item[0])"
+                    ></v-icon>
+                </template>
+
                 </v-list-item>
                 <v-divider v-if="index < tableNames.length - 1"></v-divider>
 
@@ -56,6 +67,9 @@ import { ref, onMounted, defineEmits, computed} from "vue"
 import {
     getTableNames
 } from "../services/backend.calls";
+import { useMetadataDialogStore } from '../stores/metadataDialog'
+
+const metadataDialogStore = useMetadataDialogStore();
 
 let tableNames = ref(null)
 const selectedItems = ref([]);
@@ -137,6 +151,7 @@ if (!selectedItems.value.includes(layerName)) {
 const sendQuestRequest = async () => {
   const tablenamesfromDB =  await getTableNames()
   tableNames.value = tablenamesfromDB
+  console.log(tablenamesfromDB)
 }
 
 const getIcon = (value)=> {
@@ -158,6 +173,10 @@ const clearSearch =()=>{
     layerSearchText.value = "";
 }
 
+const showMetadata = (metadata, tablename) => {
+    //console.log(metadata)
+    metadataDialogStore.assignMetadata(metadata, tablename)
+}
 const filteredItems = computed(() => {
   if (!layerSearchText.value) {
     return tableNames.value;
