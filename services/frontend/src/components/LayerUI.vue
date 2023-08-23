@@ -72,7 +72,12 @@ if (!selectedItems.value.includes(layerName)) {
    
     if (geomType == "MultiPolygon" || geomType == "Polygon"){
         style.value = {
-            'fill-color': 'blue',
+            'fill-color': [
+                'case',
+                ['boolean',['feature-state', 'clicked'], false],
+                '#ffff00', // highlight color
+                '#0000ff', // default color
+            ],
             "fill-opacity": 0.7,
             "fill-outline-color": "black",
         }
@@ -80,8 +85,18 @@ if (!selectedItems.value.includes(layerName)) {
     }
     else if (geomType == "MultiLineString" || geomType == "LineString" || geomType == "Line"){
         style.value = {
-            'line-width': 2,
-            'line-color': "#0000FF",
+            'line-width': [
+                'case',
+                ['boolean',['feature-state', 'clicked'], false],
+                4, // highlight width
+                2, // default width
+            ],
+            'line-color': [
+                'case',
+                ['boolean',['feature-state', 'clicked'], false],
+                '#ffff00', // highlight color
+                "#0000FF", // default color
+            ],
             'line-opacity': 1,
            
         }
@@ -89,9 +104,24 @@ if (!selectedItems.value.includes(layerName)) {
     }
     else if (geomType == "Point") {
         style.value = {
-            'circle-color': '#00FF00',
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1,
+            'circle-color': [
+                'case',
+                ['boolean',['feature-state', 'clicked'], false],
+                '#ffff00', // highlight color
+                '#00FF00', // default color
+            ],
+            'circle-stroke-color': [
+                'case',
+                ['boolean',['feature-state', 'clicked'], false],
+                "#ffffff", 
+                "#000000", 
+            ],
+            'circle-stroke-width':[
+                'case',
+                ['boolean',['feature-state', 'clicked'], false],
+                4, // highlight stroke-width
+                1, // default stroke-width
+            ],
             'circle-opacity': 1
         } 
         layerType.value = "circle"
