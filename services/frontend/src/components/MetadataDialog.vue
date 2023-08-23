@@ -3,7 +3,6 @@
         <v-dialog
             v-model="dialog"
             max-width="500"
-            style="border-radius:20px"
         >
         
             <v-card class="dialog-ui">
@@ -63,7 +62,6 @@ const { dialog, metadata, tablename } = storeToRefs(useMetadataDialogStore())
 .v-dialog > .v-overlay__content > .v-card {
     display: flex;
     flex-direction: column;
-    border-radius: 20px;
     background-color: rgba(255,255,255,0.6);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
