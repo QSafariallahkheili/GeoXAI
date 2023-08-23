@@ -48,10 +48,15 @@ def home():
         JOIN 
             pg_attribute a ON t.table_name = a.attrelid::regclass::text
         WHERE 
-        t.table_schema = 'public'
-        AND format_type(a.atttypid, a.atttypmod) LIKE 'geometry%')
-        
-        select * from table_specification where length(data_type)>0; """
+            t.table_schema = 'public'
+        AND format_type(a.atttypid, a.atttypmod) LIKE 'geometry%'
+	    ),
+        metadata AS (
+            select * from metadata
+        )
+            SELECT ts.table_name, ts.data_type, m.details
+            FROM table_specification ts
+            LEFT JOIN metadata m ON ts.table_name = m.table_name  where length(ts.data_type)>0;"""
     )
     user = cur.fetchall()
     cur.close()
