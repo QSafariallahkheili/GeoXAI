@@ -6,7 +6,7 @@
    
             <v-card-text>
                 <v-text-field
-                    placeholder="looking for ..."
+                    :placeholder="'looking for (' +  tableNames?.length + ' datasets)'"
                     prepend-inner-icon="mdi-magnify"
                     class="expanding-search"
                     filled
