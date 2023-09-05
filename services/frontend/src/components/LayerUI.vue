@@ -36,7 +36,7 @@
                             type="checkbox"
                             :value="item[0]"
                             @change="toggleClickedLayer(item[0],item[1])"
-                            :checked="selectedItems.includes(item[0])?true:fasle"
+                            :checked="selectedItems.includes(item[0])?true:false"
                         >
                         
                         <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
