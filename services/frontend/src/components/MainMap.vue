@@ -62,7 +62,6 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
 
     popup?.remove()
     popup = new Popup({ closeOnClick: false })
-
     const coordinates = [e.lngLat.lng, e.lngLat.lat]
     popup.setLngLat(coordinates)
     popup.setDOMContent(
@@ -74,11 +73,6 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
     )
     popup.addTo(map);
    
-    // modifyinh popup's default style
-    document.getElementsByClassName('maplibregl-popup-content')[0].style.borderRadius="8px"
-    document.getElementsByClassName('maplibregl-popup-content')[0].style.width="fit-content"
-    document.getElementsByClassName('maplibregl-popup-content')[0].style.background="rgba(255,255,255,0.6)"
-    document.getElementsByClassName('maplibregl-popup-content')[0].style.backdropFilter="blur(5px)"
 
     
     if (e.features.length > 0) {
@@ -150,5 +144,9 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-
+  ::v-deep .maplibregl-popup-content {
+    border-radius:10px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(5px)
+  }
 </style>
