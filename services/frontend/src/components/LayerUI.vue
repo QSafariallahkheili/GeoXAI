@@ -29,23 +29,18 @@
                     :prepend-avatar= "getIcon(item[1])"
                     size="x-small"
                 >
-                
-                <template v-slot:subtitle >
-                    <div style="text-align: left;">
-                        <input
-                            type="checkbox"
-                            :value="item[0]"
-                            @change="toggleClickedLayer(item[0],item[1])"
-                            :checked="selectedItems.includes(item[0])?true:false"
-                        >
-                        
-                        <span class="font-weight-bold ml-2" >{{ item[0] }}</span> 
-                    </div>
-                </template>
+                    <v-switch 
+                        :v-model="selectedItems.includes(item[0])?true:false"
+                        style="width:fit-content; justify-content: center; align-items: center; display: flex;"
+                        :label= item[0] 
+                        :value="item[0]"
+                        @click="toggleClickedLayer(item[0],item[1])"
+                        color="indigo"
+                        inset
+                    ></v-switch>
                 <template v-slot:append>
 
                     <v-icon
-                        color="grey-lighten-1"
                         icon="mdi-information"
                         variant="text"
                         density="compact"
