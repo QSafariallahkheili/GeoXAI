@@ -147,6 +147,30 @@ onUnmounted(() => {
   ::v-deep .maplibregl-popup-content {
     border-radius:10px;
     background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(5px)
+    backdrop-filter: blur(5px);
+    animation: easeOutElastic 0.5s;
   }
+  @keyframes easeOutElastic {
+  0% {
+    transform: scale(0.98);
+  }
+  20% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.99);
+  }
+  60% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(0.999);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+
 </style>
