@@ -98,14 +98,12 @@ const addCommuneTileLayer = async () => {
 const getIndicator = async (indicatorName) => {
     const indocatorData =  await getIndicatorData(indicatorName)
     indicatorArray.value = indocatorData
-    console.log(indicatorArray, "indicatorArray")
     selectedYear = []
     matchExpression = null
     for (const subArray of indicatorArray.value) {
         const firstElement = subArray[0][0];
         selectedYear.push(firstElement);
     }    
-    console.log(selectedYear, "selectedYear")
     ////////////////////// ** classification ** /////////////////
     const wertArray = selectedYear.map(item => item.wert);
     classIntervals.value = Quantiles(wertArray, 5)
@@ -152,8 +150,7 @@ const getIndicator = async (indicatorName) => {
         } else {
             color = '#7a0177'; // Class 5 (Default color)
         }
-        console.log(row['kennziffer'])
-        matchExpression.push(row['kennziffer']?.toString(), color);
+        matchExpression.push(row['kennziffer'].toString(), color);
     }
 
     // Last value is the default color, used where there is no data
