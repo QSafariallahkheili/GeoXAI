@@ -1,26 +1,35 @@
 <template>
   <div ref="mapContainer" style="height: 100vh;">
     <AppLogo> </AppLogo>
-    <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility"/>
+    <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility"> </LayerUI>
+    <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
+    <LegendUI></LegendUI>
+    <MenuUI></MenuUI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
 </template>
 
 <script setup>
-import { Map, Popup } from 'maplibre-gl';
+import { Map,Popup } from 'maplibre-gl';
 import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
-import LayerUI from "@/components/LayerUI.vue";
 import AppLogo from "@/components/AppLogo.vue";
+import LayerUI from "@/components/LayerUI.vue";
+import IndicatorUI from "@/components/IndicatorUI.vue";
+import LegendUI from "@/components/LegendUI.vue";
+import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
-
 import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
+
+
 
 const { center, zoom, style } = storeToRefs(useMapStore())
 
 const mapContainer = ref(null);
+
+let vectorServer = process.env.VUE_APP_TILE_SERVER_URL+'/';
 let map = null;
 let popup = null
 let selectedFeatureId = null;
@@ -34,14 +43,14 @@ onMounted(() => {
     zoom: zoom.value,
   });
   
-
+  
 })
+
 const addLayerToMap = (clickedLayerName, layerType, style)=>{
-  let vectorServer = process.env.VUE_APP_TILE_SERVER_URL+'/';
   let vectorSource = "public"+"."+clickedLayerName;
   let vectorSourceLayer = "public"+"."+clickedLayerName;
   let vectorUrl = vectorServer + vectorSourceLayer + "/{z}/{x}/{y}.pbf";
-  
+    
     map.addSource(vectorSource, {
       "type": "vector",
       "tiles": [vectorUrl],
@@ -102,10 +111,7 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
           id: selectedFeatureId
         });
       }
-    })
-
-
-    
+    })    
   });
   
   
@@ -118,6 +124,7 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
 
  
 }
+
 const toggleLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
     'public'+'.'+clickedLayerName,
@@ -133,6 +140,40 @@ const toggleLayerVisibility = (clickedLayerName)=>{
     map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'visible')
   }
 
+}
+const addCommuneTileLayer = ()=>{
+  if(map.getSource("kommunales_gebiet")==undefined){
+    map.addSource("kommunales_gebiet", {
+      "type": "vector",
+      "tiles": [vectorServer + "public.kommunales_gebiet" + "/{z}/{x}/{y}.pbf"],
+      "promoteId":'id',
+      "minzoom": 0,
+      "maxzoom": 22
+    });
+    let layer = {
+        "id": "kommunales_gebiet",
+        "source": "kommunales_gebiet",
+        "source-layer": "public.kommunales_gebiet",
+        "type": "fill",
+        'paint': {
+          'fill-color': '#0080ff',
+          'fill-opacity': 1,
+          'fill-outline-color': 'white'
+
+        }
+    };
+    map.addLayer(layer, "label_place_other")
+  }
+    
+}
+
+
+const addStyleExpressionByYear = (fillStyle)=>{   
+  map.setPaintProperty(
+    "kommunales_gebiet", 
+    'fill-color', fillStyle
+  );
+  
 }
 
 onUnmounted(() => {

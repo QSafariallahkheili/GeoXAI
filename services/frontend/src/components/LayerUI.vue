@@ -1,6 +1,6 @@
 <template>
     <v-card
-        class="mx-auto layer-ui"  width="400" max-height="400"
+        class="mx-auto layer-ui"  width="400" max-height="400" v-show="activeMenu=='layers'"
     >
         <v-toolbar class="sticky">
    
@@ -49,7 +49,7 @@
                 </template>
 
                 </v-list-item>
-                <v-divider v-if="index < tableNames.length - 1"></v-divider>
+                <v-divider class="mt-2 mb-2" v-if="index < tableNames.length - 1"></v-divider>
 
             </div>
             
@@ -63,6 +63,10 @@ import {
     getTableNames
 } from "../services/backend.calls";
 import { useMetadataDialogStore } from '../stores/metadataDialog'
+import { storeToRefs } from 'pinia'
+import { useMenuStore } from '../stores/menu'
+
+let { activeMenu } = storeToRefs(useMenuStore())
 
 const metadataDialogStore = useMetadataDialogStore();
 
