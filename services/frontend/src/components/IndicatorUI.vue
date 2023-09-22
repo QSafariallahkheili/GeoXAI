@@ -152,8 +152,8 @@ const getIndicator = async (indicatorName) => {
         } else {
             color = '#7a0177'; // Class 5 (Default color)
         }
-
-        matchExpression.push(row['kennziffer'].toString(), color);
+        console.log(row['kennziffer'])
+        matchExpression.push(row['kennziffer']?.toString(), color);
     }
 
     // Last value is the default color, used where there is no data
