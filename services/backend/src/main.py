@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from os import getenv
@@ -62,3 +62,31 @@ def home():
     cur.close()
     conn.close()
     return user
+
+@app.get("/indcators_list")
+def indicator_list():
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute(""" 
+    select json_agg(distinct indikator) from dashboard_data; 
+       """
+    )
+    indicators = cur.fetchall()[0][0]
+    cur.close()
+    conn.close()
+    return indicators
+
+
+@app.post("/get_indicatort_data")
+async def get_indicatort_data(request: Request):
+    indicator = await request.json()
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute(""" 
+    select zeit_wert_array from dashboard_data where indikator = '%s';
+       """ % (indicator,)
+    )
+    indicators = cur.fetchall()
+    cur.close()
+    conn.close()
+    return indicators
