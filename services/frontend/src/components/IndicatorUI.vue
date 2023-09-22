@@ -98,14 +98,14 @@ const addCommuneTileLayer = async () => {
 const getIndicator = async (indicatorName) => {
     const indocatorData =  await getIndicatorData(indicatorName)
     indicatorArray.value = indocatorData
-    
+    console.log(indicatorArray, "indicatorArray")
     selectedYear = []
     matchExpression = null
     for (const subArray of indicatorArray.value) {
         const firstElement = subArray[0][0];
         selectedYear.push(firstElement);
     }    
-    
+    console.log(selectedYear, "selectedYear")
     ////////////////////// ** classification ** /////////////////
     const wertArray = selectedYear.map(item => item.wert);
     classIntervals.value = Quantiles(wertArray, 5)
