@@ -23,7 +23,7 @@
                 @click="setActiveButton('dashboard')"
                 :style="{ color: activeMenu === 'dashboard' ? 'blue' : '' }"
             >
-                <v-icon size="x-large">mdi-view-dashboard-outline</v-icon>
+                <v-icon size="x-large">mdi-chart-bar-stacked</v-icon>
             </v-btn> 
         </template>
     </v-tooltip>
