@@ -35,7 +35,7 @@
                 >
                 </v-list-item>
 
-                <v-divider class="mt-2 mb-2" v-if="index < indicatorNames.length - 1"></v-divider>
+                <v-divider style="margin-left: 15px; margin-right: 15px;" class="mt-2 mb-2" v-if="index < indicatorNames.length - 1"></v-divider>
 
             </div>
         </v-list>
@@ -179,7 +179,8 @@ const clearSearch =()=>{
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     -moz-backdrop-filter: blur(5px);
-    -ms-backdrop-filter: blur(5px);       
+    -ms-backdrop-filter: blur(5px);    
+    border: 1px solid rgba(0, 0, 0, 0.2);
    
 }
 .sticky{

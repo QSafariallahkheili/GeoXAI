@@ -190,6 +190,7 @@ onUnmounted(() => {
     background: rgba(255,255,255,0.6);
     backdrop-filter: blur(5px);
     animation: easeOutElastic 0.5s;
+    border: 1px solid rgba(0, 0, 0, 0.2);   
   }
   @keyframes easeOutElastic {
   0% {
