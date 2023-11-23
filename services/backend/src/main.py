@@ -19,7 +19,7 @@ dbConfig = {
     'host': getenv('DB_HOST', 'localhost'),
     'port': getenv('DB_PORT', 5432),
     'dbname': getenv('DB_NAME', 'brandenburg'),
-    'user': getenv('DB_USER', 'berlinberlin'),
+    'user': getenv('DB_USER', 'postgres'),
     'password': getenv('DB_PASSWORD', '1234')
 }
 
