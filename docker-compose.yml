@@ -67,6 +67,14 @@ services:
       GEOSERVER_ADMIN_PASSWORD: geoserver
     depends_on:
       - brandenburg_db
+    
+  masterportal:
+    image: nginx:alpine
+    container_name: masterportal
+    volumes:
+      - ./services/examples:/usr/share/nginx/html:ro
+    ports:
+      - 8082:80
 
 volumes:
   brandenburg_db:
