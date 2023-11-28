@@ -55,5 +55,19 @@ services:
     env_file:
       - pg.env
 
+  geoserver:
+    image: kartoza/geoserver:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - geoserver_data:/opt/geoserver/data_dir
+    environment:
+      GEOSERVER_DATA_DIR: /opt/geoserver/data_dir
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: geoserver
+    depends_on:
+      - brandenburg_db
+
 volumes:
   brandenburg_db:
+  geoserver_data:
