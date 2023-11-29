@@ -4,7 +4,9 @@ services:
 
   backend:
     build: ./services/backend
-   
+    environment:
+      - DB_HOST=brandenburg_db
+      - DB_NAME=brandenburg
     ports:
       - 5000:5000
     volumes:
