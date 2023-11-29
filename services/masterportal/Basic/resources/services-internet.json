@@ -136,6 +136,45 @@
     ]
   },
   {
+    "id": "4",
+    "name": "Burnt Area",
+    "url": "http://tv4-geo.innowest-brandenburg.de:8081/geoserver/brandenburg/burnt_areas_2013_2023/ows?version=1.1.0",
+    "typ": "WFS",
+    "featureType": "burnt_areas_2013_2023",
+    "outputFormat": "XML",
+    "version": "1.1.0",
+    "featureNS": "https://registry.gdi-de.org/id/de.hh.up",
+    "gfiAttributes": {
+      "Initialdat": "Initialdat",
+      "Finaldate": "Finaldate",
+      "Area_ha": "Area_ha"
+    },
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "hitTolerance": 0,
+    "datasets": [
+      {
+        "md_id": "D3DDBBA3-7329-475C-BB07-14D539ED6B1E",
+        "csw_url": "https://metaver.de/csw",
+        "show_doc_url": "https://metaver.de/trefferanzeige?cmd=doShowDocument&docuuid=",
+        "rs_id": "https://registry.gdi-de.org/id/de.hh/7988c147-7523-45bb-8f18-7f39d0d20541",
+        "md_name": "Schulstammdaten und Schülerzahlen der Hamburger Schulen",
+        "bbox": "461468.96892897453,5916367.229806512,587010.9095989474,5980347.755797674",
+        "kategorie_opendata": [
+          "Wissenschaft und Technologie",
+          "Regionen und Städte",
+          "Bevölkerung und Gesellschaft"
+        ],
+        "kategorie_inspire": [
+          "Versorgungswirtschaft und staatliche Dienste"
+        ],
+        "kategorie_organisation": "Behörde für Schule und Berufsbildung"
+      }
+    ],
+    "urlIsVisible": true
+  },
+  {
     "id": "7",
     "name": "KITA",
     "url": "http://tv4-geo.innowest-brandenburg.de:8081/geoserver/brandenburg/kita/wms?request=GetCapabilities",

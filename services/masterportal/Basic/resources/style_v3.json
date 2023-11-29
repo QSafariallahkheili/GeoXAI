@@ -1,5 +1,27 @@
 [
   {
+    "styleId": "4",
+    "rules": [
+      {
+        "style": {
+          "polygonStrokeColor": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "polygonStrokeWidth": 1,
+          "polygonFillColor": [
+            255,
+            0,
+            0,
+            0.9
+          ]
+        }
+      }
+    ]
+  },
+  {
     "styleId": "1711",
     "rules": [
       {
