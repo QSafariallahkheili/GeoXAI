@@ -5,8 +5,10 @@ services:
   backend:
     build: ./services/backend
     environment:
+      - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=brandenburg_db
       - DB_NAME=brandenburg
+      - POSTGRES_USER=${DB_USER}
     ports:
       - 5000:5000
     volumes:
