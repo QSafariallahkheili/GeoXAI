@@ -24,7 +24,7 @@ dbConfig = {
 }
 
 def connect():
-    print(dbConfig['user'], dbConfig['password'])
+    
     return psycopg2.connect(
     host=dbConfig['host'],
     port=dbConfig['port'], 

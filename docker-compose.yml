@@ -17,7 +17,7 @@ services:
     depends_on:
       - brandenburg_db
     env_file:
-      - pg.env
+      - ./pg.env
   
   frontend:
     build: 
