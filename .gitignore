@@ -1,2 +1,3 @@
 /services/frontend/node_modules
 .env
+.pg_tileserv.env
