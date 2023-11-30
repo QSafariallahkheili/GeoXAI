@@ -12,6 +12,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - 5000:5000
+    env_file:
+      - .env
     volumes:
       - ./services/backend:/app
     command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
@@ -45,7 +47,13 @@ services:
   brandenburg_db:
     image: postgis/postgis
     container_name: brandenburg_db
-
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=brandenburg_db
+      - POSTGRES_DB=brandenburg
+      - POSTGRES_USER=${POSTGRES_USER}
+    env_file:
+      - .env
     volumes:
       - ./data:/work
       - brandenburg_db:/var/lib/postgresql/data
