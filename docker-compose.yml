@@ -70,6 +70,8 @@ services:
       GEOSERVER_DATA_DIR: /opt/geoserver/data_dir
       GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN}
       GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_PASSWORD}
+    env_file:
+      - .env
     depends_on:
       - brandenburg_db
     
