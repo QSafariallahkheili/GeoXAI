@@ -16,15 +16,15 @@ app.add_middleware(
     expose_headers=["*"],
 )
 dbConfig = {
-    'host': getenv('DB_HOST', 'localhost'),
-    'port': getenv('DB_PORT', 5432),
-    'dbname': getenv('DB_NAME', 'brandenburg'),
-    'user': getenv('DB_USER', 'postgresql'),
-    'password': getenv('DB_PASSWORD', '1234')
+    'host': getenv('POSTGRES_HOST', 'localhost'),
+    'port': getenv('POSTGRES_PORT', 5432),
+    'dbname': getenv('POSTGRES_DB', 'brandenburg'),
+    'user': getenv('POSTGRES_USER', 'postgresql'),
+    'password': getenv('POSTGRES_PASSWORD', '1234')
 }
 
 def connect():
-    
+    print(dbConfig['password'], dbConfig['user'])
     return psycopg2.connect(
     host=dbConfig['host'],
     port=dbConfig['port'], 

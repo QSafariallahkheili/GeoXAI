@@ -4,14 +4,12 @@ services:
 
   backend:
     build: ./services/backend
+
     environment:
-      - DB_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=brandenburg_db
-      - DB_NAME=brandenburg
-      - DB_USER=${POSTGRES_USER}
-    env_file:
-      - pg.env
-  
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=brandenburg_db
+      - POSTGRES_DB=brandenburg
+      - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - 5000:5000
     volumes:
@@ -46,7 +44,6 @@ services:
   
   brandenburg_db:
     image: postgis/postgis
-
     container_name: brandenburg_db
 
     volumes:
@@ -54,9 +51,6 @@ services:
       - brandenburg_db:/var/lib/postgresql/data
     ports:
       - 5433:5432
-
-    env_file:
-      - pg.env
 
   geoserver:
     image: kartoza/geoserver:latest
