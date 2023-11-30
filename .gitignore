@@ -1,2 +1,2 @@
 /services/frontend/node_modules
-env
+.env
