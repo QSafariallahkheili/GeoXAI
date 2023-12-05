@@ -19,12 +19,12 @@ dbConfig = {
     'host': getenv('POSTGRES_HOST', 'localhost'),
     'port': getenv('POSTGRES_PORT', 5432),
     'dbname': getenv('POSTGRES_DB', 'brandenburg'),
-    'user': getenv('POSTGRES_USER', 'postgresql'),
+    'user': getenv('POSTGRES_USER', 'postgres'),
     'password': getenv('POSTGRES_PASSWORD', '1234')
 }
 
 def connect():
-    print(dbConfig['password'], dbConfig['user'])
+    
     return psycopg2.connect(
     host=dbConfig['host'],
     port=dbConfig['port'], 
