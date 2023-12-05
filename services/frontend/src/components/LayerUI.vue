@@ -26,15 +26,15 @@
         <v-list lines="one" style="overflow-y: scroll; background: transparent;">
             <div v-for="(item,index) in filteredItems" :key="index">
                 <v-list-item
-                    :prepend-avatar= "getIcon(item[1])"
+                    :prepend-avatar= getIcon(item.type)
                     size="x-small"
                 >
                     <v-switch 
-                        :v-model="selectedItems.includes(item[0])?true:false"
+                        :v-model="selectedItems.includes(item.name)?true:false"
                         style="width:fit-content; justify-content: center; align-items: center; display: flex;"
-                        :label= item[0] 
-                        :value="item[0]"
-                        @click="toggleClickedLayer(item[0],item[1])"
+                        :label= item.name
+                        :value= item.name
+                        @click="toggleClickedLayer(item.name,item.type)"
                         color="indigo"
                         inset
                     ></v-switch>
@@ -44,15 +44,15 @@
                         icon="mdi-information"
                         variant="text"
                         density="compact"
-                        @click="showMetadata(item[2], item[0])"
+                        @click="showMetadata(item.metadata, item.name)"
                     ></v-icon>
                 </template>
 
                 </v-list-item>
-                <v-divider style="margin-left: 15px; margin-right: 15px;" class="mt-2 mb-2" v-if="index < tableNames.length - 1"></v-divider>
-
+                <v-divider style="margin-left: 15px; margin-right: 15px;" class="mt-2 mb-2"></v-divider>
+               
             </div>
-            
+           
         </v-list>
   
     </v-card>
@@ -60,7 +60,7 @@
 <script setup>
 import { ref, onMounted, defineEmits, computed} from "vue"
 import {
-    getTableNames
+    getTableNames, getGeoserverCoverageSources
 } from "../services/backend.calls";
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import { storeToRefs } from 'pinia'
@@ -70,87 +70,107 @@ let { activeMenu } = storeToRefs(useMenuStore())
 
 const metadataDialogStore = useMetadataDialogStore();
 
-let tableNames = ref(null)
-const selectedItems = ref([]);
+let tableNames = ref([]);
+let selectedItems = ref([]);
 let style = ref(null)
 let layerType = ref(null)
 let layerSearchText= ref("")
 
-const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility"]);
+const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility",  "addCoverageLayerToMap", "toggleCoverageLayerVisibility"]);
 
 
 
 const toggleClickedLayer = (layerName, geomType) => {
-if (!selectedItems.value.includes(layerName)) {
-   
-    if (geomType == "MultiPolygon" || geomType == "Polygon"){
-        style.value = {
-            'fill-color': [
-                'case',
-                ['boolean',['feature-state', 'clicked'], false],
-                '#ffff00', // highlight color
-                '#0000ff', // default color
-            ],
-            "fill-opacity": 0.7,
-            "fill-outline-color": "black",
+    if (!selectedItems.value.includes(layerName)) {
+    
+        if (geomType == "MultiPolygon" || geomType == "Polygon"){
+            style.value = {
+                'fill-color': [
+                    'case',
+                    ['boolean',['feature-state', 'clicked'], false],
+                    '#ffff00', // highlight color
+                    '#0000ff', // default color
+                ],
+                "fill-opacity": 0.7,
+                "fill-outline-color": "black",
+            }
+            layerType.value = "fill"
         }
-        layerType.value = "fill"
-    }
-    else if (geomType == "MultiLineString" || geomType == "LineString" || geomType == "Line"){
-        style.value = {
-            'line-width': [
-                'case',
-                ['boolean',['feature-state', 'clicked'], false],
-                4, // highlight width
-                2, // default width
-            ],
-            'line-color': [
-                'case',
-                ['boolean',['feature-state', 'clicked'], false],
-                '#ffff00', // highlight color
-                "#0000FF", // default color
-            ],
-            'line-opacity': 1,
-           
+        else if (geomType == "MultiLineString" || geomType == "LineString" || geomType == "Line"){
+            style.value = {
+                'line-width': [
+                    'case',
+                    ['boolean',['feature-state', 'clicked'], false],
+                    4, // highlight width
+                    2, // default width
+                ],
+                'line-color': [
+                    'case',
+                    ['boolean',['feature-state', 'clicked'], false],
+                    '#ffff00', // highlight color
+                    "#0000FF", // default color
+                ],
+                'line-opacity': 1,
+            
+            }
+            layerType.value = "line"
         }
-        layerType.value = "line"
+        else if (geomType == "Point") {
+            style.value = {
+                'circle-color': [
+                    'case',
+                    ['boolean',['feature-state', 'clicked'], false],
+                    '#ffff00', // highlight color
+                    '#00FF00', // default color
+                ],
+                'circle-stroke-color': [
+                    'case',
+                    ['boolean',['feature-state', 'clicked'], false],
+                    "#ffffff", 
+                    "#000000", 
+                ],
+                'circle-stroke-width':[
+                    'case',
+                    ['boolean',['feature-state', 'clicked'], false],
+                    4, // highlight stroke-width
+                    1, // default stroke-width
+                ],
+                'circle-opacity': 1
+            } 
+            layerType.value = "circle"
+        }
+        else if (geomType == "Raster"){
+            style.value = {
+                'raster-opacity' : 1
+            }
+            layerType.value = "raster"
+        }
+        if (geomType=='Raster'){
+            emit("addCoverageLayerToMap", layerName, layerType, style)
+        }
+        else {
+            emit("addLayerToMap", layerName, layerType, style);
+        }
+        selectedItems.value.push(layerName);
+    
+    } 
+    else {
+        if (geomType=='Raster'){
+            emit("toggleCoverageLayerVisibility", layerName)
+        }
+        else {
+            emit("toggleLayerVisibility", layerName)
+        }
     }
-    else if (geomType == "Point") {
-        style.value = {
-            'circle-color': [
-                'case',
-                ['boolean',['feature-state', 'clicked'], false],
-                '#ffff00', // highlight color
-                '#00FF00', // default color
-            ],
-            'circle-stroke-color': [
-                'case',
-                ['boolean',['feature-state', 'clicked'], false],
-                "#ffffff", 
-                "#000000", 
-            ],
-            'circle-stroke-width':[
-                'case',
-                ['boolean',['feature-state', 'clicked'], false],
-                4, // highlight stroke-width
-                1, // default stroke-width
-            ],
-            'circle-opacity': 1
-        } 
-        layerType.value = "circle"
-    }
-    emit("addLayerToMap", layerName, layerType, style)
-    selectedItems.value.push(layerName);
-} else {
-    emit("toggleLayerVisibility", layerName)
-    console.log(selectedItems)
-}
 
 }
 const sendQuestRequest = async () => {
-  const tablenamesfromDB =  await getTableNames()
-  tableNames.value = tablenamesfromDB
-  console.log(tablenamesfromDB)
+    const tablenamesfromDB =  await getTableNames()
+
+    for (let i in tablenamesfromDB) {
+        tableNames.value.push(tablenamesfromDB[i]);
+    }
+
 }
 
 const getIcon = (value)=> {
@@ -163,8 +183,11 @@ const getIcon = (value)=> {
     else if (value == "Point"){
         return "point.png"
     }
+    else if (value == "Raster") {
+        return "raster.png" 
+    }
     else {
-        return "point.png" 
+        return "raster.png" 
     }
 }
 
@@ -173,23 +196,30 @@ const clearSearch =()=>{
 }
 
 const showMetadata = (metadata, tablename) => {
-    //console.log(metadata)
     metadataDialogStore.assignMetadata(metadata, tablename)
 }
 const filteredItems = computed(() => {
-  if (!layerSearchText.value) {
-    return tableNames.value;
-  }
+    if (!layerSearchText.value) {
+        return tableNames.value;
+    }
 
-  return tableNames.value.filter(item =>
-    item[0].toLowerCase().includes(layerSearchText.value.toLowerCase())
-  )
+    return tableNames.value.filter(item =>
+        item.name.toLowerCase().includes(layerSearchText.value.toLowerCase())
+    )
   
 });
 
+const readGeoserverCoverageSources = async ()=> {
+    const response =  await getGeoserverCoverageSources()
+    for (let i in response) {
+        tableNames.value.push(response[i]);
+    }
+}
+
+
 onMounted(() => {
   sendQuestRequest();
- 
+  readGeoserverCoverageSources()
 })
 
 </script>
