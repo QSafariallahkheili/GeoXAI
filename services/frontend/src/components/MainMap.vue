@@ -1,7 +1,7 @@
 <template>
   <div ref="mapContainer" style="height: 100vh;">
     <AppLogo> </AppLogo>
-    <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility"> </LayerUI>
+    <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
     <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
@@ -34,6 +34,7 @@ let map = null;
 let popup = null
 let selectedFeatureId = null;
 
+
 onMounted(() => {
 
   map = new Map({
@@ -42,7 +43,7 @@ onMounted(() => {
     center: center.value,
     zoom: zoom.value,
   });
-  
+
   
 })
 
@@ -125,22 +126,6 @@ const addLayerToMap = (clickedLayerName, layerType, style)=>{
  
 }
 
-const toggleLayerVisibility = (clickedLayerName)=>{
-    let visibility = map.getLayoutProperty(
-    'public'+'.'+clickedLayerName,
-    'visibility'
-  );
-  if (visibility == 'visible'){
-    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
-  }
-  else if (visibility == undefined){
-    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
-  }
-  else {
-    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'visible')
-  }
-
-}
 const addCommuneTileLayer = ()=>{
   if(map.getSource("kommunales_gebiet")==undefined){
     map.addSource("kommunales_gebiet", {
@@ -175,6 +160,60 @@ const addStyleExpressionByYear = (fillStyle)=>{
   );
   
 }
+
+const toggleLayerVisibility = (clickedLayerName)=>{
+    let visibility = map.getLayoutProperty(
+    'public'+'.'+clickedLayerName,
+    'visibility'
+  );
+  if (visibility == 'visible'){
+    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
+  }
+  else if (visibility == undefined){
+    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
+  }
+  else {
+    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'visible')
+  }
+
+}
+
+const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
+  console.log(layerType, style)
+  let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
+  map.addSource(clickedLayerName, {
+    'type': layerType.value,
+    'tiles': [
+      geoserver_base_url+'/brandenburg/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=brandenburg:'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
+    ],
+    'tileSize': 256
+  });
+  map.addLayer(
+  {
+    'id': clickedLayerName,
+    'type': layerType.value,
+    'source': clickedLayerName,
+    'paint': style.value
+  }, 'road_major'
+  );
+}
+const toggleCoverageLayerVisibility = (clickedLayerName)=>{
+    let visibility = map.getLayoutProperty(
+    clickedLayerName,
+    'visibility'
+  );
+  if (visibility == 'visible'){
+    map.setLayoutProperty(clickedLayerName,'visibility', 'none')
+  }
+  else if (visibility == undefined){
+    map.setLayoutProperty(clickedLayerName,'visibility', 'none')
+  }
+  else {
+    map.setLayoutProperty(clickedLayerName,'visibility', 'visible')
+  }
+
+}
+
 
 onUnmounted(() => {
       if (map) {
