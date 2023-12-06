@@ -1,11 +1,10 @@
 FROM python:3.11-buster
 
-# Install GDAL system dependencies from Debian Stretch (9) repositories
-RUN echo "deb http://deb.debian.org/debian stretch main" >> /etc/apt/sources.list \
-    && apt-get update \
+# Install GDAL system dependencies
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        gdal-bin=2.2.3+dfsg-2 \
-        libgdal-dev=2.2.3+dfsg-2 \
+        gdal-bin \
+        libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the GDAL configuration for pip
