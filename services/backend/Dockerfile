@@ -1,13 +1,7 @@
-FROM python:3.11-buster
+FROM python:3.11
 
-# Install GDAL system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gdal-bin \
-        libgdal-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the GDAL configuration for pip
+RUN apt-get update
+RUN apt-get install -y gdal-bin libgdal-dev
 ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
 
@@ -20,5 +14,6 @@ ENV PYTHONPATH=.
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+
 
 COPY src/ .
