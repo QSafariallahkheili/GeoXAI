@@ -20,7 +20,7 @@ RUN npm run build --prod \
 # production stage: create NGINX server
 FROM nginx:stable-alpine as production-stage
 
-COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 ## Remove default nginx index page
 RUN rm -rf /usr/share/nginx/html/*
 
