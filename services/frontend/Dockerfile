@@ -11,7 +11,11 @@ COPY package-lock.json .
 RUN npm install
 COPY . .
 
-RUN npm run build
+# Build and clean up
+RUN npm run build --prod \
+    && npm prune --production \
+    && rm -rf node_modules
+
 
 # production stage: create NGINX server
 FROM nginx:stable-alpine as production-stage
@@ -20,4 +24,3 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build-stage ./app/dist /usr/share/nginx/html/
 
-EXPOSE 80 443
