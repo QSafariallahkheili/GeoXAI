@@ -2,7 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from os import getenv
-
+import os
+import subprocess
+import json
 
 app = FastAPI()
 
@@ -91,3 +93,32 @@ async def get_indicatort_data(request: Request):
     cur.close()
     conn.close()
     return indicators
+
+@app.get("/local_shap")
+async def compute_local_shap():
+    # Create a temporary file to save the uploaded GeoTIFF
+    tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
+    # List all GeoTIFF files in the specified directory
+    predictors = [f for f in os.listdir(tif_directory) if f.endswith(".tif")]
+    # Dictionary to store results
+    locationinfo_dict = {}
+
+    # Iterate over each GeoTIFF file  
+    for tif_file in predictors:
+        file_path = os.path.join(tif_directory, tif_file)
+        lng = 11.61214
+        lat = 52.44401
+        command = f"gdallocationinfo {file_path} -valonly -wgs84 {lng} {lat}"
+        # Execute the GDAL command
+        try:
+            result = subprocess.check_output(command, shell=True, text=True)
+            result_float = float(result.strip())
+            # Remove ".tif" extension from the filename
+            root, _ = os.path.splitext(tif_file)
+            locationinfo_dict[root] = result_float
+
+        except subprocess.CalledProcessError as e:
+            locationinfo_dict[tif_file] = f"Error: {e}"
+    
+    
+    return locationinfo_dict
