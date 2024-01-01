@@ -29,15 +29,20 @@
                     :prepend-avatar= getIcon(item.type)
                     size="x-small"
                 >
-                    <v-switch 
-                        :v-model="selectedItems.includes(item.name)?true:false"
-                        style="width:fit-content; justify-content: center; align-items: center; display: flex;"
-                        :label= item.name
-                        :value= item.name
-                        @click="toggleClickedLayer(item.name,item.type)"
-                        color="indigo"
-                        inset
-                    ></v-switch>
+                <div class="form-check form-switch ml-1" style="width:fit-content; justify-content: center; align-items: center; display: flex; box-shadow:none !important;">
+                    <input
+                        @click="toggleClickedLayer(item.name,item.type)" 
+                        class="form-check-input"
+                        style=" cursor: pointer;"
+                        type="checkbox" 
+                        role="switch" 
+                        :value= 
+                        item.name 
+                        :id=item.name 
+                        :checked="item.checked">
+                    <label class="form-check-label ml-2 " for="flexSwitchCheckDefault">{{ item.name }}</label>
+                </div>
+                   
                 <template v-slot:append>
 
                     <v-icon
@@ -81,6 +86,10 @@ const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility",  "addCoverag
 
 
 const toggleClickedLayer = (layerName, geomType) => {
+    let index = tableNames.value.findIndex(obj => obj.name==layerName);
+    tableNames.value[index].checked=!tableNames.value[index].checked
+    // Trigger reactivity
+    tableNames.value = [...tableNames.value];
     if (!selectedItems.value.includes(layerName)) {
     
         if (geomType == "MultiPolygon" || geomType == "Polygon"){
@@ -152,7 +161,6 @@ const toggleClickedLayer = (layerName, geomType) => {
             emit("addLayerToMap", layerName, layerType, style);
         }
         selectedItems.value.push(layerName);
-    
     } 
     else {
         if (geomType=='Raster'){
@@ -169,6 +177,10 @@ const sendQuestRequest = async () => {
 
     for (let i in tablenamesfromDB) {
         tableNames.value.push(tablenamesfromDB[i]);
+
+        // add new key and value per table name to track the checked status of each layer
+        tableNames.value[i]["checked"]=false
+       
     }
 
 }
