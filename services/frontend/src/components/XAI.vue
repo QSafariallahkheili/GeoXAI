@@ -14,8 +14,9 @@
 import { onMounted, defineEmits, ref, watch } from "vue"
 import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
+import { getLocalShapValues } from "../services/backend.calls";
+
 let { clickedCoordinates } = storeToRefs(useXAIStore())
-console.log(clickedCoordinates)
 
 const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate"]);
 let layerName = "fire_susceptibility_color"
@@ -27,8 +28,10 @@ const addCoverageLayerToMap = () => {
     emit("getClickedCoordinate")
 }
 
-watch(clickedCoordinates, () => {
-    console.log("hiii",clickedCoordinates)
+watch(clickedCoordinates, async () => {
+    console.log("hiii",clickedCoordinates.value)
+    const shapValues =  await getLocalShapValues(clickedCoordinates.value)
+    console.log(shapValues)
 
 })
 
