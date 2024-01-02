@@ -257,4 +257,5 @@ onMounted(() => {
     top: 0;
     z-index: 1;
 }
+.form-switch .form-check-input {width: 4em; height: 2em;}
 </style>
