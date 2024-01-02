@@ -5,7 +5,7 @@
     <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap"></XAI>
+    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @getClickedCoordinate="getClickedCoordinate"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -25,8 +25,11 @@ import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
 import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
 import { useMenuStore } from '../stores/menu'
+import { useXAIStore } from '../stores/xai'
 
 let { activeMenu } = storeToRefs(useMenuStore())
+let { clickedCoordinates } = storeToRefs(useXAIStore())
+
 
 
 const { center, zoom, style } = storeToRefs(useMapStore())
@@ -221,6 +224,18 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     map.setLayoutProperty(clickedLayerName,'visibility', 'visible')
   }
 
+}
+
+const getClickedCoordinate = ()=>{
+ 
+    map.on('click', (e) => {
+      if (activeMenu.value=='xai'){
+        clickedCoordinates = [e.lngLat.lng,  e.lngLat.lat]
+      }
+    
+  });
+    
+  
 }
 
 

@@ -4,12 +4,7 @@
     >
     <div >
        
-        <v-btn
-            prepend-icon="mdi-map"
-            class="ml-2"
-        >
-            Query SHAP
-        </v-btn>
+       XAI UI
     </div>
     
     </v-card>
@@ -17,13 +12,19 @@
 </template>
 <script setup>
 import { onMounted, defineEmits, ref } from "vue"
-const emit = defineEmits(["addCoverageLayerToMap"]);
+const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate"]);
 let layerName = "fire_susceptibility_color"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
 
-onMounted(() => {
+const addCoverageLayerToMap = ()=>{
     emit("addCoverageLayerToMap", layerName, layerType, style)
+    emit("getClickedCoordinate")
+}
+
+
+onMounted(() => {
+    addCoverageLayerToMap()
 })
 </script>
     
