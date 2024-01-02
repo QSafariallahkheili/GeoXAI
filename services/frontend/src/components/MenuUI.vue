@@ -33,6 +33,23 @@
             </v-btn> 
         </template>
     </v-tooltip>
+    <v-tooltip text="xai" location="top">
+        <template v-slot:activator="{ props }">
+            <v-btn 
+                
+                v-bind="props"
+                class="ml-2"
+                v-ripple="{ class: 'primary--text' }"
+                @click="setActiveButton('xai')"
+                :style="{ color: activeMenu === 'xai' ? 'blue' : '' }"
+            >
+            <v-icon size="x-large">
+               <IconXai />
+            </v-icon>
+               
+            </v-btn> 
+        </template>
+    </v-tooltip>
 
 </div>    
 
@@ -41,6 +58,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useMenuStore } from '../stores/menu'
+import IconXai from '../assets/icons/IconXai.vue';
 const menuStore = useMenuStore();
 
 const activeMenu = ref(null);
