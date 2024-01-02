@@ -5,7 +5,7 @@
     <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'"></XAI>
+    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -183,23 +183,28 @@ const toggleLayerVisibility = (clickedLayerName)=>{
 }
 
 const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
-  console.log(layerType, style)
-  let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
-  map.addSource(clickedLayerName, {
-    'type': layerType.value,
-    'tiles': [
-      geoserver_base_url+'/brandenburg/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=brandenburg:'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
-    ],
-    'tileSize': 256
-  });
-  map.addLayer(
-  {
-    'id': clickedLayerName,
-    'type': layerType.value,
-    'source': clickedLayerName,
-    'paint': style.value
-  }, 'road_major'
-  );
+  let coverageLayer = map.getLayer(clickedLayerName);
+
+  if(typeof coverageLayer == 'undefined') {
+    let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
+    map.addSource(clickedLayerName, {
+      'type': layerType.value,
+      'tiles': [
+        geoserver_base_url+'/brandenburg/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=brandenburg:'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
+      ],
+      'tileSize': 256
+    });
+    map.addLayer({
+      'id': clickedLayerName,
+      'type': layerType.value,
+      'source': clickedLayerName,
+      'paint': style.value
+      },
+    'road_major'
+    );
+  }
+ 
+  
 }
 const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
