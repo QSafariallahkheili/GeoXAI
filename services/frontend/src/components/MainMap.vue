@@ -29,6 +29,8 @@ import { useXAIStore } from '../stores/xai'
 
 let { activeMenu } = storeToRefs(useMenuStore())
 let { clickedCoordinates } = storeToRefs(useXAIStore())
+const XAIStore = useXAIStore();
+
 
 
 
@@ -230,7 +232,10 @@ const getClickedCoordinate = ()=>{
  
     map.on('click', (e) => {
       if (activeMenu.value=='xai'){
-        clickedCoordinates = [e.lngLat.lng,  e.lngLat.lat]
+        XAIStore.assignClickedCoordinates({
+          clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
+        })
+        
       }
     
   });

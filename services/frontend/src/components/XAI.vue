@@ -11,17 +11,26 @@
           
 </template>
 <script setup>
-import { onMounted, defineEmits, ref } from "vue"
+import { onMounted, defineEmits, ref, watch } from "vue"
+import { storeToRefs } from 'pinia'
+import { useXAIStore } from '../stores/xai'
+let { clickedCoordinates } = storeToRefs(useXAIStore())
+console.log(clickedCoordinates)
+
 const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate"]);
 let layerName = "fire_susceptibility_color"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
 
-const addCoverageLayerToMap = ()=>{
+const addCoverageLayerToMap = () => {
     emit("addCoverageLayerToMap", layerName, layerType, style)
     emit("getClickedCoordinate")
 }
 
+watch(clickedCoordinates, () => {
+    console.log("hiii",clickedCoordinates)
+
+})
 
 onMounted(() => {
     addCoverageLayerToMap()
