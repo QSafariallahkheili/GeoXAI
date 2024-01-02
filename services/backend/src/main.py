@@ -5,6 +5,14 @@ from os import getenv
 import os
 import subprocess
 import json
+from dataclasses import dataclass
+from .models import IndicatorRequest
+from .database import (
+    get_home_data,
+    get_indicator_list,
+    get_indicator_data
+)
+
 
 app = FastAPI()
 
@@ -17,81 +25,15 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
-dbConfig = {
-    'host': getenv('POSTGRES_HOST', 'localhost'),
-    'port': getenv('POSTGRES_PORT', 5432),
-    'dbname': getenv('POSTGRES_DB', 'brandenburg'),
-    'user': getenv('POSTGRES_USER', 'postgres'),
-    'password': getenv('POSTGRES_PASSWORD', '1234')
-}
 
-def connect():
-    
-    return psycopg2.connect(
-    host=dbConfig['host'],
-    port=dbConfig['port'], 
-    dbname=dbConfig['dbname'], 
-    user=dbConfig['user'], 
-    password=dbConfig['password'])
 @app.get("/")
 def home():
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute(""" 
-        with table_specification as (SELECT 
-            t.table_name,
-            regexp_replace(
-                regexp_replace(format_type(a.atttypid, a.atttypmod),'[0-9\(\)]+','', 'g'),
-                'geometry|,',
-                '',
-                'g'
-            ) AS data_type
-        FROM 
-            information_schema.tables t
-        JOIN 
-            pg_attribute a ON t.table_name = a.attrelid::regclass::text
-        WHERE 
-            t.table_schema = 'public'
-        AND format_type(a.atttypid, a.atttypmod) LIKE 'geometry%'
-	    ),
-        metadata AS (
-            select * from metadata
-        )
-            SELECT ts.table_name, ts.data_type, m.details
-            FROM table_specification ts
-            LEFT JOIN metadata m ON ts.table_name = m.table_name  where length(ts.data_type)>0;"""
-    )
-    user = cur.fetchall()
-    cur.close()
-    conn.close()
-    return user
+    data = get_home_data()
+    return data
 
 @app.get("/indcators_list")
 def indicator_list():
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute(""" 
-    select json_agg(distinct indikator) from dashboard_data; 
-       """
-    )
-    indicators = cur.fetchall()[0][0]
-    cur.close()
-    conn.close()
-    return indicators
-
-
-@app.post("/get_indicatort_data")
-async def get_indicatort_data(request: Request):
-    indicator = await request.json()
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute(""" 
-    select zeit_wert_array from dashboard_data where indikator = '%s';
-       """ % (indicator,)
-    )
-    indicators = cur.fetchall()
-    cur.close()
-    conn.close()
+    indicators = get_indicator_list()
     return indicators
 
 @app.get("/local_shap")
@@ -122,3 +64,11 @@ async def compute_local_shap():
     
     
     return locationinfo_dict
+
+async def get_indicatort_data(
+    request: Request, 
+    indicator_request: IndicatorRequest,
+):
+    indicator = indicator_request.indicator
+    data = get_indicator_data(indicator)
+    return data

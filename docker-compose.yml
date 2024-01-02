@@ -4,7 +4,9 @@ services:
 
   backend:
     build: ./services/backend
-
+    container_name: backend
+    networks: 
+      - my_network
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=brandenburg_db
@@ -12,12 +14,14 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - 5000:5000
+    restart: unless-stopped
     env_file:
       - .env
     volumes:
       - ./services/backend:/app
       - forest_fire_data:/app/data/forest_fire_predictor
-    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000 --root-path /api
+    
     depends_on:
       - brandenburg_db
 
@@ -25,25 +29,31 @@ services:
     build: 
       context: ./services/frontend
       dockerfile: Dockerfile
+    container_name: frontend
+    networks: 
+      - my_network
     volumes:
       - './services/frontend:/app'
       - '/app/node_modules'
     ports:
       - 8080:80
+    restart: unless-stopped
   
-  pg_tileserv:
-    image: pramsey/pg_tileserv:latest
-
-    container_name: pg_tileserv
-
+  tileserv:
+    image: pramsey/pg_tileserv:20231005
+    #image: pramsey/pg_tileserv:latest
     env_file:
       - pg_tileserv.env
 
     depends_on:
       - brandenburg_db
-
+    restart: unless-stopped
     ports:
-      - 7800:7800
+      - "7800:7800"
+
+    container_name: tileserv
+    networks: 
+      - my_network
   
   brandenburg_db:
     image: postgis/postgis
@@ -60,11 +70,18 @@ services:
       - brandenburg_db:/var/lib/postgresql/data
     ports:
       - 5433:5432
+    networks: 
+      - my_network
+    restart: unless-stopped
 
   geoserver:
     image: kartoza/geoserver:latest
     ports:
       - "8081:8080"
+    networks: 
+      - my_network
+    container_name: geoserver
+    restart: unless-stopped
     volumes:
       - geoserver_data:/opt/geoserver/data_dir
     environment:
@@ -77,14 +94,35 @@ services:
       - brandenburg_db
     
   masterportal:
-    image: nginx:alpine
+    image: nginx
     container_name: masterportal
     volumes:
       - ./services/masterportal:/usr/share/nginx/html:ro
     ports:
-      - 8082:80
+      - "8082:80"
+    networks: 
+      - my_network
+    restart: unless-stopped
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    networks: 
+      - my_network
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - frontend
+      - backend
+      - masterportal
+      - tileserv
+
 
 volumes:
   brandenburg_db:
   geoserver_data:
   forest_fire_data:
+networks:
+  my_network:

@@ -46,11 +46,13 @@
                 <template v-slot:append>
 
                     <v-icon
-                        icon="mdi-information"
+                        size="small"
                         variant="text"
                         density="compact"
                         @click="showMetadata(item.metadata, item.name)"
-                    ></v-icon>
+                    >
+                    <font-awesome-icon :icon="['fas', 'circle-info']" />
+                </v-icon>
                 </template>
 
                 </v-list-item>

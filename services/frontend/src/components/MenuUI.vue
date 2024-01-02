@@ -9,7 +9,9 @@
                 @click="setActiveButton('layers')"
                 :style="{ color: activeMenu === 'layers' ? 'blue' : '' }"
             >
-                <v-icon size="x-large">mdi-layers-outline</v-icon>
+                <v-icon size="small">
+                    <font-awesome-icon :icon="['fas', 'layer-group']" />
+                </v-icon>
             </v-btn>
         </template>
     </v-tooltip>
@@ -23,7 +25,11 @@
                 @click="setActiveButton('dashboard')"
                 :style="{ color: activeMenu === 'dashboard' ? 'blue' : '' }"
             >
-                <v-icon size="x-large">mdi-chart-bar-stacked</v-icon>
+                <v-icon size="small">
+                    <font-awesome-icon :icon="['fas', 'chart-column']" />
+                </v-icon>
+               
+               
             </v-btn> 
         </template>
     </v-tooltip>

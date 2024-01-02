@@ -26,8 +26,13 @@ export async function getIndicatorNames() {
 }
 
 export async function getIndicatorData(indicator) {
-  const response = await HTTP.post("get_indicatort_data", indicator);
-  return response.data;
+    const response = await HTTP.post(
+        "get_indicatort_data",
+        {
+            "indicator": indicator
+        }
+    );
+    return response.data;
 }
 
 export async function getGeoserverCoverageSources() {
