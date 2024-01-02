@@ -1,77 +1,21 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
-        <defs>
-
-<style>
-      .cls-1, .cls-2 {
-        fill: none;
-        stroke: #353535;
-        stroke-linecap: round;
-        stroke-width: 2px;
-      }
-
-      .cls-1 {
-        stroke-linejoin: round;
-      }
-
-      .cls-2 {
-        stroke-miterlimit: 10;
-      }
-
-      .cls-3 {
-        fill: #353535;
-      }
-    </style>
-
-</defs>
-
-<title/>
-
-<g>
-
-<g>
-
-<path class="cls-1" d="M17.30639,11.25243a5.29412,5.29412,0,1,0-10.58824,0,5.23707,5.23707,0,0,0,.584,2.37007A5.27955,5.27955,0,0,0,8.8358,23.95831"/>
-
-<path class="cls-2" d="M3.58191,21.56266a7.00047,7.00047,0,1,0,11.32225,6.78321V28"/>
-
-<path class="cls-1" d="M8.43086,42.32855A6.21606,6.21606,0,0,1,5.108,36.82494a6.14985,6.14985,0,0,1,.68573-2.78316"/>
-
-<path class="cls-2" d="M19,16a5,5,0,0,1-5,5"/>
-
-<g>
-
-<polyline class="cls-2" points="19 16.01 30.5 16.01 32.521 13.99"/>
-
-<polyline class="cls-2" points="25.5 20.01 31.5 20.01 33.521 17.99 39 17.99"/>
-
-<polyline class="cls-2" points="24.917 31.99 30.5 31.99 32.521 34.01"/>
-
-<polyline class="cls-2" points="24.917 27.99 31.5 27.99 33.521 30.01 39 30.01"/>
-
-<path class="cls-2" d="M39,38.01018H31.52094l-1.52061-2.02061-4.95867.00011v6.05209a5,5,0,0,1-10,0"/>
-
-</g>
-
-<path class="cls-2" d="M17.04167,4.13392a4.05277,4.05277,0,0,1,8,.91833V12.01l4.45868.00013L31.521,9.98956H39"/>
-
-<line class="cls-2" x1="36" x2="25.04167" y1="24" y2="24"/>
-
-<circle class="cls-3" cx="11" cy="20" r="1"/>
-
-<circle class="cls-3" cx="11.79167" cy="43.5" r="1"/>
-
-</g>
-
-<circle class="cls-2" cx="41.47922" cy="10" r="2"/>
-
-<circle class="cls-2" cx="41.47922" cy="18" r="2"/>
-
-<circle class="cls-2" cx="41.47922" cy="30" r="2"/>
-
-<circle class="cls-2" cx="41.47922" cy="38" r="2"/>
-
-</g>     </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" >
+      <circle cx="34.52" cy="11.43" r="5.82"/>
+      <circle cx="53.63" cy="31.6" r="5.82"/>
+      <circle cx="34.52" cy="50.57" r="5.82"/>
+      <circle cx="15.16" cy="42.03" r="5.82"/>
+      <circle cx="15.16" cy="19.27" r="5.82"/>
+      <circle cx="34.51" cy="29.27" r="4.7"/>
+      <line x1="20.17" y1="16.3" x2="28.9" y2="12.93"/>
+      <line x1="38.6" y1="15.59" x2="49.48" y2="27.52"/>
+      <line x1="50.07" y1="36.2" x2="38.67" y2="46.49"/>
+      <line x1="18.36" y1="24.13" x2="30.91" y2="46.01"/>
+      <line x1="20.31" y1="44.74" x2="28.7" y2="48.63"/>
+      <line x1="17.34" y1="36.63" x2="31.37" y2="16.32"/>
+      <line x1="20.52" y1="21.55" x2="30.34" y2="27.1"/>
+      <line x1="39.22" y1="29.8" x2="47.81" y2="30.45"/>
+      <line x1="34.51" y1="33.98" x2="34.52" y2="44.74"/>
+    </svg>
   </template>
   
   <script>
