@@ -3,8 +3,6 @@ import { HTTP } from '../utils/http-call';
 export async function getTableNames() {
   try {
       const response = await HTTP.get("");
-      const response2=await HTTP.get("local_shap");
-      console.log(response2)
       const transformedData = response.data.map(item => {
           const [name, type, metadata] = item;
           return {
@@ -79,5 +77,14 @@ export async function getGeoserverCoverageSources() {
     }
 }
 
+export async function getLocalShapValues (coordinates) {
+    const response = await HTTP.post(
+        "local_shap",
+        {
+            "coordinates": coordinates
+        }
+    );
+    return response.data;
+}
 
 

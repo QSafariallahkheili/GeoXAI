@@ -7,6 +7,7 @@ import subprocess
 import json
 from dataclasses import dataclass
 from .models import IndicatorRequest
+from .models import CoordinatesRequest
 from .database import (
     get_home_data,
     get_indicator_list,
@@ -36,8 +37,13 @@ def indicator_list():
     indicators = get_indicator_list()
     return indicators
 
-@app.get("/local_shap")
-async def compute_local_shap():
+@app.post("/local_shap")
+async def compute_local_shap(
+    request: Request,
+    coordinates_request: CoordinatesRequest
+):
+    coordinates = coordinates_request.coordinates
+    
     # Create a temporary file to save the uploaded GeoTIFF
     tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
     # List all GeoTIFF files in the specified directory
@@ -48,8 +54,8 @@ async def compute_local_shap():
     # Iterate over each GeoTIFF file  
     for tif_file in predictors:
         file_path = os.path.join(tif_directory, tif_file)
-        lng = 11.61214
-        lat = 52.44401
+        lng = coordinates[0]
+        lat = coordinates[1]
         command = f"gdallocationinfo {file_path} -valonly -wgs84 {lng} {lat}"
         # Execute the GDAL command
         try:
