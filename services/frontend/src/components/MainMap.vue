@@ -5,6 +5,7 @@
     <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
+    <XAI v-if="activeMenu=='xai'"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -21,8 +22,11 @@ import IndicatorUI from "@/components/IndicatorUI.vue";
 import LegendUI from "@/components/LegendUI.vue";
 import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
+import XAI from "@/components/XAI.vue";
 import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
+import { useMenuStore } from '../stores/menu'
 
+let { activeMenu } = storeToRefs(useMenuStore())
 
 
 const { center, zoom, style } = storeToRefs(useMapStore())
