@@ -71,6 +71,7 @@ async def compute_local_shap(
     
     return locationinfo_dict
 
+@app.post("/get_indicatort_data")
 async def get_indicatort_data(
     request: Request, 
     indicator_request: IndicatorRequest,
