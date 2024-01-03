@@ -1,15 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-import psycopg2
-from os import getenv
 import os
 import subprocess
-import json
 import pandas as pd
 import joblib
 import shap
 import numpy as np
-from dataclasses import dataclass
 from .models import IndicatorRequest
 from .models import CoordinatesRequest
 from .database import (
@@ -76,29 +72,44 @@ async def compute_local_shap(
         except subprocess.CalledProcessError as e:
             locationinfo_dict[tif_file] = f"Error: {e}"
 
-       
     input_df = pd.DataFrame([locationinfo_dict])
+
     correct_order = ['aspect', 'dem', 'ndvi', 'slope', 'drought_index', 'global_radiation', 'gndvi', 'landcover', 'ndmi', 'precipitation', 'lst']
     # Reorder the columns to match the correct order in randomforest model
     input_df = input_df[correct_order]
 
-    predicted_probabilities = rf_model.predict_proba(input_df)
-    print(predicted_probabilities)
-    
-    explainer = shap.TreeExplainer(rf_model)
-    shap_values = explainer.shap_values(input_df)
-    print(shap_values[0])
-    #shap.force_plot(explainer.expected_value[1], shap_values[1], input_df,  matplotlib=True)
-
-    # SHAP numpy array to list
-    shap_values_list = {
-        'class_not_fire': np.array(shap_values[0]).tolist(),
-        'class_fire':np.array(shap_values[1]).tolist()
+    predicted_probability = rf_model.predict_proba(input_df)
+    predicted_probability = {
+        'probability_not_fire': predicted_probability[0][0],
+        'probability_fire': predicted_probability[0][1]
     }
 
+    explainer = shap.TreeExplainer(rf_model)
+    shap_values = explainer.shap_values(input_df)
 
-    
-    return shap_values_list
+    #shap.force_plot(explainer.expected_value[1], shap_values[1], input_df,  matplotlib=True)
+
+    shap_values_list = {
+        'class_not_fire': shap_values[0][0].tolist(),
+        'class_fire': shap_values[1][0].tolist()
+    }
+
+    # Assign feature names to the SHAP values
+    shap_values_dict = {
+        'shap_values':{
+            'class_not_fire': dict(zip(correct_order, shap_values_list['class_not_fire'])),
+            'class_fire': dict(zip(correct_order, shap_values_list['class_fire'])),
+        },
+       
+        'predicted_probability': predicted_probability,
+        'raster_values_at_clicked_point': locationinfo_dict
+    }
+
+    # Convert to list 
+    shap_values_dict['shap_values']['class_not_fire'] = [{feature: value} for feature, value in shap_values_dict['shap_values']['class_not_fire'].items()]
+    shap_values_dict['shap_values']['class_fire'] = [{feature: value} for feature, value in shap_values_dict['shap_values']['class_fire'].items()]
+
+    return shap_values_dict
 
 @app.post("/get_indicatort_data")
 async def get_indicatort_data(
