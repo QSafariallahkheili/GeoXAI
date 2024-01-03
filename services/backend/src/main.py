@@ -6,6 +6,7 @@ import os
 import subprocess
 import json
 import pandas as pd
+import cloudpickle
 from dataclasses import dataclass
 from .models import IndicatorRequest
 from .models import CoordinatesRequest
@@ -69,7 +70,9 @@ async def compute_local_shap(
         except subprocess.CalledProcessError as e:
             locationinfo_dict[tif_file] = f"Error: {e}"
 
-        print(locationinfo_dict)
+       
+    input_df = pd.DataFrame([locationinfo_dict])
+    print(input_df)
     
     return locationinfo_dict
 
