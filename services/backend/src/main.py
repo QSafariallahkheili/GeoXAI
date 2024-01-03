@@ -6,7 +6,7 @@ import os
 import subprocess
 import json
 import pandas as pd
-import cloudpickle
+import joblib
 from dataclasses import dataclass
 from .models import IndicatorRequest
 from .models import CoordinatesRequest
@@ -28,6 +28,10 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+rf_model = joblib.load('/Users/qasemsafariallahkheili/Downloads/wildfire/sample/random_sample/random_forest_model.joblib')
+
+
 
 @app.get("/")
 def home():
@@ -73,6 +77,16 @@ async def compute_local_shap(
        
     input_df = pd.DataFrame([locationinfo_dict])
     print(input_df)
+    correct_order = ['aspect', 'dem', 'ndvi', 'slope', 'drought_index', 'global_radiation', 'gndvi', 'landcover', 'ndmi', 'precipitation', 'lst']
+    # Reorder the columns to match the correct order
+    input_df = input_df[correct_order]
+    predicted_probabilities = rf_model.predict_proba(input_df)
+
+    print(predicted_probabilities)
+
+
+
+
     
     return locationinfo_dict
 
