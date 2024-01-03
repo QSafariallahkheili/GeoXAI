@@ -28,7 +28,7 @@ import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
 
 let { activeMenu } = storeToRefs(useMenuStore())
-let { clickedCoordinates } = storeToRefs(useXAIStore())
+
 const XAIStore = useXAIStore();
 
 
