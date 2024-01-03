@@ -7,6 +7,8 @@ import subprocess
 import json
 import pandas as pd
 import joblib
+import shap
+import numpy as np
 from dataclasses import dataclass
 from .models import IndicatorRequest
 from .models import CoordinatesRequest
@@ -76,19 +78,27 @@ async def compute_local_shap(
 
        
     input_df = pd.DataFrame([locationinfo_dict])
-    print(input_df)
     correct_order = ['aspect', 'dem', 'ndvi', 'slope', 'drought_index', 'global_radiation', 'gndvi', 'landcover', 'ndmi', 'precipitation', 'lst']
-    # Reorder the columns to match the correct order
+    # Reorder the columns to match the correct order in randomforest model
     input_df = input_df[correct_order]
+
     predicted_probabilities = rf_model.predict_proba(input_df)
-
     print(predicted_probabilities)
+    
+    explainer = shap.TreeExplainer(rf_model)
+    shap_values = explainer.shap_values(input_df)
+    print(shap_values[0])
+    #shap.force_plot(explainer.expected_value[1], shap_values[1], input_df,  matplotlib=True)
 
-
+    # SHAP numpy array to list
+    shap_values_list = {
+        'class_not_fire': np.array(shap_values[0]).tolist(),
+        'class_fire':np.array(shap_values[1]).tolist()
+    }
 
 
     
-    return locationinfo_dict
+    return shap_values_list
 
 @app.post("/get_indicatort_data")
 async def get_indicatort_data(
