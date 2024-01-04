@@ -7,6 +7,7 @@ import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
 import { getLocalShapValues } from "../services/backend.calls";
 import Chart from 'chart.js/auto';
+import * as turf from "@turf/turf";
 
 let { clickedCoordinates } = storeToRefs(useXAIStore())
 
@@ -95,16 +96,26 @@ const renderChart = () => {
 
 
 watch(clickedCoordinates, async () => {
-    const response =  await getLocalShapValues(clickedCoordinates.value)
-    console.log(response)
-    if(response.shap_values){
-        shapValues.value = response.shap_values.class_not_fire
-        raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
-        renderChart()
+
+    // check if the clicked coordinates are inside the AOI
+    let layerBBOX = [11.266490630334411, 51.791199895877064, 14.4502996603007, 53.558814880433424]
+    let poly = turf.bboxPolygon(layerBBOX);
+    let isInside = turf.inside(clickedCoordinates.value, poly);
+
+    if(isInside==true){
+        const response =  await getLocalShapValues(clickedCoordinates.value)
+        console.log(response)
+        if(response.shap_values){
+            shapValues.value = response.shap_values.class_not_fire
+            raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
+            renderChart()
+        }
+        else {
+            alert(response)
+        }
     }
-    else {
-       alert(response)
-    }
+    
+    
     
 })
 
