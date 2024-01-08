@@ -13,6 +13,7 @@ let { clickedCoordinates } = storeToRefs(useXAIStore())
 
 let shapValues = ref(null)
 let raster_values_at_clicked_point = ref(null)
+let predict_proba = ref(null)
 let chartInstance = ref(null);
 let toggle = ref(false)
 
@@ -25,7 +26,7 @@ const renderChart = () => {
   
   nextTick(() => {
     if (shapValues.value){
-    
+      
       let labels = shapValues.value.map(obj => Object.keys(obj)[0]);
       labels = labels.map(label => `${label}: ${raster_values_at_clicked_point.value[label].toFixed(3)}`);
       const values = shapValues.value.map(obj => Object.values(obj)[0]);
@@ -65,7 +66,7 @@ const renderChart = () => {
               
               title: {
                 display: true,
-                text: 'SHAP Values'
+                text: 'SHAP Values' + ' (' + 'wildfire pobability: ' + predict_proba.value.toFixed(3) + ')'
               },
               legend: {
                 position: 'right',
@@ -108,6 +109,7 @@ watch(clickedCoordinates, async () => {
         if(response.shap_values){
             shapValues.value = response.shap_values.class_not_fire
             raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
+            predict_proba.value = response.predicted_probability.probability_fire
             renderChart()
         }
         else {
@@ -140,7 +142,7 @@ onUnmounted(() => {
     bottom: 100px;
     z-index: 10;
     background-color: rgba(255,255,255,0.6);
-    
+    border-radius: 8px;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     -moz-backdrop-filter: blur(5px);
