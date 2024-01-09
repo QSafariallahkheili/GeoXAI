@@ -34,8 +34,10 @@ const renderChart = () => {
       const positiveValues = values.map(value => Math.max(0, value));
       const negativeValues = values.map(value => Math.min(0, value));
 
-      const positiveColors = positiveValues.map(() => 'rgba(75, 192, 192, 1)');
-      const negativeColors = negativeValues.map(() => 'rgba(255, 99, 132, 1)');
+      const positiveColors = positiveValues.map(() => 'rgba(75, 192, 192, 0.8)');
+      const positiveColorsBorder = positiveValues.map(() => 'rgba(75, 192, 192, 1)');
+      const negativeColors = negativeValues.map(() => 'rgba(255, 99, 132, 0.8)');
+      const negativeColorsBorder = negativeValues.map(() => 'rgba(255, 99, 132, 1)');
       let id = document.getElementById('shapChart').getContext('2d');
       if (id){
         chartInstance.value = new Chart('shapChart', {
@@ -47,26 +49,41 @@ const renderChart = () => {
                 label: 'Importance Value (non-fire)',
                 data: positiveValues,
                 backgroundColor: positiveColors,
-                borderColor: positiveColors,
-                borderWidth: 1,
+                borderColor: positiveColorsBorder,
+                borderRadius: 5,
+                borderWidth: 2,
+                borderSkipped: false,
               },
               {
                 label: 'Importance Value (fire)',
                 data: negativeValues,
                 backgroundColor: negativeColors,
-                borderColor: negativeColors,
-                borderWidth: 1,
+                borderColor: negativeColorsBorder,
+                borderRadius: 5,
+                borderWidth: 2,
+                borderSkipped: false,
               },
             ]
           },
           options: {
+            onClick: (e, activeEls) => {
+              if (activeEls.length!==0){
+                let datasetIndex = activeEls[0].datasetIndex;
+                let dataIndex = activeEls[0].index;
+                let datasetLabel = e.chart.data.datasets[datasetIndex].label;
+                let value = e.chart.data.datasets[datasetIndex].data[dataIndex];
+                let label = e.chart.data?.labels[dataIndex];
+                console.log("In click", datasetLabel, label, value);
+              }
+              
+            },
             indexAxis: 'y',
             responsive: false,
             plugins: {
               
               title: {
                 display: true,
-                text: `SHAP Values (wildfire pobability: ${predict_proba.value.toFixed(3)})`
+                text: `SHAP Values (wildfire pobability: ${predict_proba.value.toFixed(3)})`,
               },
               legend: {
                 position: 'top',
@@ -86,7 +103,8 @@ const renderChart = () => {
                 stacked: true
               }
             }
-          }
+          },
+          
         });
       }
       
@@ -116,7 +134,6 @@ watch(clickedCoordinates, async () => {
             alert(response)
         }
     }
-    
     
     
 })
