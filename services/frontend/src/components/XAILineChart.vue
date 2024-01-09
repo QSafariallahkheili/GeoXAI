@@ -34,8 +34,8 @@ const renderChart = () => {
       const positiveValues = values.map(value => Math.max(0, value));
       const negativeValues = values.map(value => Math.min(0, value));
 
-      const positiveColors = positiveValues.map(() => 'rgba(75, 192, 192, 0.7)');
-      const negativeColors = negativeValues.map(() => 'rgba(255, 99, 132, 0.7)');
+      const positiveColors = positiveValues.map(() => 'rgba(75, 192, 192, 1)');
+      const negativeColors = negativeValues.map(() => 'rgba(255, 99, 132, 1)');
       let id = document.getElementById('shapChart').getContext('2d');
       if (id){
         chartInstance.value = new Chart('shapChart', {
@@ -44,14 +44,14 @@ const renderChart = () => {
             labels: labels,
             datasets: [
               {
-                label: 'Positive',
+                label: 'Importance Value (non-fire)',
                 data: positiveValues,
                 backgroundColor: positiveColors,
                 borderColor: positiveColors,
                 borderWidth: 1,
               },
               {
-                label: 'Negative',
+                label: 'Importance Value (fire)',
                 data: negativeValues,
                 backgroundColor: negativeColors,
                 borderColor: negativeColors,
@@ -66,10 +66,10 @@ const renderChart = () => {
               
               title: {
                 display: true,
-                text: 'SHAP Values' + ' (' + 'wildfire pobability: ' + predict_proba.value.toFixed(3) + ')'
+                text: `SHAP Values (wildfire pobability: ${predict_proba.value.toFixed(3)})`
               },
               legend: {
-                position: 'right',
+                position: 'top',
               },
             },
             scales: {
@@ -77,7 +77,7 @@ const renderChart = () => {
                 ticks: {
                   beginAtZero: true,
                   callback: function(value) {
-                    return value < 0 ? '-' + Math.abs(value) : value;
+                    return value < 0 ? '-' + Math.abs(value).toFixed(2) : value.toFixed(2);
                   }
                 }
                 
