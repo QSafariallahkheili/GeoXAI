@@ -224,10 +224,14 @@ const filteredItems = computed(() => {
 });
 
 const readGeoserverCoverageSources = async ()=> {
-    const response =  await getGeoserverCoverageSources()
-    for (let i in response) {
-        tableNames.value.push(response[i]);
+    const response =  await getGeoserverCoverageSources()    
+    for (let i in response.coverageStores.coverageStore) {
+        tableNames.value.push({"name": response.coverageStores.coverageStore[i].name,
+        "type": "Raster",
+        "checked": false
+        });        
     }
+    console.log( tableNames.value)
 }
 
 
