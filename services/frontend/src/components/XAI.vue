@@ -16,7 +16,7 @@ import { onMounted, defineEmits, ref} from "vue"
 import XAILineChart from "@/components/XAILineChart.vue";
 
 const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate"]);
-let layerName = "fire_susceptibility_color"
+let layerName = "fire_susceptibility"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
 
