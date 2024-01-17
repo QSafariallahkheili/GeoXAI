@@ -34,25 +34,8 @@ export async function getIndicatorData(indicator) {
 }
 
 export async function getGeoserverCoverageSources() {
-  const coveragesList = process.env.VUE_APP_GEOSERVER_URL + "/rest/workspaces/brandenburg/coveragestores/raster_sources/coverages";
-    const authHeader = 'Basic ' + btoa(process.env.VUE_APP_GEOSERVER_USERNAME + ':' + process.env.VUE_APP_GEOSERVER_PASSWORD);
-
-    const formatObject = originalObject => {
-        // Check if originalObject is an array and has a map function
-        if (Array.isArray(originalObject) && originalObject.map) {
-            return originalObject.map(item => {
-                const { name, metadata } = item;
-                return {
-                    name,
-                    type: "Raster",
-                    metadata
-                };
-            });
-        } else {
-            console.error('Unexpected structure returned from GeoServer:', originalObject);
-            return [];
-        }
-    };
+  const coveragesList = process.env.VUE_APP_GEOSERVER_URL + "/rest/workspaces/brandenburg/coveragestores.json";
+    const authHeader = 'Basic ' + btoa('admin' + ':' + 'geoserver');
 
     try {
         const response = await fetch(coveragesList, {
@@ -67,9 +50,7 @@ export async function getGeoserverCoverageSources() {
         }
 
         const geoServerInfo = await response.json();
-        const formattedInfo = formatObject(geoServerInfo.coverages.coverage);
-
-        return formattedInfo;
+        return geoServerInfo;
     } catch (error) {
         console.error('Error fetching GeoServer Info:', error);
         // Propagate the error
