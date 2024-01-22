@@ -1,8 +1,8 @@
 <template >
-    <canvas v-if="toggle"  class="xai-chart" id="shapChart" width="600" height="400" ></canvas>
+    <canvas v-show="shapValues!==null" class="xai-chart" id="shapChart" width="600" height="400" ></canvas>
 </template>
 <script setup>
-import { ref, watch, onUnmounted, nextTick } from "vue"
+import { ref, watch, onUnmounted, onMounted } from "vue"
 import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
 import { getLocalShapValues } from "../services/backend.calls";
@@ -14,76 +14,36 @@ let { clickedCoordinates } = storeToRefs(useXAIStore())
 let shapValues = ref(null)
 let raster_values_at_clicked_point = ref(null)
 let predict_proba = ref(null)
-let chartInstance = ref(null);
-let toggle = ref(false)
+let chartInstance = null;
 
 
 const renderChart = () => {
-  toggle.value=true
-  if (chartInstance.value){
-    chartInstance.value.destroy();
+  if (chartInstance){
+    chartInstance.destroy();
+    chartInstance = null;
   }
   
-  nextTick(() => {
-    if (shapValues.value){
-      
-      let labels = shapValues.value.map(obj => Object.keys(obj)[0]);
-      labels = labels.map(label => `${label}: ${raster_values_at_clicked_point.value[label].toFixed(3)}`);
-      const values = shapValues.value.map(obj => Object.values(obj)[0]);
-
-      const positiveValues = values.map(value => Math.max(0, value));
-      const negativeValues = values.map(value => Math.min(0, value));
-
-      const positiveColors = positiveValues.map(() => 'rgba(75, 192, 192, 0.8)');
-      const positiveColorsBorder = positiveValues.map(() => 'rgba(75, 192, 192, 1)');
-      const negativeColors = negativeValues.map(() => 'rgba(255, 99, 132, 0.8)');
-      const negativeColorsBorder = negativeValues.map(() => 'rgba(255, 99, 132, 1)');
-      let id = document.getElementById('shapChart').getContext('2d');
-      if (id){
-        chartInstance.value = new Chart('shapChart', {
+      const canvas = document.getElementById('shapChart');
+      console.log(canvas, 'canvas')
+      if (canvas){
+        const ctx = canvas.getContext('2d');
+        chartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: labels,
+            labels: "",
             datasets: [
-              {
-                label: 'Importance Value (non-fire)',
-                data: positiveValues,
-                backgroundColor: positiveColors,
-                borderColor: positiveColorsBorder,
-                borderRadius: 5,
-                borderWidth: 2,
-                borderSkipped: false,
-              },
-              {
-                label: 'Importance Value (fire)',
-                data: negativeValues,
-                backgroundColor: negativeColors,
-                borderColor: negativeColorsBorder,
-                borderRadius: 5,
-                borderWidth: 2,
-                borderSkipped: false,
-              },
+              
             ]
           },
           options: {
-            onClick: (e, activeEls) => {
-              if (activeEls.length!==0){
-                let datasetIndex = activeEls[0].datasetIndex;
-                let dataIndex = activeEls[0].index;
-                let datasetLabel = e.chart.data.datasets[datasetIndex].label;
-                let value = e.chart.data.datasets[datasetIndex].data[dataIndex];
-                let label = e.chart.data?.labels[dataIndex];
-                console.log("In click", datasetLabel, label, value);
-              }
-              
-            },
+  
             indexAxis: 'y',
             responsive: false,
             plugins: {
               
               title: {
                 display: true,
-                text: `SHAP Values (wildfire pobability: ${predict_proba.value.toFixed(3)})`,
+                //text: `SHAP Values (wildfire pobability: ${predict_proba?.value?.toFixed(3)})`,
               },
               legend: {
                 position: 'top',
@@ -91,12 +51,7 @@ const renderChart = () => {
             },
             scales: {
               x: {
-                ticks: {
-                  beginAtZero: true,
-                  callback: function(value) {
-                    return value < 0 ? '-' + Math.abs(value).toFixed(2) : value.toFixed(2);
-                  }
-                }
+     
                 
               },
               y: {
@@ -108,42 +63,87 @@ const renderChart = () => {
         });
       }
       
-    }
-  })
-
+      
 }
 
-
+onMounted( async ()=>{
+  renderChart()
+})
 watch(clickedCoordinates, async () => {
+  // check if the clicked coordinates are inside the AOI
+  let layerBBOX = [11.266490630334411, 51.791199895877064, 14.4502996603007, 53.558814880433424]
+  let poly = turf.bboxPolygon(layerBBOX);
+  let isInside = turf.inside(clickedCoordinates.value, poly);
 
-    // check if the clicked coordinates are inside the AOI
-    let layerBBOX = [11.266490630334411, 51.791199895877064, 14.4502996603007, 53.558814880433424]
-    let poly = turf.bboxPolygon(layerBBOX);
-    let isInside = turf.inside(clickedCoordinates.value, poly);
+  if(isInside==true){
+    const response =  await getLocalShapValues(clickedCoordinates.value)
+    if(response.shap_values){
+      shapValues.value = response.shap_values.class_not_fire
+      raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
+      predict_proba.value = response.predicted_probability.probability_fire
+      //renderChart()
 
-    if(isInside==true){
-        const response =  await getLocalShapValues(clickedCoordinates.value)
-        console.log(response)
-        if(response.shap_values){
-            shapValues.value = response.shap_values.class_not_fire
-            raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
-            predict_proba.value = response.predicted_probability.probability_fire
-            renderChart()
+
+
+      let labels = shapValues.value.map(obj => Object.keys(obj)[0]);
+      labels = labels.map(label => `${label}: ${raster_values_at_clicked_point.value[label].toFixed(3)}`);
+      const values = shapValues.value.map(obj => Object.values(obj)[0]);
+
+      const positiveValues = values.map(value => Math.max(0, value));
+      const negativeValues = values.map(value => Math.min(0, value));
+
+      const positiveColors = positiveValues.map(() => 'rgba(75, 192, 192, 0.8)');
+      const positiveColorsBorder = positiveValues.map(() => 'rgba(75, 192, 192, 1)');
+      const negativeColors = negativeValues.map(() => 'rgba(255, 99, 132, 0.8)');
+      const negativeColorsBorder = negativeValues.map(() => 'rgba(255, 99, 132, 1)');
+      let  chartData=  {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Importance Value (non-fire)',
+            data: positiveValues,
+            backgroundColor: positiveColors,
+            borderColor: positiveColorsBorder,
+            borderRadius: 5,
+            borderWidth: 2,
+            borderSkipped: false,
+          },
+          {
+            label: 'Importance Value (fire)',
+            data: negativeValues,
+            backgroundColor: negativeColors,
+            borderColor: negativeColorsBorder,
+            borderRadius: 5,
+            borderWidth: 2,
+            borderSkipped: false,
+          },
+        ]
+      }
+      if (chartInstance) {
+        chartInstance.data = chartData;
+        chartInstance.options.plugins.title = {
+          display: true,
+          text: `SHAP Values (wildfire pobability: ${predict_proba?.value?.toFixed(3)})`,
         }
-        else {
-            alert(response)
-        }
+        chartInstance.update();
+      }
+          
+
     }
+    else {
+        alert(response)
+    }
+  }
     
     
 })
 
 
 onUnmounted(() => {
-    toggle.value=false
-    if (chartInstance.value) {
-        chartInstance.value.destroy();
-    }
+  if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null
+  }
     
 });
 
