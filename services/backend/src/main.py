@@ -13,7 +13,7 @@ from .database import (
     get_indicator_list,
     get_indicator_data
 )
-
+import matplotlib.pyplot as plt
 
 app = FastAPI()
 
