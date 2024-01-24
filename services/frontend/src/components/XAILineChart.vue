@@ -15,6 +15,7 @@ let shapValues = ref(null)
 let raster_values_at_clicked_point = ref(null)
 let predict_proba = ref(null)
 let chartInstance = null;
+let clickedElement = ref(null)
 
 
 const renderChart = () => {
@@ -32,10 +33,16 @@ const renderChart = () => {
           data: {
             labels: "",
             datasets: [
-              
+              {hoverOffset: 100}
             ]
           },
           options: {
+            onClick: (event, elements, chart) => {
+              if (elements[0]) {            
+                const i = elements[0].index;
+                clickedElement.value = chart.data.labels[i].split(':')[0].trim();
+              }
+            },
   
             indexAxis: 'y',
             responsive: false,
@@ -138,7 +145,9 @@ watch(clickedCoordinates, async () => {
     
 })
 
-
+watch(clickedElement, async () => {
+  console.log(clickedElement.value)
+})
 onUnmounted(() => {
   if (chartInstance) {
       chartInstance.destroy();
