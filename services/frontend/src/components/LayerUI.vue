@@ -6,7 +6,7 @@
    
             <v-card-text>
                 <v-text-field
-                    :placeholder="'looking for (' +  tableNames?.length + ' datasets)'"
+                    :placeholder="'looking for (' +  DBTableNames?.length + ' datasets)'"
                     prepend-inner-icon="mdi-magnify"
                     class="expanding-search"
                     filled
@@ -72,13 +72,15 @@ import {
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import { storeToRefs } from 'pinia'
 import { useMenuStore } from '../stores/menu'
+import { useLayersStore } from '../stores/layers'
 
 let { activeMenu } = storeToRefs(useMenuStore())
+let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
 const metadataDialogStore = useMetadataDialogStore();
 
-let tableNames = ref([]);
-let selectedItems = ref([]);
+//let tableNames = ref([]);
+//let selectedItems = ref([]);
 let style = ref(null)
 let layerType = ref(null)
 let layerSearchText= ref("")
@@ -88,11 +90,12 @@ const emit = defineEmits(["addLayerToMap", "toggleLayerVisibility",  "addCoverag
 
 
 const toggleClickedLayer = (layerName, geomType) => {
-    let index = tableNames.value.findIndex(obj => obj.name==layerName);
-    tableNames.value[index].checked=!tableNames.value[index].checked
+   
+    let index = DBTableNames.value.findIndex(obj => obj.name==layerName);
+    DBTableNames.value[index].checked=!DBTableNames.value[index].checked
     // Trigger reactivity
-    tableNames.value = [...tableNames.value];
-    if (!selectedItems.value.includes(layerName)) {
+    DBTableNames.value = [...DBTableNames.value];
+    if (!addedLayers.value.includes(layerName)) {
     
         if (geomType == "MultiPolygon" || geomType == "Polygon"){
             style.value = {
@@ -162,7 +165,7 @@ const toggleClickedLayer = (layerName, geomType) => {
         else {
             emit("addLayerToMap", layerName, layerType, style);
         }
-        selectedItems.value.push(layerName);
+        addedLayers.value.push(layerName);
     } 
     else {
         if (geomType=='Raster'){
@@ -178,10 +181,10 @@ const sendQuestRequest = async () => {
     const tablenamesfromDB =  await getTableNames()
 
     for (let i in tablenamesfromDB) {
-        tableNames.value.push(tablenamesfromDB[i]);
+        DBTableNames.value.push(tablenamesfromDB[i]);
 
         // add new key and value per table name to track the checked status of each layer
-        tableNames.value[i]["checked"]=false
+        DBTableNames.value[i]["checked"]=false
        
     }
 
@@ -214,10 +217,10 @@ const showMetadata = (metadata, tablename) => {
 }
 const filteredItems = computed(() => {
     if (!layerSearchText.value) {
-        return tableNames.value;
+        return DBTableNames.value;
     }
 
-    return tableNames.value.filter(item =>
+    return DBTableNames.value.filter(item =>
         item.name.toLowerCase().includes(layerSearchText.value.toLowerCase())
     )
   
@@ -226,12 +229,11 @@ const filteredItems = computed(() => {
 const readGeoserverCoverageSources = async ()=> {
     const response =  await getGeoserverCoverageSources()    
     for (let i in response.coverageStores.coverageStore) {
-        tableNames.value.push({"name": response.coverageStores.coverageStore[i].name,
+        DBTableNames.value.push({"name": response.coverageStores.coverageStore[i].name,
         "type": "Raster",
         "checked": false
         });        
     }
-    console.log( tableNames.value)
 }
 
 
