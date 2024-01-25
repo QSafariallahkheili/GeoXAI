@@ -5,7 +5,7 @@
   </div>
 </template>
 <script setup>
-import { ref, watch, onUnmounted, onMounted } from "vue"
+import { ref, watch, onUnmounted, onMounted, defineEmits } from "vue"
 import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
 import { getLocalShapValues } from "../services/backend.calls";
@@ -19,63 +19,11 @@ let shapValues = ref(null)
 let raster_values_at_clicked_point = ref(null)
 let predict_proba = ref(null)
 let chartInstance = null;
-let clickedElement = ref(null)
+let hoveredElement = ref(null)
+
+const emit = defineEmits(["addHoveredLayerToMap", "toggleCoverageLayerVisibilityWithValue"]);
 
 
-/*const renderChart = () => {
-  if (chartInstance){
-    chartInstance.destroy();
-    chartInstance = null;
-  }
-  
-      const canvas = document.getElementById('shapChart');
-      console.log(canvas, 'canvas')
-      if (canvas){
-        const ctx = canvas.getContext('2d');
-        chartInstance = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: "",
-            datasets: [
-              {hoverOffset: 100}
-            ]
-          },
-          options: {
-            onClick: (event, elements, chart) => {
-              if (elements[0]) {            
-                const i = elements[0].index;
-                clickedElement.value = chart.data.labels[i].split(':')[0].trim();
-              }
-            },
-  
-            indexAxis: 'y',
-            responsive: false,
-            plugins: {
-              
-              title: {
-                display: true,
-                //text: `SHAP Values (wildfire pobability: ${predict_proba?.value?.toFixed(3)})`,
-              },
-              legend: {
-                position: 'top',
-              },
-            },
-            scales: {
-              x: {
-     
-                
-              },
-              y: {
-                stacked: true
-              }
-            }
-          },
-          
-        });
-      }
-      
-      
-}*/
 const renderChart = () => {
   const svg = d3.select('#shapChart');
   svg.selectAll('*').remove(); // Clear existing chart
@@ -103,7 +51,6 @@ const renderChart = () => {
     .style('pointer-events', 'none'); // Allow mouse events to pass through
 
   if (shapValues.value) {
-    console.log(shapValues.value)
     // Extract data for the chart
     const labels = shapValues.value.map(obj => Object.keys(obj)[0]);
     const values = shapValues.value.map(obj => Object.values(obj)[0]);
@@ -134,6 +81,9 @@ const renderChart = () => {
       .attr('ry', 5) // Set vertical radius for rounded ends
  
       .on('mouseover', function (event, d) {
+       
+        hoveredElement.value = Object.keys(d)[0];
+        emit ("addHoveredLayerToMap", hoveredElement.value )
         // Highlight the bar on mouseover
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)');
 
@@ -144,6 +94,10 @@ const renderChart = () => {
           .style('top', `${event.pageY - 28}px`);
       })
       .on('mouseout', function () {
+       
+        console.log(hoveredElement.value, "mouseout")
+        emit ("addHoveredLayerToMap", hoveredElement.value )
+       
         // Restore the original color on mouseout
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 0.8)' : 'rgba(255, 99, 132, 0.8)');
 
@@ -247,8 +201,8 @@ watch(clickedCoordinates, async () => {
     
 })
 
-watch(clickedElement, async () => {
-  console.log(clickedElement.value)
+watch(hoveredElement, async () => {
+  console.log(hoveredElement.value, "watched")
 })
 onUnmounted(() => {
   if (chartInstance) {

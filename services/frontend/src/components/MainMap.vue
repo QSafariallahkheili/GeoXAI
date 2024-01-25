@@ -5,7 +5,7 @@
     <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @getClickedCoordinate="getClickedCoordinate"></XAI>
+    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -227,6 +227,8 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
   }
 
 }
+
+
 
 const getClickedCoordinate = ()=>{
  

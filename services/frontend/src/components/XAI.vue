@@ -1,5 +1,5 @@
 <template >
-    <XAILineChart> </XAILineChart>
+    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </XAILineChart>
     <v-card
         class="mx-auto xai-ui"  width="400" max-height="400"
     >
@@ -14,19 +14,38 @@
 <script setup>
 import { onMounted, defineEmits, ref} from "vue"
 import XAILineChart from "@/components/XAILineChart.vue";
+import { useLayersStore } from '../stores/layers'
+import { storeToRefs } from 'pinia'
+let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
-const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate"]);
+
+const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility"]);
 let layerName = "fire_susceptibility"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
 
-const addCoverageLayerToMap = () => {
+const addFireSusceptibilityToMap = () => {
     emit("addCoverageLayerToMap", layerName, layerType, style)
     emit("getClickedCoordinate")
 }
+const addHoveredLayerToMap = (hoveredLayer) => {
+    let index = DBTableNames.value.findIndex(obj => obj.name==hoveredLayer);
+    DBTableNames.value[index].checked=!DBTableNames.value[index].checked
+    DBTableNames.value = [...DBTableNames.value];
+    if (!addedLayers.value.includes(hoveredLayer)) {
+        emit("addCoverageLayerToMap", hoveredLayer, layerType, style)
+        addedLayers.value.push(hoveredLayer);
+    }
+    else {
+        emit("toggleCoverageLayerVisibility", hoveredLayer)
+    }
+   
+}
+
+
 
 onMounted(() => {
-    addCoverageLayerToMap()
+    addFireSusceptibilityToMap()
 })
 
 </script>
