@@ -14,6 +14,8 @@ from .database import (
     get_indicator_data
 )
 import matplotlib.pyplot as plt
+import rioxarray
+
 
 app = FastAPI()
 
@@ -124,3 +126,30 @@ async def get_indicatort_data(
     indicator = indicator_request.indicator
     data = get_indicator_data(indicator)
     return data
+
+@app.get("/get_histogram")
+def get_all_histogram_data():
+    tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
+    tif_files = [file for file in os.listdir(tif_directory) if file.endswith(".tif")]
+
+    all_data = {}
+    for tif_file in tif_files:
+        file_path = os.path.join(tif_directory, tif_file)
+        if os.path.isfile(file_path):
+            lidar_dem_im = rioxarray.open_rasterio(file_path, masked=True)
+
+            # Handle NaN values
+            values = lidar_dem_im.values.flatten()
+            values = values[~np.isnan(values)]
+
+            # Calculate histogram data
+            histogram_counts, histogram_values  = np.histogram(values, bins=40)
+            data = {"values": histogram_values.tolist(), "counts": histogram_counts.tolist()}
+
+            # Remove ".tif" extension from the filename
+            root, _ = os.path.splitext(tif_file)
+            all_data[root] = data
+            
+
+    return all_data
+

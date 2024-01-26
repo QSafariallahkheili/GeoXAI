@@ -69,3 +69,8 @@ export async function getLocalShapValues (coordinates) {
 }
 
 
+/*export async function getHistogram() {
+    const response = await HTTP.get("/get_histogram")
+    console.log(response)
+    return response;
+  }*/
