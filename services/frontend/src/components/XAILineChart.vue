@@ -96,8 +96,7 @@ const renderChart = () => {
       })
       .on('mouseout', function () {
         d3.select(this).style("cursor", "default"); 
-       
-        console.log(hoveredElement.value, "mouseout")
+        
         emit ("addHoveredLayerToMap", hoveredElement.value )
        
         // Restore the original color on mouseout
@@ -148,7 +147,7 @@ const renderChart = () => {
       { x: 'Value3', y: 3 }, 
       { x: 'Value4', y: 6 }    
     ];
-    const margin = 150;
+    const margin = 120;
     const tickGroup = chartGroup.append('g')
       .attr('class', 'tick-group')
       .attr('transform', `translate(-${margin}, ${yScale(d)})`);
@@ -175,26 +174,44 @@ const renderChart = () => {
       .attr('width', chartBarWidth)
       .attr('y', d => chartYScale(d.y))
       .attr('height', d => chartHeight - chartYScale(d.y))
-      .attr('fill', 'grey'); // Adjust color as needed
+      .attr('fill', 'grey');
+
+         // Draw a curved line
+        /*const curveLine = d3.line()
+          .x((d, i) => chartXScale(i) + chartBarWidth / 2) // Center of each bar
+          .y(d => chartYScale(d.y)) // Use the y property of chartData for the curved line
+          .curve(d3.curveBasis); // Adjust the curve type as needed
+
+        tickGroup.append('path')
+          .data([chartData])
+          .attr('class', 'curve-line')
+          .attr('d', curveLine)
+          .attr('stroke', 'blue') // Adjust color as needed
+          .attr('fill', 'none');*/
     
-    // Add text elements for min and max values
+    // Add X-axis labels at the start and end
     tickGroup.append('text')
       .attr('class', 'chart-label')
-      .attr('x', -margin) // Adjust the x-position as needed
-      .attr('y', chartYScale(d) - chartHeight/2) // Place label at the bottom of the chart
+      .attr('x', -2) // Adjust the x-position as needed
+      .attr('y', chartHeight ) // Adjust the y-position as needed
       .attr('text-anchor', 'end')
-      .text(`${d3.min(chartData, d => d.y).toFixed(2)}`);
+      .style('font-size', '8') 
+      .style('font-weight', 'normal')
+      .text(chartData[0].y); // Display the first X-axis label
 
     tickGroup.append('text')
       .attr('class', 'chart-label')
-      .attr('x', chartWidth) // Adjust the x-position as needed
-      .attr('y', chartYScale(d) - chartHeight/2) // Place label at the bottom of the chart
+      .attr('x', chartWidth + 2) // Adjust the x-position as needed
+      .attr('y', chartHeight ) // Adjust the y-position as needed
       .attr('text-anchor', 'start')
-      .text(`${d3.max(chartData, d => d.y).toFixed(2)}`);
+      .style('font-size', '8px') 
+      .style('font-weight', 'normal')
+      .text(chartData[chartData.length - 1].y);
+
+ 
 
 
-
-    return `${d} : ${raster_values_at_clicked_point.value[d].toFixed(3)}`;
+    return `${d} `;
   });
       
 
@@ -222,8 +239,7 @@ const renderChart = () => {
       .attr('x', -height / 2)
       .attr('y', -margin.left + 10)
       .attr('dy', '1em')
-      .attr('text-anchor', 'middle')
-      .text('Predictors');
+      .attr('text-anchor', 'middle');
 
     // Add chart title
     chartGroup.append('text')
@@ -264,9 +280,7 @@ watch(clickedCoordinates, async () => {
     
 })
 
-watch(hoveredElement, async () => {
-  console.log(hoveredElement.value, "watched")
-})
+
 onUnmounted(() => {
   if (chartInstance) {
       chartInstance.destroy();
