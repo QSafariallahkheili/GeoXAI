@@ -81,7 +81,8 @@ const renderChart = () => {
       .attr('ry', 5) // Set vertical radius for rounded ends
  
       .on('mouseover', function (event, d) {
-       
+        d3.select(this).style("cursor", "pointer"); 
+
         hoveredElement.value = Object.keys(d)[0];
         emit ("addHoveredLayerToMap", hoveredElement.value )
         // Highlight the bar on mouseover
@@ -94,6 +95,7 @@ const renderChart = () => {
           .style('top', `${event.pageY - 28}px`);
       })
       .on('mouseout', function () {
+        d3.select(this).style("cursor", "default"); 
        
         console.log(hoveredElement.value, "mouseout")
         emit ("addHoveredLayerToMap", hoveredElement.value )
@@ -125,9 +127,76 @@ const renderChart = () => {
     // Create axes with transition
     const xAxis = d3.axisBottom(xScale)
    
-
+    // render small histogram charts on each labels
     const yAxis = d3.axisLeft(yScale)
-      .tickFormat(d => `${d} : ${raster_values_at_clicked_point.value[d].toFixed(3)}`);
+  .tickFormat(d => {
+    const chartData = [
+      { x: 'Value1', y: 5 },  
+      { x: 'Value2', y: 8 }, 
+      { x: 'Value3', y: 3 },  
+      { x: 'Value4', y: 6 },  
+      { x: 'Value1', y: 5 },  
+      { x: 'Value2', y: 8 }, 
+      { x: 'Value3', y: 3 }, 
+      { x: 'Value4', y: 6 },
+      { x: 'Value1', y: 5 },  
+      { x: 'Value2', y: 8 }, 
+      { x: 'Value3', y: 3 },  
+      { x: 'Value4', y: 6 },  
+      { x: 'Value1', y: 5 },  
+      { x: 'Value2', y: 8 }, 
+      { x: 'Value3', y: 3 }, 
+      { x: 'Value4', y: 6 }    
+    ];
+    const margin = 150;
+    const tickGroup = chartGroup.append('g')
+      .attr('class', 'tick-group')
+      .attr('transform', `translate(-${margin}, ${yScale(d)})`);
+
+    const chartWidth = 40;
+    const chartHeight = yScale.bandwidth();
+    const chartXScale = d3.scaleBand()
+      .domain(d3.range(chartData.length)) // Assuming each bar represents a value
+      .range([0, chartWidth])
+      .padding(0.1); // Adjust padding to control spacing between bars
+
+    const chartYScale = d3.scaleLinear()
+      .domain([0, d3.max(chartData, d => d.y)]) // Use the maximum y-value as the domain
+      .range([chartHeight, 0]);
+
+    const chartBarWidth = chartXScale.bandwidth();
+
+    tickGroup.selectAll('.chart-bar')
+      .data(chartData)
+      .enter()
+      .append('rect')
+      .attr('class', 'chart-bar')
+      .attr('x', (d, i) => chartXScale(i))
+      .attr('width', chartBarWidth)
+      .attr('y', d => chartYScale(d.y))
+      .attr('height', d => chartHeight - chartYScale(d.y))
+      .attr('fill', 'grey'); // Adjust color as needed
+    
+    // Add text elements for min and max values
+    tickGroup.append('text')
+      .attr('class', 'chart-label')
+      .attr('x', -margin) // Adjust the x-position as needed
+      .attr('y', chartYScale(d) - chartHeight/2) // Place label at the bottom of the chart
+      .attr('text-anchor', 'end')
+      .text(`${d3.min(chartData, d => d.y).toFixed(2)}`);
+
+    tickGroup.append('text')
+      .attr('class', 'chart-label')
+      .attr('x', chartWidth) // Adjust the x-position as needed
+      .attr('y', chartYScale(d) - chartHeight/2) // Place label at the bottom of the chart
+      .attr('text-anchor', 'start')
+      .text(`${d3.max(chartData, d => d.y).toFixed(2)}`);
+
+
+
+    return `${d} : ${raster_values_at_clicked_point.value[d].toFixed(3)}`;
+  });
+      
 
     chartGroup.append('g')
       .attr('transform', `translate(0, ${height})`)
@@ -163,12 +232,6 @@ const renderChart = () => {
       .attr('text-anchor', 'middle')
       .text(`SHAP Values (wildfire probability: ${predict_proba?.value?.toFixed(3)})`);
 
-      
-
-
-
-
-  
   }
 };
 
