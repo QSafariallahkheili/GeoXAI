@@ -16,6 +16,7 @@ import { onMounted, defineEmits, ref} from "vue"
 import XAILineChart from "@/components/XAILineChart.vue";
 import { useLayersStore } from '../stores/layers'
 import { storeToRefs } from 'pinia'
+//import {getHistogram} from '../services/backend.calls'
 let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
 
@@ -43,9 +44,13 @@ const addHoveredLayerToMap = (hoveredLayer) => {
 }
 
 
-
+/*const getHistogramFromBackend = () => {
+    getHistogram()
+}*/
 onMounted(() => {
     addFireSusceptibilityToMap()
+    //getHistogramFromBackend()
+
 })
 
 </script>

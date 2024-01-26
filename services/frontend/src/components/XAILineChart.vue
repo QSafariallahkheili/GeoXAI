@@ -9,10 +9,10 @@ import { ref, watch, onUnmounted, onMounted, defineEmits } from "vue"
 import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
 import { getLocalShapValues } from "../services/backend.calls";
-//import Chart from 'chart.js/auto';
+
 import * as turf from "@turf/turf";
 import * as d3 from "d3";
-
+import histogramValues from '../assets/histogramValues'
 let { clickedCoordinates } = storeToRefs(useXAIStore())
 
 let shapValues = ref(null)
@@ -23,7 +23,22 @@ let hoveredElement = ref(null)
 
 const emit = defineEmits(["addHoveredLayerToMap", "toggleCoverageLayerVisibilityWithValue"]);
 
+// Function to find the index of the closest value in an array
+const findClosestIndex = (array, targetValue)=> {
+  let minDiff = Number.MAX_VALUE;
+  let closestIndex = -1;
 
+  array.forEach((value, index) => {
+    const diff = Math.abs(value - targetValue);
+
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIndex = index;
+    }
+  });
+
+  return closestIndex;
+}
 const renderChart = () => {
   const svg = d3.select('#shapChart');
   svg.selectAll('*').remove(); // Clear existing chart
@@ -126,93 +141,116 @@ const renderChart = () => {
     // Create axes with transition
     const xAxis = d3.axisBottom(xScale)
    
-    // render small histogram charts on each labels
+    
     const yAxis = d3.axisLeft(yScale)
-  .tickFormat(d => {
-    const chartData = [
-      { x: 'Value1', y: 5 },  
-      { x: 'Value2', y: 8 }, 
-      { x: 'Value3', y: 3 },  
-      { x: 'Value4', y: 6 },  
-      { x: 'Value1', y: 5 },  
-      { x: 'Value2', y: 8 }, 
-      { x: 'Value3', y: 3 }, 
-      { x: 'Value4', y: 6 },
-      { x: 'Value1', y: 5 },  
-      { x: 'Value2', y: 8 }, 
-      { x: 'Value3', y: 3 },  
-      { x: 'Value4', y: 6 },  
-      { x: 'Value1', y: 5 },  
-      { x: 'Value2', y: 8 }, 
-      { x: 'Value3', y: 3 }, 
-      { x: 'Value4', y: 6 }    
-    ];
-    const margin = 120;
-    const tickGroup = chartGroup.append('g')
-      .attr('class', 'tick-group')
-      .attr('transform', `translate(-${margin}, ${yScale(d)})`);
+      .tickFormat(d => {
+      const margin = 120;
+    
+      // Iterate over keys (ndmi, lst, landcover, etc.)
+      Object.keys(histogramValues).forEach(key => {
+        const histogramData = histogramValues[key];
+        const tickGroup = chartGroup.append('g')
+          .attr('class', 'tick-group')
+          .attr('transform', `translate(-${margin}, ${yScale(key)})`);
 
-    const chartWidth = 40;
-    const chartHeight = yScale.bandwidth();
-    const chartXScale = d3.scaleBand()
-      .domain(d3.range(chartData.length)) // Assuming each bar represents a value
-      .range([0, chartWidth])
-      .padding(0.1); // Adjust padding to control spacing between bars
+        const chartWidth = 50;
+        const chartHeight = yScale.bandwidth()-10;
+        const chartXScale = d3.scaleBand()
+          .domain(d3.range(histogramData.values.length))
+          .range([0, chartWidth])
+          .padding(0.8);
 
-    const chartYScale = d3.scaleLinear()
-      .domain([0, d3.max(chartData, d => d.y)]) // Use the maximum y-value as the domain
-      .range([chartHeight, 0]);
+        const chartYScale = d3.scaleLinear()
+          .domain([0, d3.max(histogramData.counts)])
+          .range([chartHeight, 0]);
 
-    const chartBarWidth = chartXScale.bandwidth();
+        const chartBarWidth = chartXScale.bandwidth();
 
-    tickGroup.selectAll('.chart-bar')
-      .data(chartData)
-      .enter()
-      .append('rect')
-      .attr('class', 'chart-bar')
-      .attr('x', (d, i) => chartXScale(i))
-      .attr('width', chartBarWidth)
-      .attr('y', d => chartYScale(d.y))
-      .attr('height', d => chartHeight - chartYScale(d.y))
-      .attr('fill', 'grey');
+        tickGroup.selectAll('.chart-bar')
+          .data(histogramData.counts)
+          .enter()
+          .append('rect')
+          .attr('class', 'chart-bar')
+          .attr('x', (d, i) => chartXScale(i))
+          .attr('width', chartBarWidth)
+          .attr('y', d => chartYScale(d))
+          .attr('height', d => chartHeight - chartYScale(d))
+          .attr('fill', 'grey');
 
-         // Draw a curved line
-        /*const curveLine = d3.line()
-          .x((d, i) => chartXScale(i) + chartBarWidth / 2) // Center of each bar
-          .y(d => chartYScale(d.y)) // Use the y property of chartData for the curved line
-          .curve(d3.curveBasis); // Adjust the curve type as needed
+          
+            
+        // Add red bar for the corresponding value
+        let indicatorValue = raster_values_at_clicked_point.value[key]; // Assuming key is the correct identifier
+
+        // Find the index of the closest value in histogramData.values
+        const indicatorIndex = findClosestIndex(histogramData.values, indicatorValue);
+
+        if (indicatorIndex !== -1) {
+          const triangleSize = 4; // Adjust the size of the triangle as needed
+          const initialPoints = `0,${chartHeight} ` +
+                        `-${triangleSize / 2},${chartHeight + triangleSize} ` +
+                        `+${triangleSize / 2},${chartHeight + triangleSize}`;
+
+          const finalPoints = `${chartXScale(indicatorIndex)},${chartHeight} ` +
+                      `${chartXScale(indicatorIndex) - triangleSize / 2},${chartHeight + triangleSize} ` +
+                      `${chartXScale(indicatorIndex) + triangleSize / 2},${chartHeight + triangleSize}`;
+
+
+          const redTriangle = tickGroup.append('polygon')
+            .attr('class', 'red-triangle')
+            .attr('points', initialPoints)
+            .attr('fill', 'red')
+            .attr('stroke', 'none'); 
+
+          // Apply animation with transition
+          redTriangle.transition()
+            .duration(1000)
+            .attr('points', finalPoints); 
+        }
+          
+        // Draw a curved line
+        const curveLine = d3.line()
+          .x((d, i) => chartXScale(i) + chartBarWidth / 2)
+          .y(d => chartYScale(d))
+          .curve(d3.curveBasis);
 
         tickGroup.append('path')
-          .data([chartData])
+          .data([histogramData.counts])
           .attr('class', 'curve-line')
           .attr('d', curveLine)
-          .attr('stroke', 'blue') // Adjust color as needed
-          .attr('fill', 'none');*/
+          .attr('stroke', 'blue')
+          .attr('fill', 'none');
+
+        // Add X-axis labels at the start and end
+        tickGroup.append('text')
+          .attr('class', 'chart-label')
+          .attr('x', -2)
+          .attr('y', chartHeight)
+          .attr('text-anchor', 'end')
+          .style('font-size', '8px')
+          .style('font-weight', 'normal')
+          .style('fill', 'black')
+          .text(histogramData.values[0].toFixed(2));
+
+        tickGroup.append('text')
+          .attr('class', 'chart-label')
+          .attr('x', chartWidth + 2)
+          .attr('y', chartHeight)
+          .attr('text-anchor', 'start')
+          .style('font-size', '8px')
+          .style('font-weight', 'normal')
+          .style('fill', 'black')
+          .text(histogramData.values[histogramData.values.length - 1].toFixed(2));
+
+
+      });
     
-    // Add X-axis labels at the start and end
-    tickGroup.append('text')
-      .attr('class', 'chart-label')
-      .attr('x', -2) // Adjust the x-position as needed
-      .attr('y', chartHeight ) // Adjust the y-position as needed
-      .attr('text-anchor', 'end')
-      .style('font-size', '8') 
-      .style('font-weight', 'normal')
-      .text(chartData[0].y); // Display the first X-axis label
-
-    tickGroup.append('text')
-      .attr('class', 'chart-label')
-      .attr('x', chartWidth + 2) // Adjust the x-position as needed
-      .attr('y', chartHeight ) // Adjust the y-position as needed
-      .attr('text-anchor', 'start')
-      .style('font-size', '8px') 
-      .style('font-weight', 'normal')
-      .text(chartData[chartData.length - 1].y);
-
- 
-
-
-    return `${d} `;
+      return `${d}`;
+    //return `${d} : ${raster_values_at_clicked_point.value[d].toFixed(3)}`;
+    
   });
+  
+  
       
 
     chartGroup.append('g')
@@ -253,6 +291,7 @@ const renderChart = () => {
 
 
 onMounted( async ()=>{
+  console.log(histogramValues)
 
 })
 watch(clickedCoordinates, async () => {
