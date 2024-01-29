@@ -163,7 +163,13 @@ const toggleClickedLayer = (layerName, geomType) => {
             emit("addCoverageLayerToMap", layerName, layerType, style)
         }
         else {
-            emit("addLayerToMap", layerName, layerType, style);
+            let layerSpecification = {
+                layerNameInDatabase: layerName,
+                id: layerName,
+                style: style,
+                layerType: layerType
+            }
+            emit("addLayerToMap", layerSpecification);
         }
         addedLayers.value.push(layerName);
     } 

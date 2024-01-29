@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { Map,Popup } from 'maplibre-gl';
+import { Map,/*Popup*/ } from 'maplibre-gl';
 import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
@@ -23,7 +23,9 @@ import LegendUI from "@/components/LegendUI.vue";
 import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
-import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
+import { addPopupToMap } from '../utils/mapUtils';
+
+//import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
 import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
 
@@ -40,7 +42,7 @@ const mapContainer = ref(null);
 
 let vectorServer = process.env.VUE_APP_TILE_SERVER_URL+'/';
 let map = null;
-let popup = null
+//let popup = null
 let selectedFeatureId = null;
 
 
@@ -53,113 +55,145 @@ onMounted(() => {
     zoom: zoom.value,
   });
 
+const size = 200;
+ 
+
+const pulsingDot = {
+  width: size,
+  height: size,
+  data: new Uint8Array(size * size * 4),
+ 
+
+  onAdd: function () {
+    const canvas = document.createElement('canvas');
+    canvas.width = this.width;
+    canvas.height = this.height;
+    this.context = canvas.getContext('2d');
+  },
+ 
+  // Call once before every frame where the icon will be used.
+  render: function () {
+    const duration = 1000;
+    const t = (performance.now() % duration) / duration;
+ 
+    const radius = (size / 2) * 0.1;
+    const outerRadius = (size / 2) * 0.7 * t + radius;
+    const context = this.context;
+ 
+    // Draw the outer circle.
+    context.clearRect(0, 0, this.width, this.height);
+    context.beginPath();
+    context.arc(
+      this.width / 2,
+      this.height / 2,
+      outerRadius,
+      0,
+      Math.PI * 2
+    );
+    context.fillStyle = `rgba(121, 7, 222, ${1 - t})`;
+    context.fill();
+  
+    // Draw the inner circle.
+    context.beginPath();
+    context.arc(
+      this.width / 2,
+      this.height / 2,
+      radius,
+      0,
+      Math.PI * 2
+    );
+    context.fillStyle = 'rgba(121, 7, 222, 1)';
+    context.strokeStyle = 'white';
+    context.lineWidth = 2 + 4 * (1 - t);
+    context.fill();
+    context.stroke();
+ 
+    // Update this image's data with data from the canvas.
+    this.data = context.getImageData(
+      0,
+      0,
+      this.width,
+      this.height
+    ).data;
+ 
+    // Continuously repaint the map, resulting
+    // in the smooth animation of the dot.
+    map.triggerRepaint();
+ 
+    // Return `true` to let the map know that the image was updated.
+    return true;
+  }
+};
+ 
+map.on('load', () => {
+  map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+  
+  map.addSource('dot-point', {
+    'type': 'geojson',
+    'data': {
+      'type': 'FeatureCollection',
+      'features': [
+        {
+          'type': 'Feature',
+          'geometry': {
+            'type': 'Point',
+            'coordinates': [13.259101,52.538625]
+          }
+        }
+      ]
+    }
+  });
+  map.addLayer({
+    'id': 'layer-with-pulsing-dot',
+    'type': 'symbol',
+    'source': 'dot-point',
+    'layout': {
+      'icon-image': 'pulsing-dot'
+    }
+  });
+});
+
   
 })
 
-const addLayerToMap = (clickedLayerName, layerType, style)=>{
-  let vectorSource = "public"+"."+clickedLayerName;
-  let vectorSourceLayer = "public"+"."+clickedLayerName;
+const addLayerToMap = (layerSpecification)=>{
+
+  let vectorSourceLayer = "public"+"."+layerSpecification.layerNameInDatabase;
   let vectorUrl = vectorServer + vectorSourceLayer + "/{z}/{x}/{y}.pbf";
+  if(map.getSource(layerSpecification.id)==undefined){
+    map.addSource(layerSpecification.id, {
+        "type": "vector",
+        "tiles": [vectorUrl],
+        "promoteId":'id',
+        "minzoom": 0,
+        "maxzoom": 22
+    });
+    let layer = {
+        "id": layerSpecification.id,
+        "source": layerSpecification.id,
+        "source-layer": vectorSourceLayer,
+        "type": layerSpecification.layerType.value,
+        "paint":  layerSpecification.style.value
+    };
+    map.addLayer(layer)  
+  }
+  map.on('click', layerSpecification.id, function(e) {
+    addPopupToMap(map, layerSpecification.id, vectorSourceLayer, selectedFeatureId, e)
     
-    map.addSource(vectorSource, {
-      "type": "vector",
-      "tiles": [vectorUrl],
-      "promoteId":'id',
-      "minzoom": 0,
-      "maxzoom": 22
-  });
-  let layer = {
-      "id": "public"+"."+clickedLayerName,
-      "source": vectorSource,
-      "source-layer": "public"+"."+clickedLayerName,
-      "type": layerType.value,
-      "paint":  style.value
-  };
-  map.addLayer(layer)  
+});
 
-  map.on('click', "public"+"."+clickedLayerName, function(e) {
-
-    popup?.remove()
-    popup = new Popup({ closeOnClick: false })
-    const coordinates = [e.lngLat.lng, e.lngLat.lat]
-    popup.setLngLat(coordinates)
-    popup.setDOMContent(
-      createHTMLAttributeTable(
-        e.lngLat.lng,
-        e.lngLat.lat,
-        e.features[0].properties
-      )
-    )
-    popup.addTo(map);
-   
-
-    
-    if (e.features.length > 0) {
-      if (selectedFeatureId) {
-        map.removeFeatureState({
-          source: "public"+"."+clickedLayerName,
-          sourceLayer: "public"+"."+clickedLayerName,
-          id: selectedFeatureId
-        });
-      }
-
-      selectedFeatureId = e.features[0].id;
-
-      map.setFeatureState({
-        source: "public"+"."+clickedLayerName,
-        sourceLayer: "public"+"."+clickedLayerName,
-        id: selectedFeatureId,
-      }, {
-        clicked: true
-      });
-    }
-    popup.on("close", ()=>{
-      if (selectedFeatureId) {
-        map.removeFeatureState({
-          source: "public"+"."+clickedLayerName,
-          sourceLayer: "public"+"."+clickedLayerName,
-          id: selectedFeatureId
-        });
-      }
-    })    
-  });
   
-  
-  map.on('mouseenter', "public"+"."+clickedLayerName, function() {
+  map.on('mouseenter', layerSpecification.id, function() {
     map.getCanvas().style.cursor = 'pointer';
   });
-  map.on('mouseleave', "public"+"."+clickedLayerName, function() {
+  map.on('mouseleave', layerSpecification.id, function() {
     map.getCanvas().style.cursor = '';
   });
 
  
 }
 
-const addCommuneTileLayer = ()=>{
-  if(map.getSource("kommunales_gebiet")==undefined){
-    map.addSource("kommunales_gebiet", {
-      "type": "vector",
-      "tiles": [vectorServer + "public.kommunales_gebiet" + "/{z}/{x}/{y}.pbf"],
-      "promoteId":'id',
-      "minzoom": 0,
-      "maxzoom": 22
-    });
-    let layer = {
-        "id": "kommunales_gebiet",
-        "source": "kommunales_gebiet",
-        "source-layer": "public.kommunales_gebiet",
-        "type": "fill",
-        'paint': {
-          'fill-color': '#0080ff',
-          'fill-opacity': 1,
-          'fill-outline-color': 'white'
 
-        }
-    };
-    map.addLayer(layer, "label_place_other")
-  }
-    
-}
 
 
 const addStyleExpressionByYear = (fillStyle)=>{   
@@ -172,17 +206,17 @@ const addStyleExpressionByYear = (fillStyle)=>{
 
 const toggleLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
-    'public'+'.'+clickedLayerName,
+    clickedLayerName,
     'visibility'
   );
   if (visibility == 'visible'){
-    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
+    map.setLayoutProperty(clickedLayerName,'visibility', 'none')
   }
   else if (visibility == undefined){
-    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'none')
+    map.setLayoutProperty(clickedLayerName,'visibility', 'none')
   }
   else {
-    map.setLayoutProperty('public'+'.'+clickedLayerName,'visibility', 'visible')
+    map.setLayoutProperty(clickedLayerName,'visibility', 'visible')
   }
 
 }
