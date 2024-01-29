@@ -5,7 +5,7 @@
     <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate"></XAI>
+    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -24,6 +24,7 @@ import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
 import { addPopupToMap } from '../utils/mapUtils';
+import { addPulseLayer } from '../utils/pulseLayer';
 
 //import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
 import { useMenuStore } from '../stores/menu'
@@ -54,104 +55,6 @@ onMounted(() => {
     center: center.value,
     zoom: zoom.value,
   });
-
-const size = 200;
- 
-
-const pulsingDot = {
-  width: size,
-  height: size,
-  data: new Uint8Array(size * size * 4),
- 
-
-  onAdd: function () {
-    const canvas = document.createElement('canvas');
-    canvas.width = this.width;
-    canvas.height = this.height;
-    this.context = canvas.getContext('2d');
-  },
- 
-  // Call once before every frame where the icon will be used.
-  render: function () {
-    const duration = 1000;
-    const t = (performance.now() % duration) / duration;
- 
-    const radius = (size / 2) * 0.1;
-    const outerRadius = (size / 2) * 0.7 * t + radius;
-    const context = this.context;
- 
-    // Draw the outer circle.
-    context.clearRect(0, 0, this.width, this.height);
-    context.beginPath();
-    context.arc(
-      this.width / 2,
-      this.height / 2,
-      outerRadius,
-      0,
-      Math.PI * 2
-    );
-    context.fillStyle = `rgba(121, 7, 222, ${1 - t})`;
-    context.fill();
-  
-    // Draw the inner circle.
-    context.beginPath();
-    context.arc(
-      this.width / 2,
-      this.height / 2,
-      radius,
-      0,
-      Math.PI * 2
-    );
-    context.fillStyle = 'rgba(121, 7, 222, 1)';
-    context.strokeStyle = 'white';
-    context.lineWidth = 2 + 4 * (1 - t);
-    context.fill();
-    context.stroke();
- 
-    // Update this image's data with data from the canvas.
-    this.data = context.getImageData(
-      0,
-      0,
-      this.width,
-      this.height
-    ).data;
- 
-    // Continuously repaint the map, resulting
-    // in the smooth animation of the dot.
-    map.triggerRepaint();
- 
-    // Return `true` to let the map know that the image was updated.
-    return true;
-  }
-};
- 
-map.on('load', () => {
-  map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
-  
-  map.addSource('dot-point', {
-    'type': 'geojson',
-    'data': {
-      'type': 'FeatureCollection',
-      'features': [
-        {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Point',
-            'coordinates': [13.259101,52.538625]
-          }
-        }
-      ]
-    }
-  });
-  map.addLayer({
-    'id': 'layer-with-pulsing-dot',
-    'type': 'symbol',
-    'source': 'dot-point',
-    'layout': {
-      'icon-image': 'pulsing-dot'
-    }
-  });
-});
 
   
 })
@@ -262,16 +165,26 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
 
 }
 
+const removeLayerFromMap = (layerId)=>{
+  let layer = map.getLayer(layerId);
 
+  if(typeof layer !== 'undefined') {
+
+      map.removeLayer(layerId).removeSource(layerId);
+  }
+}
 
 const getClickedCoordinate = ()=>{
- 
+  
     map.on('click', (e) => {
+      
       if (activeMenu.value=='xai'){
+        
         XAIStore.assignClickedCoordinates({
           clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
         })
-        
+        addPulseLayer(map, "xai-pulse", e.lngLat.lng,  e.lngLat.lat)
+             
       }
     
   });
