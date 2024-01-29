@@ -1,8 +1,6 @@
 <template>
   <div ref="mapContainer" style="height: 100vh;">
-    <AppLogo> </AppLogo>
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
-    <IndicatorUI @addStyleExpressionByYear="addStyleExpressionByYear" @addCommuneTileLayer="addCommuneTileLayer"> </IndicatorUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
     <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap"></XAI>
@@ -12,13 +10,11 @@
 </template>
 
 <script setup>
-import { Map,/*Popup*/ } from 'maplibre-gl';
+import { Map } from 'maplibre-gl';
 import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
-import AppLogo from "@/components/AppLogo.vue";
 import LayerUI from "@/components/LayerUI.vue";
-import IndicatorUI from "@/components/IndicatorUI.vue";
 import LegendUI from "@/components/LegendUI.vue";
 import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
@@ -26,7 +22,6 @@ import XAI from "@/components/XAI.vue";
 import { addPopupToMap } from '../utils/mapUtils';
 import { addPulseLayer } from '../utils/pulseLayer';
 
-//import { createHTMLAttributeTable } from '../utils/createHTMLAttributeTable';
 import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
 
@@ -96,16 +91,6 @@ const addLayerToMap = (layerSpecification)=>{
  
 }
 
-
-
-
-const addStyleExpressionByYear = (fillStyle)=>{   
-  map.setPaintProperty(
-    "kommunales_gebiet", 
-    'fill-color', fillStyle
-  );
-  
-}
 
 const toggleLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
