@@ -12,7 +12,7 @@
           
 </template>
 <script setup>
-import { onMounted, defineEmits, ref} from "vue"
+import { onMounted, defineEmits, ref, onUnmounted} from "vue"
 import XAILineChart from "@/components/XAILineChart.vue";
 import { useLayersStore } from '../stores/layers'
 import { storeToRefs } from 'pinia'
@@ -20,7 +20,7 @@ import { storeToRefs } from 'pinia'
 let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
 
-const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility"]);
+const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility", "removeLayerFromMap"]);
 let layerName = "fire_susceptibility"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
@@ -51,6 +51,10 @@ onMounted(() => {
     addFireSusceptibilityToMap()
     //getHistogramFromBackend()
 
+})
+
+onUnmounted(()=>{
+    emit("removeLayerFromMap", "xai-pulse")
 })
 
 </script>
