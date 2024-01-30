@@ -39,10 +39,12 @@ const findClosestIndex = (array, targetValue)=> {
 
   return closestIndex;
 }
+
 const renderChart = () => {
+
   const svg = d3.select('#shapChart');
   svg.selectAll('*').remove(); // Clear existing chart
-  var margin = { top: 40, right: 20, bottom: 60, left: 150 };
+  var margin = { top: 40, right: 20, bottom: 60, left: 190 };
   let width = 600 - margin.left - margin.right;
   let height = 400 - margin.top - margin.bottom;
 
@@ -81,6 +83,9 @@ const renderChart = () => {
       .domain([-maxAbsValue, maxAbsValue])
       .range([0, width]);
     const yScale = d3.scaleBand().domain(labels).range([height, 0]).padding(0.1);
+    // gridlines in x axis function
+   
+
 
     // Create bars without transition for entering elements
     const barsEnter = chartGroup.selectAll('rect')
@@ -140,11 +145,11 @@ const renderChart = () => {
 
     // Create axes with transition
     const xAxis = d3.axisBottom(xScale)
-   
+
     
     const yAxis = d3.axisLeft(yScale)
       .tickFormat(d => {
-      const margin = 120;
+      const margin = 160;
     
       // Iterate over keys (ndmi, lst, landcover, etc.)
       Object.keys(histogramValues).forEach(key => {
@@ -175,10 +180,9 @@ const renderChart = () => {
           .attr('width', chartBarWidth)
           .attr('y', d => chartYScale(d))
           .attr('height', d => chartHeight - chartYScale(d))
-          .attr('fill', 'grey');
-
+          .attr('fill', 'grey')
           
-            
+
         // Add red bar for the corresponding value
         let indicatorValue = raster_values_at_clicked_point.value[key]; // Assuming key is the correct identifier
 
@@ -199,7 +203,7 @@ const renderChart = () => {
           const redTriangle = tickGroup.append('polygon')
             .attr('class', 'red-triangle')
             .attr('points', initialPoints)
-            .attr('fill', 'red')
+            .attr('fill', 'rgba(255, 0, 0, 1)')
             .attr('stroke', 'none'); 
 
           // Apply animation with transition
@@ -218,7 +222,7 @@ const renderChart = () => {
           .data([histogramData.counts])
           .attr('class', 'curve-line')
           .attr('d', curveLine)
-          .attr('stroke', 'blue')
+          .attr('stroke', 'black')
           .attr('fill', 'none');
 
         // Add X-axis labels at the start and end
@@ -251,7 +255,7 @@ const renderChart = () => {
   });
   
   
-      
+
 
     chartGroup.append('g')
       .attr('transform', `translate(0, ${height})`)
