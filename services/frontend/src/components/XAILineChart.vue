@@ -20,7 +20,7 @@ let raster_values_at_clicked_point = ref(null)
 let predict_proba = ref(null)
 let chartInstance = null;
 let hoveredElement = ref(null)
-
+let clickedElement = ref(null)
 const emit = defineEmits(["addHoveredLayerToMap", "toggleCoverageLayerVisibilityWithValue"]);
 
 // Function to find the index of the closest value in an array
@@ -95,19 +95,25 @@ const renderChart = () => {
       .attr('y', d => yScale(Object.keys(d)[0]))
       .attr('height', yScale.bandwidth())
       .attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 0.8)' : 'rgba(255, 99, 132, 0.8)')
-      .attr('stroke', 'grey') // Add grey border
-      .attr('stroke-width', 1) // Set border width
-      .attr('rx', 5) // Set horizontal radius for rounded ends
-      .attr('ry', 5) // Set vertical radius for rounded ends
+      .attr('stroke', 'grey') 
+      .attr('stroke-width', d =>  Object.keys(d)[0] == clickedElement.value ? 2 : 1) // when an indicator is selected in previous render
+      .attr('rx', 5) // horizontal radius for rounded ends
+      .attr('ry', 5) // vertical radius for rounded ends
  
       .on('mouseover', function (event, d) {
         d3.select(this).style("cursor", "pointer"); 
 
         hoveredElement.value = Object.keys(d)[0];
-        emit ("addHoveredLayerToMap", hoveredElement.value )
+       
         // Highlight the bar on mouseover
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)');
-        d3.select(this).attr('stroke', 'orange')
+        if(hoveredElement.value!==clickedElement.value){
+          
+          d3.select(this).attr('stroke', 'orange')
+          emit ("addHoveredLayerToMap", hoveredElement.value )
+        }
+
+        
         // Show tooltip on mouseover
         tooltip.transition().duration(400).style('opacity', 0.7);
         tooltip.html(`Value: ${Object.values(d)[0].toFixed(2)}`)
@@ -116,8 +122,11 @@ const renderChart = () => {
       })
       .on('mouseout', function () {
         d3.select(this).style("cursor", "default"); 
-        
-        emit ("addHoveredLayerToMap", hoveredElement.value )
+          
+        if(hoveredElement.value!==clickedElement.value){
+          emit("toggleCoverageLayerVisibilityWithValue", hoveredElement.value, 'none')
+        }
+          
        
         // Restore the original color on mouseout
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 0.8)' : 'rgba(255, 99, 132, 0.8)');
@@ -125,9 +134,27 @@ const renderChart = () => {
         // Hide tooltip on mouseout
         tooltip.transition().duration(500).style('opacity', 0);
       })
-      .on('click', function(){
-        console.log(hoveredElement.value)
-        //d3.select(this).attr('stroke-width', '3px')
+      .on('click', function(event, d){
+        
+        if(Object.keys(d)[0]!==clickedElement.value){
+          
+          chartGroup.selectAll('rect').attr('stroke-width', '1px')
+          emit("toggleCoverageLayerVisibilityWithValue", Object.keys(d)[0], 'visible')
+          emit("toggleCoverageLayerVisibilityWithValue", clickedElement.value, 'none')
+          clickedElement.value = Object.keys(d)[0]
+          
+          d3.select(this).attr('stroke-width', '2px')
+          
+        }
+        else {
+          emit("toggleCoverageLayerVisibilityWithValue", clickedElement.value, 'none')
+          d3.select(this).attr('stroke-width', '1px')
+          
+          clickedElement.value = null
+        }
+        
+        
+        
       })
 
     // Apply transition for updating elements
@@ -183,6 +210,7 @@ const renderChart = () => {
           .attr('x', (d, i) => chartXScale(i))
           .attr('width', chartBarWidth)
           .attr('y', d => chartYScale(d))
+          
           .attr('height', d => chartHeight - chartYScale(d))
           .attr('fill', 'grey')
           
