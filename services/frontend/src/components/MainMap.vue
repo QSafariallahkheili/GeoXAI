@@ -3,7 +3,7 @@
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap"></XAI>
+    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -130,7 +130,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
     'road_major'
     );
   }
- 
+  map.moveLayer(clickedLayerName);
   
 }
 const toggleCoverageLayerVisibility = (clickedLayerName)=>{
@@ -138,14 +138,16 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     clickedLayerName,
     'visibility'
   );
+  
   if (visibility == 'visible'){
     map.setLayoutProperty(clickedLayerName,'visibility', 'none')
   }
   else if (visibility == undefined){
     map.setLayoutProperty(clickedLayerName,'visibility', 'none')
   }
-  else {
+  else {   
     map.setLayoutProperty(clickedLayerName,'visibility', 'visible')
+    map.moveLayer(clickedLayerName);
   }
 
 }
@@ -174,6 +176,14 @@ const getClickedCoordinate = ()=>{
     
   });
     
+  
+}
+
+const toggleCoverageLayerVisibilityWithValue = (layerID, visStatus)=>{
+  map.setLayoutProperty(layerID, 'visibility', visStatus)
+  if(visStatus=='visible'){
+    map.moveLayer(layerID, "xai-pulse")
+  }
   
 }
 

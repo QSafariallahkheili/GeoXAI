@@ -1,5 +1,5 @@
 <template >
-    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </XAILineChart>
+    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue"> </XAILineChart>
     <v-card
         class="mx-auto xai-ui"  width="400" max-height="400"
     >
@@ -20,7 +20,7 @@ import { storeToRefs } from 'pinia'
 let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
 
-const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility", "removeLayerFromMap"]);
+const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility", "removeLayerFromMap", "toggleCoverageLayerVisibilityWithValue"]);
 let layerName = "fire_susceptibility"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
@@ -41,6 +41,10 @@ const addHoveredLayerToMap = (hoveredLayer) => {
         emit("toggleCoverageLayerVisibility", hoveredLayer)
     }
    
+}
+
+const toggleCoverageLayerVisibilityWithValue = (layerId, visStatus)=>{
+    emit("toggleCoverageLayerVisibilityWithValue", layerId, visStatus)
 }
 
 
