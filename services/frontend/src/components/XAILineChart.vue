@@ -107,7 +107,7 @@ const renderChart = () => {
         emit ("addHoveredLayerToMap", hoveredElement.value )
         // Highlight the bar on mouseover
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)');
-
+        d3.select(this).attr('stroke', 'orange')
         // Show tooltip on mouseover
         tooltip.transition().duration(400).style('opacity', 0.7);
         tooltip.html(`Value: ${Object.values(d)[0].toFixed(2)}`)
@@ -121,10 +121,14 @@ const renderChart = () => {
        
         // Restore the original color on mouseout
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 0.8)' : 'rgba(255, 99, 132, 0.8)');
-
+        d3.select(this).attr('stroke', 'grey')
         // Hide tooltip on mouseout
         tooltip.transition().duration(500).style('opacity', 0);
-      });
+      })
+      .on('click', function(){
+        console.log(hoveredElement.value)
+        //d3.select(this).attr('stroke-width', '3px')
+      })
 
     // Apply transition for updating elements
     const barsUpdate = chartGroup.selectAll('rect')  // Select only existing rectangles
