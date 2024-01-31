@@ -120,7 +120,7 @@ const renderChart = () => {
           `<b style="color:rgba(121, 7, 222, 1)">${Object.keys(d)[0]}</b> <b>feature importance</b>
            <br> value: ${Object.values(d)[0].toFixed(2)}`
           )
-          .style('left', `${event.pageX}px`)
+          .style('left', `${event.pageX +10}px`)
           .style('top', `${event.pageY - 28}px`)
           .style('font-size', '10px');
       })
