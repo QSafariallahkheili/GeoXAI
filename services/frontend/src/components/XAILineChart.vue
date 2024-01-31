@@ -116,9 +116,13 @@ const renderChart = () => {
         
         // Show tooltip on mouseover
         tooltip.transition().duration(400).style('opacity', 0.7);
-        tooltip.html(`Value: ${Object.values(d)[0].toFixed(2)}`)
+        tooltip.html(
+          `<b style="color:rgba(121, 7, 222, 1)">${Object.keys(d)[0]}</b> <b>feature importance</b>
+           <br> value: ${Object.values(d)[0].toFixed(2)}`
+          )
           .style('left', `${event.pageX}px`)
-          .style('top', `${event.pageY - 28}px`);
+          .style('top', `${event.pageY - 28}px`)
+          .style('font-size', '10px');
       })
       .on('mouseout', function () {
         d3.select(this).style("cursor", "default"); 
@@ -285,9 +289,6 @@ const renderChart = () => {
     //return `${d} : ${raster_values_at_clicked_point.value[d].toFixed(3)}`;
     
   });
-  
-  
-
 
     chartGroup.append('g')
       .attr('transform', `translate(0, ${height})`)
@@ -297,7 +298,6 @@ const renderChart = () => {
 
     chartGroup.append('g')
       .call(yAxis)
-      
       .transition()
       .duration(1000) // Set the duration of the transition
 
