@@ -180,10 +180,14 @@ const getClickedCoordinate = ()=>{
 }
 
 const toggleCoverageLayerVisibilityWithValue = (layerID, visStatus)=>{
-  map.setLayoutProperty(layerID, 'visibility', visStatus)
-  if(visStatus=='visible'){
-    map.moveLayer(layerID, "xai-pulse")
+  const layer = map.getLayer(layerID)
+  if(layer  !== undefined){
+    map.setLayoutProperty(layerID, 'visibility', visStatus)
+    if(visStatus=='visible'){
+      map.moveLayer(layerID, "xai-pulse")
+    }
   }
+  
   
 }
 
