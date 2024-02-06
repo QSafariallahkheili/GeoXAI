@@ -1,14 +1,5 @@
 <template >
-    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue"> </XAILineChart>
-    <v-card
-        class="mx-auto xai-ui"  width="400" max-height="400"
-    >
-    <div >
-       
-       XAI UI
-    </div>
-    
-    </v-card>
+    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addXaiPulseLayer"> </XAILineChart>
           
 </template>
 <script setup>
@@ -20,7 +11,7 @@ import { storeToRefs } from 'pinia'
 let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
 
-const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility", "removeLayerFromMap", "toggleCoverageLayerVisibilityWithValue"]);
+const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility", "removeLayerFromMap", "toggleCoverageLayerVisibilityWithValue", "addXaiPulseLayer"]);
 let layerName = "fire_susceptibility"
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
@@ -45,6 +36,15 @@ const addHoveredLayerToMap = (hoveredLayer) => {
 
 const toggleCoverageLayerVisibilityWithValue = (layerId, visStatus)=>{
     emit("toggleCoverageLayerVisibilityWithValue", layerId, visStatus)
+}
+
+const addXaiPulseLayer = (clickedCoordinates) => {
+    let payload = {
+        layerId: "xai-pulse",
+        lng: clickedCoordinates[0],
+        lat: clickedCoordinates[1]
+    }
+    emit("addXaiPulseLayer", payload)
 }
 
 
