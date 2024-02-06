@@ -83,9 +83,36 @@ const renderChart = () => {
       .domain([-maxAbsValue, maxAbsValue])
       .range([0, width]);
     const yScale = d3.scaleBand().domain(labels).range([height, 0]).padding(0.1);
-    // gridlines in x axis function
-   
+   // Append vertical gridlines
+   chartGroup.append('g')
+      .attr('class', 'x axis-grid')
+      .call(d3.axisBottom(xScale)
+        .tickSize(height)
+        .tickFormat('')
+        
+      )
+      .selectAll('line')
+      .style('stroke', 'rgba(0, 0, 0, 0.1)')
 
+    // Remove the farmost top tick from the x axis
+    chartGroup.select('.x.axis-grid')
+      .select('.domain')
+      .remove();
+     
+
+    // Append horizontal gridlines
+    chartGroup.append('g')
+      .attr('class', 'y axis-grid')
+      .call(d3.axisLeft(yScale)
+        .tickSize(-width)
+        .tickFormat('')
+      )
+      .selectAll('line')
+    .style('stroke', 'rgba(0, 0, 0, 0.1)');
+    // Remove the farmost right tick from the y axis
+    chartGroup.select('.y.axis-grid')
+        .select('.domain')
+        .remove();
 
     // Create bars without transition for entering elements
     const barsEnter = chartGroup.selectAll('rect')
@@ -290,6 +317,7 @@ const renderChart = () => {
     
   });
 
+     
     chartGroup.append('g')
       .attr('transform', `translate(0, ${height})`)
       .call(xAxis)
@@ -382,6 +410,9 @@ onUnmounted(() => {
     -moz-backdrop-filter: blur(5px);
     -ms-backdrop-filter: blur(5px);
     border: 1px solid rgba(0, 0, 0, 0.2);    
+}
+.axis-grid line {
+  stroke: rgb(4, 101, 199);
 }
 
 
