@@ -21,7 +21,7 @@ let predict_proba = ref(null)
 let chartInstance = null;
 let hoveredElement = ref(null)
 let clickedElement = ref(null)
-const emit = defineEmits(["addHoveredLayerToMap", "toggleCoverageLayerVisibilityWithValue"]);
+const emit = defineEmits(["addHoveredLayerToMap", "toggleCoverageLayerVisibilityWithValue", "addXaiPulseLayer"]);
 
 // Function to find the index of the closest value in an array
 const findClosestIndex = (array, targetValue)=> {
@@ -342,7 +342,7 @@ watch(clickedCoordinates, async () => {
       shapValues.value = response.shap_values.class_not_fire
       raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
       predict_proba.value = response.predicted_probability.probability_fire
-      
+      emit("addXaiPulseLayer", clickedCoordinates.value)
       renderChart();
       
     }
