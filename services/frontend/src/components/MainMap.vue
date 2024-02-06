@@ -3,7 +3,7 @@
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue"></XAI>
+    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
   
@@ -170,7 +170,6 @@ const getClickedCoordinate = ()=>{
         XAIStore.assignClickedCoordinates({
           clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
         })
-        addPulseLayer(map, "xai-pulse", e.lngLat.lng,  e.lngLat.lat)
              
       }
     
@@ -178,6 +177,11 @@ const getClickedCoordinate = ()=>{
     
   
 }
+
+const addPulseLayerToMap = (payload) => {
+  addPulseLayer(map, payload.layerId, payload.lng,  payload.lat)
+}
+
 
 const toggleCoverageLayerVisibilityWithValue = (layerID, visStatus)=>{
   const layer = map.getLayer(layerID)
