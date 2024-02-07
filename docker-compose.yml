@@ -9,8 +9,8 @@ services:
       - my_network
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=brandenburg_db
-      - POSTGRES_DB=brandenburg
+      - POSTGRES_HOST=geoxai_db
+      - POSTGRES_DB=geoxai
       - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - 5000:5000
@@ -23,7 +23,7 @@ services:
     command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000 --root-path /api
     
     depends_on:
-      - brandenburg_db
+      - geoxai_db
 
   frontend:
     build: 
@@ -46,7 +46,7 @@ services:
       - pg_tileserv.env
 
     depends_on:
-      - brandenburg_db
+      - geoxai_db
     restart: unless-stopped
     ports:
       - "7800:7800"
@@ -55,19 +55,19 @@ services:
     networks: 
       - my_network
   
-  brandenburg_db:
+  geoxai_db:
     image: postgis/postgis
-    container_name: brandenburg_db
+    container_name: geoxai_db
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=brandenburg_db
-      - POSTGRES_DB=brandenburg
+      - POSTGRES_HOST=geoxai_db
+      - POSTGRES_DB=geoxai
       - POSTGRES_USER=${POSTGRES_USER}
     env_file:
       - .env
     volumes:
       - ./data:/work
-      - brandenburg_db:/var/lib/postgresql/data
+      - geoxai_db:/var/lib/postgresql/data
     ports:
       - 5433:5432
     networks: 
@@ -91,18 +91,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - brandenburg_db
-    
-  masterportal:
-    image: nginx
-    container_name: masterportal
-    volumes:
-      - ./services/masterportal:/usr/share/nginx/html:ro
-    ports:
-      - "8082:80"
-    networks: 
-      - my_network
-    restart: unless-stopped
+      - geoxai_db
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -116,12 +105,11 @@ services:
     depends_on:
       - frontend
       - backend
-      - masterportal
       - tileserv
 
 
 volumes:
-  brandenburg_db:
+  geoxai_db:
   geoserver_data:
   forest_fire_data:
 networks:
