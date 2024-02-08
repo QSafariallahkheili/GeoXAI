@@ -29,9 +29,13 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-rf_model = joblib.load('/Users/qasemsafariallahkheili/Downloads/wildfire/sample/random_sample/random_forest_model.joblib')
+#rf_model = joblib.load('/Users/qasemsafariallahkheili/Downloads/wildfire/sample/random_sample/random_forest_model.joblib')
 
+# Define the path to the model file within the Docker volume
+model_path = '/app/data/forest_fire_trained_model/random_forest_model.joblib'
 
+# Load the model
+rf_model = joblib.load(model_path)
 
 @app.get("/")
 def home():
@@ -51,7 +55,10 @@ async def compute_local_shap(
     coordinates = coordinates_request.coordinates
     
     # Create a temporary file to save the uploaded GeoTIFF
-    tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
+    #tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
+
+    # GeoTIFF directory inside the docker
+    tif_directory = "/app/data/forest_fire_predictor"
     # List all GeoTIFF files in the specified directory
     predictors = [f for f in os.listdir(tif_directory) if f.endswith(".tif")]
     # Dictionary to store results
@@ -129,7 +136,9 @@ async def get_indicatort_data(
 
 @app.get("/get_histogram")
 def get_all_histogram_data():
-    tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
+    #tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
+    # GeoTIFF directory inside the docker
+    tif_directory = "/app/data/forest_fire_predictor"
     tif_files = [file for file in os.listdir(tif_directory) if file.endswith(".tif")]
 
     all_data = {}
