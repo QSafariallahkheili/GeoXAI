@@ -20,6 +20,7 @@ services:
     volumes:
       - ./services/backend:/app
       - forest_fire_data:/app/data/forest_fire_predictor
+      - forest_fire_trained_model:/app/data/forest_fire_trained_model
     command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000 --root-path /api
     
     depends_on:
@@ -112,5 +113,6 @@ volumes:
   geoxai_db:
   geoserver_data:
   forest_fire_data:
+  forest_fire_trained_model:
 networks:
   my_network:
