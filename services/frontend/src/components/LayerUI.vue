@@ -67,7 +67,7 @@
 <script setup>
 import { ref, onMounted, defineEmits, computed} from "vue"
 import {
-    getTableNames, getGeoserverCoverageSources
+    getTableNames, /*getGeoserverCoverageSources*/
 } from "../services/backend.calls";
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import { storeToRefs } from 'pinia'
@@ -232,7 +232,7 @@ const filteredItems = computed(() => {
   
 });
 
-const readGeoserverCoverageSources = async ()=> {
+/*const readGeoserverCoverageSources = async ()=> {
     const response =  await getGeoserverCoverageSources()    
     for (let i in response.coverageStores.coverageStore) {
         DBTableNames.value.push({"name": response.coverageStores.coverageStore[i].name,
@@ -240,12 +240,12 @@ const readGeoserverCoverageSources = async ()=> {
         "checked": false
         });        
     }
-}
+}*/
 
 
 onMounted(() => {
   sendQuestRequest();
-  readGeoserverCoverageSources()
+  //readGeoserverCoverageSources()
 })
 
 </script>
