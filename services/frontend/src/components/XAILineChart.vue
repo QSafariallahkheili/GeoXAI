@@ -267,7 +267,26 @@ const renderChart = () => {
             .attr('class', 'red-triangle')
             .attr('points', initialPoints)
             .attr('fill', 'rgba(255, 0, 0, 1)')
-            .attr('stroke', 'none'); 
+            .attr('stroke', 'none')
+            .on('mouseover', function (event){
+              d3.select(this).style("cursor", "pointer"); 
+              
+              tooltip.transition().duration(400).style('opacity', 0.7);
+              tooltip.html(
+                `<b style="color:rgba(121, 7, 222, 1)">value: ${indicatorValue}`
+                )
+                .style('left', `${event.pageX +10}px`)
+                .style('top', `${event.pageY - 28}px`)
+                .style('font-size', '10px');
+              
+            })
+            .on('mouseout', function () {
+              d3.select(this).style("cursor", "default"); 
+                
+             
+              // Hide tooltip on mouseout
+              tooltip.transition().duration(500).style('opacity', 0);
+            })
 
           // Apply animation with transition
           redTriangle.transition()
