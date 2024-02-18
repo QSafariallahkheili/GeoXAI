@@ -31,8 +31,11 @@ app.add_middleware(
 
 
 model_path = os.getenv('RANDOM_FOREST_MODEL_PATH', '/Users/qasemsafariallahkheili/Downloads/wildfire/sample/random_sample/random_forest_model.joblib')
-# Load the model
-rf_model = joblib.load(model_path)
+try:
+    rf_model = joblib.load(model_path)
+    print("Random Forest model loaded successfully.")
+except Exception as e:
+    print("Error loading the Random Forest model:", e)
 
 @app.get("/")
 def home():
@@ -77,11 +80,9 @@ async def compute_local_shap(
     
     try:
         input_df = pd.DataFrame([locationinfo_dict])
-
         correct_order = ['aspect', 'dem', 'ndvi', 'slope', 'drought_index', 'global_radiation', 'gndvi', 'landcover', 'ndmi', 'precipitation', 'lst']
         # Reorder the columns to match the correct order in randomforest model
         input_df = input_df[correct_order]
-
         predicted_probability = rf_model.predict_proba(input_df)
         predicted_probability = {
             'probability_not_fire': predicted_probability[0][0],
