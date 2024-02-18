@@ -111,13 +111,13 @@ const toggleLayerVisibility = (clickedLayerName)=>{
 
 const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
   let coverageLayer = map.getLayer(clickedLayerName);
-
+  
   if(typeof coverageLayer == 'undefined') {
     let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
     map.addSource(clickedLayerName, {
       'type': layerType.value,
       'tiles': [
-        geoserver_base_url+'/brandenburg/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=brandenburg:'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
+        geoserver_base_url+'/geoxai/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=geoxai:'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
       ],
       'tileSize': 256
     });

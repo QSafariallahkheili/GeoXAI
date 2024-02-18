@@ -34,8 +34,8 @@ export async function getIndicatorData(indicator) {
 }
 
 export async function getGeoserverCoverageSources() {
-  const coveragesList = process.env.VUE_APP_GEOSERVER_URL + "/rest/workspaces/brandenburg/coveragestores.json";
-    const authHeader = 'Basic ' + btoa('admin' + ':' + 'geoserver');
+  const coveragesList = process.env.VUE_APP_GEOSERVER_URL + "/rest/workspaces/geoxai/coveragestores.json";
+    const authHeader = 'Basic ' + btoa(process.env.VUE_APP_GEOSERVER_USERNAME + ':' + process.env.VUE_APP_GEOSERVER_PASSWORD);
 
     try {
         const response = await fetch(coveragesList, {
