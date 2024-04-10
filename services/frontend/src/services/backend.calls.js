@@ -74,3 +74,14 @@ export async function getLocalShapValues (coordinates) {
     console.log(response)
     return response;
   }*/
+
+  export async function getGeojsonDataFromDB (tablename) {
+    console.log(tablename)
+    const response = await HTTP.post(
+        "get_geojson",
+        {
+            "tablename": tablename,
+        }
+    );
+    return response.data;
+}
