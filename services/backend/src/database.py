@@ -70,3 +70,19 @@ def get_indicator_data(indicator):
     cur.close()
     conn.close()
     return data
+
+def get_geojson_data(tablename):
+    conn = connect()
+    cur = conn.cursor()
+  
+    cur.execute("""
+        select json_build_object(
+        'type', 'FeatureCollection',
+        'features', json_agg(ST_AsGeoJSON(t.*)::json)
+        )
+    from (select * from %s where ST_Within(geom, ST_Transform(ST_Buffer(ST_Transform(ST_SetSRID(ST_Point(13.056074,52.400586), 4326), 3857), 3000), 4326))) as t
+        ;""" %(tablename))
+    user = cur.fetchall()[0][0]
+    cur.close()
+    conn.close()
+    return user

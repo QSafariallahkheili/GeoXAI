@@ -7,3 +7,7 @@ class IndicatorRequest:
 @dataclass
 class CoordinatesRequest:
     coordinates: list
+
+@dataclass
+class TableRequest:
+    tablename: str

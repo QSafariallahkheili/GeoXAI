@@ -6,12 +6,12 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import IndicatorRequest
-from .models import CoordinatesRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest
 from .database import (
     get_home_data,
     get_indicator_list,
-    get_indicator_data
+    get_indicator_data,
+    get_geojson_data
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -156,3 +156,12 @@ def get_all_histogram_data():
 
     return all_data
 
+@app.post("/get_geojson")
+def get_geojson_data_from_db(
+    request: Request, 
+    table_request: TableRequest,
+):
+    tablename = table_request.tablename
+    print(tablename)
+    geojson = get_geojson_data(tablename)
+    return geojson
