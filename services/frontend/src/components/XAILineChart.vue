@@ -14,6 +14,7 @@ import * as turf from "@turf/turf";
 import * as d3 from "d3";
 import histogramValues from '../assets/histogramValues'
 let { clickedCoordinates } = storeToRefs(useXAIStore())
+const xaiStore = useXAIStore();
 
 let shapValues = ref(null)
 let raster_values_at_clicked_point = ref(null)
@@ -378,6 +379,7 @@ onMounted( async ()=>{
 
 })
 watch(clickedCoordinates, async () => {
+  
   // check if the clicked coordinates are inside the AOI
   let layerBBOX = [11.266490630334411, 51.791199895877064, 14.4502996603007, 53.558814880433424]
   let poly = turf.bboxPolygon(layerBBOX);
@@ -385,6 +387,8 @@ watch(clickedCoordinates, async () => {
 
   if(isInside==true){
     const response =  await getLocalShapValues(clickedCoordinates.value)
+    xaiStore.assignLocalShapValues(response)
+
     if(response.shap_values){
       shapValues.value = response.shap_values.class_not_fire
       raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
@@ -401,6 +405,8 @@ watch(clickedCoordinates, async () => {
     
     
 })
+
+
 
 
 onUnmounted(() => {
