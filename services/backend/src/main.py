@@ -6,7 +6,7 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import CoordinatesRequest, IndicatorRequest, TableRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest
 from .database import (
     get_home_data,
     get_indicator_list,
@@ -15,6 +15,8 @@ from .database import (
 )
 import matplotlib.pyplot as plt
 import rioxarray
+from osgeo import gdal
+import json
 
 
 app = FastAPI()
@@ -165,3 +167,60 @@ def get_geojson_data_from_db(
     print(tablename)
     geojson = get_geojson_data(tablename)
     return geojson
+
+@app.post("/get_zonal_statistics")
+def get_zonal_statistics(
+    request: Request, 
+    predictor_request: PredictorRequest,
+):
+    predictorName = predictor_request.predictorName
+    bbox = predictor_request.bbox
+    tif_directory = os.getenv('GEOTIFF_DIRECTORY', '/Users/qasemsafariallahkheili/Downloads/wildfire/predictors/')
+
+    file_path = tif_directory+predictorName+'.tif'
+    command = f"gdalinfo -json -proj4 {file_path} "
+    # Execute the GDAL command
+    result = subprocess.check_output(command, shell=True, text=True)
+    info = json.loads(result)
+
+    dataset = gdal.Open(file_path, gdal.GA_ReadOnly)
+    band = dataset.GetRasterBand(1)
+    
+    geotransform = dataset.GetGeoTransform()
+
+    xinit = info['geoTransform'][0]
+    yinit = info['geoTransform'][3]
+
+    xsize =info['geoTransform'][1]
+    ysize = info['geoTransform'][5]
+    print(geotransform, "geotransform")
+    print(info['geoTransform'], "info['geoTransform']")
+    p1 = (bbox[0]["minX"], bbox[0]["maxY"]) 
+    p2 = (bbox[0]["maxX"], bbox[0]["minY"]) 
+
+    row1 = int((p1[1] - yinit)/ysize)
+    col1 = int((p1[0] - xinit)/xsize)
+
+    row2 = int((p2[1] - yinit)/ysize)
+    col2 = int((p2[0] - xinit)/xsize)
+
+    data = band.ReadAsArray(col1, row1, col2 - col1 + 1, row2 - row1 + 1)
+    #perform come calculations with ...
+    mean = np.mean(data)
+    max = np.max(data)
+    min = np.min(data)
+    std = np.std(data)
+
+    res_local = {"mean": float(mean), "max": float(max), "min": float(min), "std": float(std)}
+
+
+    ##### global statistics
+    res_global = {"mean": float(info["bands"][0]["metadata"]['']['STATISTICS_MEAN']), "max": float(info["bands"][0]["metadata"]['']['STATISTICS_MAXIMUM']), "min": float(info["bands"][0]["metadata"]['']['STATISTICS_MINIMUM']), "std": float(info["bands"][0]["metadata"]['']['STATISTICS_STDDEV'])}
+
+    res = {
+        "res_local": res_local,
+        "res_global": res_global
+    }
+    
+    
+    return res
