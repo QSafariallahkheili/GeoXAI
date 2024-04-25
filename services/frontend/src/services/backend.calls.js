@@ -85,3 +85,14 @@ export async function getLocalShapValues (coordinates) {
     );
     return response.data;
 }
+
+export async function zonalStatistics (predictorName, bbox) {
+    const response = await HTTP.post(
+        "get_zonal_statistics",
+        {
+            "predictorName": predictorName,
+            "bbox": bbox
+        }
+    );
+    return response;
+}
