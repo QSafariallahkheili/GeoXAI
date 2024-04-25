@@ -24,7 +24,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080","http://localhost", "http://194.94.235.195:8080", "http://127.0.0.1:8080", "http://127.0.0.1", "http://194.94.235.195"],
+    allow_origins=["http://localhost:8080","http://localhost", "http://194.94.235.195:8080", "http://127.0.0.1:8080", "http://127.0.0.1", "http://194.94.235.195", "http://geo-xai.fh-potsdam.de:8080", "http://geo-xai.fh-potsdam.de"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,17 +39,17 @@ try:
 except Exception as e:
     print("Error loading the Random Forest model:", e)
 
-@app.get("/")
+@app.get("/api/")
 def home():
     data = get_home_data()
     return data
 
-@app.get("/indcators_list")
+@app.get("/api/indcators_list")
 def indicator_list():
     indicators = get_indicator_list()
     return indicators
 
-@app.post("/local_shap")
+@app.post("/api/local_shap")
 async def compute_local_shap(
     request: Request,
     coordinates_request: CoordinatesRequest
@@ -121,7 +121,7 @@ async def compute_local_shap(
         return "Please click inside the Area of Interest"
     
 
-@app.post("/get_indicatort_data")
+@app.post("/api/get_indicatort_data")
 async def get_indicatort_data(
     request: Request, 
     indicator_request: IndicatorRequest,
@@ -130,7 +130,7 @@ async def get_indicatort_data(
     data = get_indicator_data(indicator)
     return data
 
-@app.get("/get_histogram")
+@app.get("/api/get_histogram")
 def get_all_histogram_data():
     tif_directory = "/Users/qasemsafariallahkheili/Downloads/wildfire/predictors"
     # GeoTIFF directory inside the docker
@@ -158,7 +158,7 @@ def get_all_histogram_data():
 
     return all_data
 
-@app.post("/get_geojson")
+@app.post("/api/get_geojson")
 def get_geojson_data_from_db(
     request: Request, 
     table_request: TableRequest,
@@ -168,7 +168,7 @@ def get_geojson_data_from_db(
     geojson = get_geojson_data(tablename)
     return geojson
 
-@app.post("/get_zonal_statistics")
+@app.post("/api/get_zonal_statistics")
 def get_zonal_statistics(
     request: Request, 
     predictor_request: PredictorRequest,

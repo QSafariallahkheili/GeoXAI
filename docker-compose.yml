@@ -4,15 +4,13 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx
-    networks: 
-      - my_network
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     depends_on:
-      - frontend
+      - app
       - backend
       - tileserv
       - geoserver
@@ -21,14 +19,14 @@ services:
     build: ./services/backend
     container_name: backend
     networks: 
-      - my_network
+      default:
+        aliases:
+          - backend
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=geoxai_db
       - POSTGRES_DB=geoxai
       - POSTGRES_USER=${POSTGRES_USER}
-    ports:
-      - 5000:5000
     restart: unless-stopped
     env_file:
       - .env
@@ -36,41 +34,41 @@ services:
       - ./services/backend:/app
       - forest_fire_data:/app/data/forest_fire_predictor
       - forest_fire_trained_model:/app/data/forest_fire_trained_model
-    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000 --root-path /api
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
     
     depends_on:
       - geoxai_db
 
-  frontend:
+  app:
     build: 
       context: ./services/frontend
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: app
     networks: 
-      - my_network
+      default:
+        aliases:
+          - app
     volumes:
       - './services/frontend:/app'
       - '/app/node_modules'
-    ports:
-      - '8080:80'
     restart: unless-stopped
   
   tileserv:
+    container_name: tileserv
     image: pramsey/pg_tileserv:20231005
     #image: pramsey/pg_tileserv:latest
     env_file:
       - pg_tileserv.env
-
+    volumes:
+      - ./services/tileserv/pg_tileserv.toml:/config/pg_tileserv.toml:ro
     depends_on:
       - geoxai_db
     restart: unless-stopped
-    ports:
-      - 7800:7800
+    networks:
+      default:
+        aliases:
+          - tileserv
 
-    container_name: tileserv
-    networks: 
-      - my_network
-  
   geoxai_db:
     image: postgis/postgis
     container_name: geoxai_db
@@ -85,17 +83,15 @@ services:
       - ./data:/work
       - geoxai_db:/var/lib/postgresql/data
     ports:
-      - 5433:5432
-    networks: 
-      - my_network
+      - "5432:5432"
     restart: unless-stopped
 
   geoserver:
     image: kartoza/geoserver:latest
-    ports:
-      - "8081:8080"
     networks: 
-      - my_network
+      default:
+        aliases:
+          - geoserver
     container_name: geoserver
     restart: unless-stopped
     volumes:
@@ -109,12 +105,8 @@ services:
     depends_on:
       - geoxai_db
 
-
-
 volumes:
   geoxai_db:
   geoserver_data:
   forest_fire_data:
   forest_fire_trained_model:
-networks:
-  my_network:

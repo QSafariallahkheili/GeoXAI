@@ -2,7 +2,7 @@ import { HTTP } from '../utils/http-call';
 
 export async function getTableNames() {
   try {
-      const response = await HTTP.get("");
+      const response = await HTTP.get("/api");
       const transformedData = response.data.map(item => {
           const [name, type, metadata] = item;
           return {
@@ -19,13 +19,13 @@ export async function getTableNames() {
 }
 
 export async function getIndicatorNames() {
-  const response = await HTTP.get("/indcators_list")
+  const response = await HTTP.get("/api/indcators_list")
   return response.data;
 }
 
 export async function getIndicatorData(indicator) {
     const response = await HTTP.post(
-        "get_indicatort_data",
+        "/api/get_indicatort_data",
         {
             "indicator": indicator
         }
@@ -60,7 +60,7 @@ export async function getGeoserverCoverageSources() {
 
 export async function getLocalShapValues (coordinates) {
     const response = await HTTP.post(
-        "local_shap",
+        "/api/local_shap",
         {
             "coordinates": coordinates
         }
@@ -70,7 +70,7 @@ export async function getLocalShapValues (coordinates) {
 
 
 /*export async function getHistogram() {
-    const response = await HTTP.get("/get_histogram")
+    const response = await HTTP.get("/api/get_histogram")
     console.log(response)
     return response;
   }*/
@@ -78,7 +78,7 @@ export async function getLocalShapValues (coordinates) {
   export async function getGeojsonDataFromDB (tablename) {
     console.log(tablename)
     const response = await HTTP.post(
-        "get_geojson",
+        "/api/get_geojson",
         {
             "tablename": tablename,
         }
@@ -88,7 +88,7 @@ export async function getLocalShapValues (coordinates) {
 
 export async function zonalStatistics (predictorName, bbox) {
     const response = await HTTP.post(
-        "get_zonal_statistics",
+        "/api/get_zonal_statistics",
         {
             "predictorName": predictorName,
             "bbox": bbox
