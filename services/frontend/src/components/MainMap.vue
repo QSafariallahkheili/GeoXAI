@@ -24,15 +24,14 @@ import { addPulseLayer } from '../utils/pulseLayer';
 
 import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
-
+import {addCubeGeometry} from '../utils/addBabylon3DModel';
 let { activeMenu } = storeToRefs(useMenuStore())
 
 const XAIStore = useXAIStore();
 
 
 
-
-const { center, zoom, style } = storeToRefs(useMapStore())
+const { center, zoom, style, maxPitch } = storeToRefs(useMapStore())
 
 const mapContainer = ref(null);
 
@@ -49,8 +48,8 @@ onMounted(() => {
     style: style.value,
     center: center.value,
     zoom: zoom.value,
+    maxPitch: maxPitch.value
   });
-
   
 })
 
@@ -126,8 +125,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
       'type': layerType.value,
       'source': clickedLayerName,
       'paint': style.value
-      },
-    'road_major'
+      }
     );
   }
   map.moveLayer(clickedLayerName);
@@ -162,24 +160,22 @@ const removeLayerFromMap = (layerId)=>{
 }
 
 const getClickedCoordinate = ()=>{
-  
-    map.on('click', (e) => {
-      
-      if (activeMenu.value=='xai'){
-        
-        XAIStore.assignClickedCoordinates({
-          clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
-        })
-             
-      }
-    
+
+  map.on('click', (e) => {
+    const canvasCoords = [e.point.x, e.point.y];
+    const picked = map.getLayer("cube")?.implementation?.scene.pick(canvasCoords[0], canvasCoords[1]);
+    if (activeMenu.value=='xai'&& picked?.hit == false || picked?.hit ==undefined){
+      XAIStore.assignClickedCoordinates({
+        clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
+      })
+          
+    }
   });
-    
-  
 }
 
 const addPulseLayerToMap = (payload) => {
   addPulseLayer(map, payload.layerId, payload.lng,  payload.lat)
+  addCubeGeometry(map, "cube", payload.lng,  payload.lat, XAIStore.localShapValues)
 }
 
 
