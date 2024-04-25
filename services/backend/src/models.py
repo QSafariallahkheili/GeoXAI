@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 @dataclass
 class IndicatorRequest:
@@ -11,3 +12,8 @@ class CoordinatesRequest:
 @dataclass
 class TableRequest:
     tablename: str
+
+@dataclass
+class PredictorRequest:
+    predictorName: str
+    bbox: list
