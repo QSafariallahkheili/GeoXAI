@@ -18,5 +18,5 @@ FROM nginx:stable-alpine as production-stage
 
 COPY --from=build-stage ./app/dist /usr/share/nginx/html/app/
 
-EXPOSE 80 443
+EXPOSE 8080 443
 CMD ["nginx", "-g", "daemon off;"]
