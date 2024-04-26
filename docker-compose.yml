@@ -98,8 +98,9 @@ services:
       - geoserver_data:/opt/geoserver/data_dir
     environment:
       GEOSERVER_DATA_DIR: /opt/geoserver/data_dir
-      GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN}
-      GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_PASSWORD}
+      USE_DEFAULT_CREDENTIALS: true
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: geoserver
     env_file:
       - .env
     depends_on:
