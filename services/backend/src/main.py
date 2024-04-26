@@ -15,7 +15,7 @@ from .database import (
 )
 import matplotlib.pyplot as plt
 import rioxarray
-from osgeo import gdal
+#from osgeo import gdal
 import json
 
 
@@ -24,7 +24,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080","http://localhost", "http://194.94.235.195:8080", "http://127.0.0.1:8080", "http://127.0.0.1", "http://194.94.235.195", "http://geo-xai.fh-potsdam.de:8080", "http://geo-xai.fh-potsdam.de"],
+    allow_origins=["http://localhost:8080","http://localhost", "http://127.0.0.1:8080", "http://127.0.0.1", "http://geo-xai.fh-potsdam.de:8080", "http://geo-xai.fh-potsdam.de"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -56,7 +56,6 @@ async def compute_local_shap(
 ):
     coordinates = coordinates_request.coordinates
     
-   
     tif_directory = os.getenv('GEOTIFF_DIRECTORY', '/Users/qasemsafariallahkheili/Downloads/wildfire/predictors')
     predictors = [f for f in os.listdir(tif_directory) if f.endswith(".tif")]
     # Dictionary to store results
@@ -176,7 +175,7 @@ def get_zonal_statistics(
     predictorName = predictor_request.predictorName
     bbox = predictor_request.bbox
     tif_directory = os.getenv('GEOTIFF_DIRECTORY', '/Users/qasemsafariallahkheili/Downloads/wildfire/predictors/')
-
+    '''
     file_path = tif_directory+predictorName+'.tif'
     command = f"gdalinfo -json -proj4 {file_path} "
     # Execute the GDAL command
@@ -222,5 +221,5 @@ def get_zonal_statistics(
         "res_global": res_global
     }
     
-    
-    return res
+    '''
+    return "ok"
