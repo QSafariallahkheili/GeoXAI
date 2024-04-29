@@ -87,7 +87,7 @@ services:
     restart: unless-stopped
 
   geoserver:
-    image: kartoza/geoserver:latest
+    image: docker.osgeo.org/geoserver:2.24.1
     networks: 
       default:
         aliases:
