@@ -87,7 +87,7 @@ services:
     restart: unless-stopped
 
   geoserver:
-    image: kartoza/geoserver:2.25.0
+    image: kartoza/geoserver:latest
     networks: 
       default:
         aliases:
@@ -98,8 +98,8 @@ services:
       - geoserver_data:/opt/geoserver/data_dir
     environment:
       - GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
-      - GEOSERVER_ADMIN_USER=geo_xai_postgres
-      - GEOSERVER_ADMIN_PASSWORD=cxHUBEgwJqzfPtZ9TYA73h
+      - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
+      - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
     env_file:
       - .env
     depends_on:
