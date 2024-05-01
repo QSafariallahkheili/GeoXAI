@@ -693,6 +693,7 @@ export function addCubeGeometry (map, layerID, lng, lat, localShapValues) {
             const firstFiveElements = rankedShapValues.slice(0, 5);
             console.log(firstFiveElements)
             /////////////////////////// apply the texture on cube faces coming from geoserver as png //////////////////////////////
+            let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
             const multiMaterial = new MultiMaterial("multi", this.scene);
             const textureResolution = 512;
             let materials = []
@@ -706,7 +707,7 @@ export function addCubeGeometry (map, layerID, lng, lat, localShapValues) {
                 let textOnCubeFace = Object.values(firstFiveElements[i])[0] > 0 ? `${Object.keys(firstFiveElements[i])[0] } ${i+1} \u2193` : `${Object.keys(firstFiveElements[i])[0] } ${i+1} \u2191`
                 let img = new Image();
                 img.crossOrigin='anonymous'
-                img.src = 'http://127.0.0.1:8082/geoserver/geoxai/wms?BBOX='+bboxText+'&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:4326&WIDTH='+textureResolution+'&HEIGHT='+textureResolution+'&LAYERS=geoxai:'+Object.keys(firstFiveElements[i])[0]+'&FORMAT=image/PNG&transparent=true';
+                img.src = geoserver_base_url+'/geoxai/wms?BBOX='+bboxText+'&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:4326&WIDTH='+textureResolution+'&HEIGHT='+textureResolution+'&LAYERS=geoxai:'+Object.keys(firstFiveElements[i])[0]+'&FORMAT=image/PNG&transparent=true';
                 img.onload = function() {
                     //Add image to dynamic texture
                     textureContext.drawImage(this, 0,0);
