@@ -6,6 +6,7 @@
     <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
   </div>
   <MetadataDialog> </MetadataDialog>
+  <AlertUI> </AlertUI>
   
 </template>
 
@@ -19,6 +20,7 @@ import LegendUI from "@/components/LegendUI.vue";
 import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
+import AlertUI from "@/components/AlertUI.vue";
 import { addPopupToMap } from '../utils/mapUtils';
 import { addPulseLayer } from '../utils/pulseLayer';
 

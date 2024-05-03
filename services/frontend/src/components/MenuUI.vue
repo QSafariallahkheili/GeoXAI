@@ -42,13 +42,24 @@
 import { ref } from 'vue';
 import { useMenuStore } from '../stores/menu'
 import IconXai from '../assets/icons/IconXai.vue';
+import { useAlertStore } from '@/stores/alert'
 const menuStore = useMenuStore();
+const alertStore = useAlertStore()
+
 
 const activeMenu = ref(null);
 
 function setActiveButton(button) {
     activeMenu.value = button;
     menuStore.setActivatedMenu(activeMenu.value)
+    if (button==="xai"){
+        console.log("dispatch")
+        alertStore.setAlert({
+            text: "Click on any pixel inside the Foreset Fire Susceptibility map to get local explanation",
+            timeout: 10000,
+            btnColor: "blue"
+        })
+    }
 }
 
 </script>
