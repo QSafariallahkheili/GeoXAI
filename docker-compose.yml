@@ -14,6 +14,7 @@ services:
       - backend
       - tileserv
       - geoserver
+    restart: unless-stopped
 
   backend:
     build: ./services/backend
