@@ -338,37 +338,60 @@ const renderChart = () => {
   });
 
      
-    chartGroup.append('g')
-      .attr('transform', `translate(0, ${height})`)
-      .call(xAxis)
-      .transition()
-      .duration(1000) // Set the duration of the transition
+  chartGroup.append('g')
+  .attr('transform', `translate(0, ${height})`)
+  .call(xAxis)
+  .transition()
+  .duration(1000); // Set the duration of the transition
 
-    chartGroup.append('g')
-      .call(yAxis)
-      .transition()
-      .duration(1000) // Set the duration of the transition
+chartGroup.append('g')
+  .call(yAxis)
+  .transition()
+  .duration(1000); // Set the duration of the transition
 
-    // Add chart title
-    chartGroup.append('text')
-      .attr('x', width / 2)
-      .attr('y', height + margin.bottom - 10)
-      .attr('text-anchor', 'middle')
-      .text('SHAP values');
+// Add main chart title at the top
+chartGroup.append('text')
+  .attr('x', width / 2)
+  .attr('y', -margin.top + 20)
+  .attr('text-anchor', 'middle')
+  .text(`SHAP Values (wildfire probability: ${predict_proba?.value?.toFixed(3)})`);
 
-    chartGroup.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('x', -height / 2)
-      .attr('y', -margin.left + 10)
-      .attr('dy', '1em')
-      .attr('text-anchor', 'middle');
+// Add SHAP values text and legend items at the bottom
+const bottomGroup = chartGroup.append('g')
+  .attr('transform', `translate(${width / 2 - 100}, ${height + margin.bottom - 10})`); // Adjust positioning as needed
 
-    // Add chart title
-    chartGroup.append('text')
-      .attr('x', width / 2)
-      .attr('y', -margin.top + 20)
-      .attr('text-anchor', 'middle')
-      .text(`SHAP Values (wildfire probability: ${predict_proba?.value?.toFixed(3)})`);
+// SHAP values text
+/*bottomGroup.append('text')
+  .attr('x', 0)
+  .attr('y', 0)
+  .attr('text-anchor', 'middle')
+  .text('SHAP values');*/
+
+// Legend items
+const legendData = [
+  { label: 'Fire', color: 'rgba(255, 99, 132, 0.8)' },
+  { label: 'Non-fire', color: 'rgba(75, 192, 192, 0.8)' }
+];
+
+const legendGroup = bottomGroup.selectAll('.legend-item')
+  .data(legendData)
+  .enter()
+  .append('g')
+  .attr('class', 'legend-item')
+  .attr('transform', (d, i) => `translate(${i * 80 + 40}, -12)`); // Adjust spacing between legend items
+
+legendGroup.append('rect')
+  .attr('width', 35)
+  .attr('height', 15)
+  .attr('fill', d => d.color)
+  .attr('rx', 2) // Rounded corners for the legend color box
+  .attr('ry', 2);
+
+legendGroup.append('text')
+  .attr('x', 40)
+    .attr('y', 12)
+    .style('font-size', '12px')
+    .text(d => d.label);
 
   }
 };
