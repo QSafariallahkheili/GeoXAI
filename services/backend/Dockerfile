@@ -2,7 +2,7 @@
 FROM python:3.11
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y gdal-bin \
     build-essential \
     g++ \
     libgdal-dev \
