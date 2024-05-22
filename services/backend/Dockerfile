@@ -1,9 +1,17 @@
+# Use an appropriate base image
 FROM python:3.11
 
-RUN apt-get update
-RUN apt-get install -y gdal-bin libgdal-dev
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    g++ \
+    libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables for GDAL
 ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
+
 
 RUN mkdir app
 WORKDIR /app

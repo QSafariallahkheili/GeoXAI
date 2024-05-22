@@ -15,7 +15,7 @@ from .database import (
 )
 import matplotlib.pyplot as plt
 import rioxarray
-#from osgeo import gdal
+from osgeo import gdal
 import json
 
 
@@ -55,7 +55,7 @@ async def compute_local_shap(
     coordinates_request: CoordinatesRequest
 ):
     coordinates = coordinates_request.coordinates
-    
+    print(gdal)
     tif_directory = os.getenv('GEOTIFF_DIRECTORY', '/Users/qasemsafariallahkheili/Downloads/wildfire/predictors')
     predictors = [f for f in os.listdir(tif_directory) if f.endswith(".tif")]
     # Dictionary to store results
