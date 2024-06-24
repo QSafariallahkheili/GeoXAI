@@ -26,7 +26,7 @@
             </div>
         </v-card-item>
         <v-card-item v-if="rasterLegendUrl">
-            <div>
+            <div class="mb-2">
                 <v-icon
                         size="small"
                         variant="text"

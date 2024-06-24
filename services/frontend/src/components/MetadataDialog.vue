@@ -15,10 +15,10 @@
                     <div v-for="(item,index) in metadata" :key="index">
                         <v-card-text v-if="item">
                             <span  v-if="isValidURL(item)">
-                                {{index}}: <a :href="metadata.source" target="_blank">{{ item }}</a> 
+                                <b>{{index}}</b>: <a :href="metadata.source" target="_blank">{{ item }}</a> 
                             </span>
                             <span v-else>
-                                {{index}}: {{ item }}
+                                <b>{{index}}</b>: {{ item }}
                             </span>
                         
                         </v-card-text>
