@@ -1,0 +1,88 @@
+{
+    "ndmi": {
+        
+        "metadata": {
+            "description": "The Normalized Difference Moisture Index indicates the level of moisture stored in vegatations which can be derived from near-infrared (NIR) and short-wave infrared (SWIR) of the electromagnetic spectrum. It can be calculated as the following formula from the sentinel-2 imagery: NDMI = (B08-B11)/(B08+B11)",
+            "source": "Sentinel-2 satellite imagery",
+            "resolution": "30m"
+        }
+    },
+    "lst": {
+       
+        "metadata": {
+            "description": "Landsat Surface Temperature measures the Earth's surface temperature in Kelvin",
+            "source": "LANDSAT/LC08/C02/T1_L2",
+            "unit": "Kelvin",
+            "resolution": "30m"
+        }
+    },
+    "landcover": {
+        
+        "metadata": {
+            "description": "drought index data was retrieved from Deutscher Wetterdienst (DWD) database and includes the annual grids of drought index in mm/°C with the temporal coverage of 1958 – 2022 in Germany with 1000m resolution in ESRI-ascii-grid-format",
+            "source": "https://opendata.dwd.de/climate_environment/CDC/grids_germany/annual/drought_index/",
+            "unit": "mm/°C",
+            "resolution": "30m"
+        }
+    },
+    "slope": {
+       
+        "metadata": {
+            "description": "slope refers to the steepness of a surface, usually the angle between the surface and a horizontal plane. It can be calculated from the DTM in UTM zone as the X and Y units must match the Z unit which is in metric. The slope value varies between 0-90",
+            "source": "https://www.opendem.info/",
+            "unit": "Degrees",
+            "resolution": "30m"
+        }
+    },
+    "precipitation": {
+        
+        "metadata": {
+            "description": "The precipitation includes the monthly sum of precipitation height in mm",
+            "source": "https://opendata.dwd.de/climate_environment/CDC/grids_germany/annual/precipitation/",
+            "unit": "mm",
+            "resolution": "1000m"
+        }
+    },
+    "gndvi": {
+        
+        "metadata": {
+            "description": "GNDVI (Green Normalized Difference Vegetation Index) is more sensitive to variation in chlorophyll content than NDVI (Gitelson et al., 1996). In other words, it measures reflectance in the green band instead of the red band. This product can be calculated from the Near Inferared and Green bands of electromagnetic spectrum which can be calculated from band 8 and band 3 respectively by the following equation: GNDVI = (B08 – B03)/(B08 + B03)",
+            "source": "Sentinel-2 satellite image",
+            "resolution": "30m"
+        }
+    },
+    "aspect": {
+        
+        "metadata": {
+            "description": "Aspect indicates the Azimuth whose value ranging from 0 to 360. This dataset can be derived from DTM",
+            "source": "https://www.opendem.info/",
+            "unit": "Degrees",
+            "resolution": "30m"
+        }
+    },
+    "global_radiation": {
+        
+        "metadata": {
+            "description": "Global Radiation is the total solar radiation reaching the earth surface. It is computed as the sum of direct, diffuse and reflected radiation.",
+            "source": "https://opendata.dwd.de/climate_environment/CDC/grids_germany/monthly/radiation_global/",
+            "unit": "kWh/m²",
+            "resolution": "1000m"
+        }
+    },
+    "ndvi": {
+        
+        "metadata": {
+            "description": "NDVI(Normalized Difference Vegetation Index) can be calculated from band 8 and band 4 of the sentinel 2 satellite image with the following formula:NDVI = (band8-band4)/(band8+band4)",
+            "source": "Sentinel-2 satellite image",
+            "resolution": "30m"
+        }
+    },
+    "dem": {
+    "metadata": {
+        "description": "A Digital Elevation Model (DEM) is a representation of the bare ground (bare earth) topographic surface of the Earth excluding trees, buildings, and any other surface objects",
+        "source": "Sentinel-2 satellite image",
+        "unit": "meter",
+        "resolution": "30m"
+    }
+    }
+}

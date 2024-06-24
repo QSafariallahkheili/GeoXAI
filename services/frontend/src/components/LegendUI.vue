@@ -27,7 +27,16 @@
         </v-card-item>
         <v-card-item v-if="rasterLegendUrl">
             <div>
+                <v-icon
+                        size="small"
+                        variant="text"
+                        density="compact"
+                        @click="showMetadata(rasterLegendTitle)"
+                    >
+                    <font-awesome-icon :icon="['fas', 'circle-info']" />
+                </v-icon>
                 {{rasterLegendTitle}}
+                
             </div>
             <div>
                  <img :src="rasterLegendUrl" alt="Legend" />
@@ -38,9 +47,16 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useMapLegendStore } from '../stores/mapLegend'
+import { useMetadataDialogStore } from '../stores/metadataDialog'
+import featureMetadata from '../assets/featureMetadata'
+
+const metadataDialogStore = useMetadataDialogStore();
 let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle} = storeToRefs(useMapLegendStore())
 
+const showMetadata = (featureName) =>{
+    metadataDialogStore.assignMetadata(featureMetadata[featureName].metadata, featureName)
 
+}
 </script>
 
 <style scoped>
