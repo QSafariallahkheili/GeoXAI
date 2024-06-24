@@ -136,7 +136,6 @@ const renderChart = () => {
         // Highlight the bar on mouseover
         d3.select(this).attr('fill', d => Object.values(d)[0] >= 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)');
         if(hoveredElement.value!==clickedElement.value){
-          
           d3.select(this).attr('stroke', 'orange')
           emit ("addHoveredLayerToMap", hoveredElement.value )
         }
@@ -171,8 +170,9 @@ const renderChart = () => {
         if(Object.keys(d)[0]!==clickedElement.value){
           
           chartGroup.selectAll('rect').attr('stroke-width', '1px')
-          emit("toggleCoverageLayerVisibilityWithValue", Object.keys(d)[0], 'visible')
+          
           emit("toggleCoverageLayerVisibilityWithValue", clickedElement.value, 'none')
+          emit("toggleCoverageLayerVisibilityWithValue", Object.keys(d)[0], 'visible')
           clickedElement.value = Object.keys(d)[0]
           
           d3.select(this).attr('stroke-width', '2px')

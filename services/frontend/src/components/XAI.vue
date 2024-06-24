@@ -7,6 +7,8 @@ import { onMounted, defineEmits, ref, onUnmounted} from "vue"
 import XAILineChart from "@/components/XAILineChart.vue";
 import { useLayersStore } from '../stores/layers'
 import { storeToRefs } from 'pinia'
+import { useMapLegendStore } from '../stores/mapLegend'
+const legendStore = useMapLegendStore();
 //import {getHistogram} from '../services/backend.calls'
 let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
@@ -30,12 +32,19 @@ const addHoveredLayerToMap = (hoveredLayer) => {
     }
     else {
         emit("toggleCoverageLayerVisibility", hoveredLayer)
+
     }
-   
+    
+    legendStore.setActivatedLegend('visible',hoveredLayer)
 }
 
 const toggleCoverageLayerVisibilityWithValue = (layerId, visStatus)=>{
     emit("toggleCoverageLayerVisibilityWithValue", layerId, visStatus)
+    if (layerId){
+        legendStore.setActivatedLegend(visStatus,layerId)
+        
+    }
+           
 }
 
 const addXaiPulseLayer = (clickedCoordinates) => {
