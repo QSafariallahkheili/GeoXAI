@@ -130,7 +130,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
       }
     );
   }
-  map.moveLayer(clickedLayerName, 'road_major');
+  map.moveLayer(clickedLayerName);
 }
 const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
