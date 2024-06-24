@@ -130,7 +130,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
       }
     );
   }
-  map.moveLayer(clickedLayerName);
+  map.moveLayer(clickedLayerName, 'road_major');
 }
 const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
@@ -146,8 +146,9 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
   }
   else {   
     map.setLayoutProperty(clickedLayerName,'visibility', 'visible')
-    map.moveLayer(clickedLayerName);
+    map.moveLayer(clickedLayerName, 'road_major');
   }
+  
 
 }
 
@@ -188,6 +189,7 @@ const toggleCoverageLayerVisibilityWithValue = (layerID, visStatus)=>{
       map.moveLayer(layerID, "xai-pulse")
     }
   }
+  map.moveLayer(layerID, 'road_major');
   
   
 }
