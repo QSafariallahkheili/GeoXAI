@@ -25,13 +25,21 @@
                 <div class="legend-label-max">{{ minMax[1] }}</div>
             </div>
         </v-card-item>
+        <v-card-item v-if="rasterLegendUrl">
+            <div>
+                {{rasterLegendTitle}}
+            </div>
+            <div>
+                 <img :src="rasterLegendUrl" alt="Legend" />
+            </div>
+        </v-card-item>
     </v-card>
 </template>
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useMapLegendStore } from '../stores/mapLegend'
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle} = storeToRefs(useMapLegendStore())
 
-let { minMax, classIntervalsAndColor} = storeToRefs(useMapLegendStore())
 
 </script>
 
@@ -49,7 +57,6 @@ let { minMax, classIntervalsAndColor} = storeToRefs(useMapLegendStore())
     -moz-backdrop-filter: blur(5px);
     -ms-backdrop-filter: blur(5px);
     width: auto;
-    min-width: 200px; 
     border-radius: 8px;
 }
 .color-strip {
