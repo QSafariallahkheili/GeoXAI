@@ -67,7 +67,7 @@
 <script setup>
 import { ref, onMounted, defineEmits, computed} from "vue"
 import {
-    getTableNames, getGeoserverCoverageSources
+    getTableNames, /*getGeoserverCoverageSources*/
 } from "../services/backend.calls";
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import { storeToRefs } from 'pinia'
