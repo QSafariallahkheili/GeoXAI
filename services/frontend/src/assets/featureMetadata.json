@@ -10,7 +10,7 @@
     "lst": {
        
         "metadata": {
-            "description": "Landsat Surface Temperature measures the Earth's surface temperature in Kelvin",
+            "description": "Land Surface Temperature measures the Earth's surface temperature in Kelvin",
             "source": "LANDSAT/LC08/C02/T1_L2",
             "unit": "Kelvin",
             "resolution": "30m"
