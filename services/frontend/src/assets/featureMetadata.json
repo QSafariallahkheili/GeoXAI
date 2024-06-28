@@ -19,6 +19,14 @@
     "landcover": {
         
         "metadata": {
+            "description": "Landcover classification is based on a time-series of monthly averaged, atmospherically corrected Sentinel-2 tiles. It consists of the following landcover classes: forest, low vegetation, water, built-up area, bare soil and agriculture",
+            "source": "https://data.mundialis.de/geonetwork/srv/eng/catalog.search#/metadata/9246503f-6adf-460b-a31e-73a649182d07",
+            "resolution": "30m"
+        }
+    },
+    "drought_index": {
+        
+        "metadata": {
             "description": "drought index data was retrieved from Deutscher Wetterdienst (DWD) database and includes the annual grids of drought index in mm/°C with the temporal coverage of 1958 – 2022 in Germany with 1000m resolution in ESRI-ascii-grid-format",
             "source": "https://opendata.dwd.de/climate_environment/CDC/grids_germany/annual/drought_index/",
             "unit": "mm/°C",
