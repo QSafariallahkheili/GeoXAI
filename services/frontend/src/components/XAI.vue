@@ -24,8 +24,12 @@ const addFireSusceptibilityToMap = () => {
 }
 const addHoveredLayerToMap = (hoveredLayer) => {
     let index = DBTableNames.value.findIndex(obj => obj.name==hoveredLayer);
-    DBTableNames.value[index].checked=!DBTableNames.value[index].checked
-    DBTableNames.value = [...DBTableNames.value];
+    console.log(index)
+    if (index!=-1){
+        DBTableNames.value[index].checked=!DBTableNames.value[index].checked
+        DBTableNames.value = [...DBTableNames.value];
+    }
+    
     if (!addedLayers.value.includes(hoveredLayer)) {
         emit("addCoverageLayerToMap", hoveredLayer, layerType, style)
         addedLayers.value.push(hoveredLayer);
