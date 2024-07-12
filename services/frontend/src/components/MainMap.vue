@@ -1,5 +1,5 @@
 <template>
-  <div ref="mapContainer" style="height: 100vh;">
+  <div ref="mapContainer" style="height: 100dvh;">
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
     <LegendUI></LegendUI>
     <MenuUI></MenuUI>
