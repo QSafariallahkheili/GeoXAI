@@ -88,7 +88,7 @@ services:
     restart: unless-stopped
 
   geoserver:
-    image: kartoza/geoserver:latest
+    image: kartoza/geoserver:2.25.2
     networks: 
       default:
         aliases:
