@@ -26,7 +26,7 @@ import { addPulseLayer } from '../utils/pulseLayer';
 
 import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
-import {addCubeGeometry} from '../utils/addBabylon3DModel';
+//import {addCubeGeometry} from '../utils/addBabylon3DModel';
 let { activeMenu } = storeToRefs(useMenuStore())
 
 const XAIStore = useXAIStore();
@@ -115,6 +115,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
   
   if(typeof coverageLayer == 'undefined') {
     let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
+    console.log(geoserver_base_url, "geoserver_base_url")
     map.addSource(clickedLayerName, {
       'type': layerType.value,
       'tiles': [
@@ -177,7 +178,7 @@ const getClickedCoordinate = ()=>{
 
 const addPulseLayerToMap = (payload) => {
   addPulseLayer(map, payload.layerId, payload.lng,  payload.lat)
-  addCubeGeometry(map, "cube", payload.lng,  payload.lat, XAIStore.localShapValues)
+  //addCubeGeometry(map, "cube", payload.lng,  payload.lat, XAIStore.localShapValues)
 }
 
 

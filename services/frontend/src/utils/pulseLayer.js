@@ -19,7 +19,7 @@ export function addPulseLayer(map, layerId, lng, lat) {
             const duration = 1000;
             const t = (performance.now() % duration) / duration;
         
-            const radius = (size / 2) * 0.1;
+            const radius = (size / 2) * 0.13;
             const outerRadius = (size / 2) * 0.7 * t + radius;
             const context = this.context;
         
