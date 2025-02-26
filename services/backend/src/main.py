@@ -32,7 +32,7 @@ app.add_middleware(
 )
 
 
-model_path = os.getenv('RANDOM_FOREST_MODEL_PATH', '/Users/qasemsafariallahkheili/Downloads/wildfire/sample/random_sample/random_forest_model.joblib')
+model_path = os.getenv('RANDOM_FOREST_MODEL_PATH', '/Users/qasemsafariallahkheili/Downloads/wildfire/notebook/FFS_300m/random_forest_model.joblib')
 try:
     rf_model = joblib.load(model_path)
     print("Random Forest model loaded successfully.")
@@ -55,8 +55,7 @@ async def compute_local_shap(
     coordinates_request: CoordinatesRequest
 ):
     coordinates = coordinates_request.coordinates
-    print(gdal)
-    tif_directory = os.getenv('GEOTIFF_DIRECTORY', '/Users/qasemsafariallahkheili/Downloads/wildfire/predictors')
+    tif_directory = os.getenv('GEOTIFF_DIRECTORY', '/Users/qasemsafariallahkheili/Downloads/wildfire/notebook/FFS_300m/predictors/tif')
     predictors = [f for f in os.listdir(tif_directory) if f.endswith(".tif")]
     # Dictionary to store results
     locationinfo_dict = {}
@@ -84,14 +83,18 @@ async def compute_local_shap(
         correct_order = ['aspect', 'dem', 'ndvi', 'slope', 'drought_index', 'global_radiation', 'gndvi', 'landcover', 'ndmi', 'precipitation', 'lst']
         # Reorder the columns to match the correct order in randomforest model
         input_df = input_df[correct_order]
+        
+        
         predicted_probability = rf_model.predict_proba(input_df)
+       
         predicted_probability = {
             'probability_not_fire': predicted_probability[0][0],
             'probability_fire': predicted_probability[0][1]
         }
-
-        explainer = shap.TreeExplainer(rf_model)
+        base_rf_model = rf_model.calibrated_classifiers_[0].estimator
+        explainer = shap.TreeExplainer(base_rf_model)
         shap_values = explainer.shap_values(input_df)
+       
 
         #shap.force_plot(explainer.expected_value[1], shap_values[1], input_df,  matplotlib=True)
 
