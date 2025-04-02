@@ -84,9 +84,7 @@ async def compute_local_shap(
         # Reorder the columns to match the correct order in randomforest model
         input_df = input_df[correct_order]
         
-        
         predicted_probability = rf_model.predict_proba(input_df)
-       
         predicted_probability = {
             'probability_not_fire': predicted_probability[0][0],
             'probability_fire': predicted_probability[0][1]

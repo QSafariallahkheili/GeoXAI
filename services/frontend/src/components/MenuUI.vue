@@ -33,6 +33,21 @@
             </v-btn> 
         </template>
     </v-tooltip>
+    <v-tooltip text="filter" location="top">
+        <template v-slot:activator="{ props }">
+            <v-btn 
+                v-bind="props"
+                class="ml-2" 
+                v-ripple="{ class: 'primary--text' }"
+                @click="setActiveButton('filter')"
+                :style="{ color: activeMenu === 'filter' ? 'blue' : '' }"
+            >
+                <v-icon size="small">
+                    <font-awesome-icon :icon="['fas', 'filter']" />
+                </v-icon>
+            </v-btn>
+        </template>
+    </v-tooltip>
 
 </div>    
 
