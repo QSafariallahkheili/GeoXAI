@@ -1,5 +1,6 @@
 import psycopg2
 from os import getenv
+import json
 
 dbConfig = {
     'host': getenv('POSTGRES_HOST', 'localhost'),
@@ -86,3 +87,122 @@ def get_geojson_data(tablename):
     cur.close()
     conn.close()
     return user
+
+def get_municipality_names():
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute(""" select distinct(name), ogc_fid from kommunale_gebiete_aoi; """)
+    data = cur.fetchall()
+    cur.close()
+    conn.close()
+    return data 
+
+def get_single_geom_instance(tablename, instanceId):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT json_build_object(
+            'type', 'FeatureCollection',
+            'features', json_agg(
+                json_build_object(
+                    'type', 'Feature',
+                    'geometry', ST_AsGeoJSON(t.geom)::json,
+                    'properties', to_jsonb(t) - 'geom'
+                )
+            )
+        )
+    from (select * from %s where ogc_fid = %s) as t
+        ;""" %(tablename,instanceId,))
+    user = cur.fetchall()[0]
+    cur.close()
+    conn.close()
+    return user
+
+def get_shap_per_table_for_municipality( instanceId):
+    conn = connect()
+    cur = conn.cursor()
+    tables = [
+        "aspect", "dem", "ndvi", "slope", "drought_index",
+        "global_radiation", "gndvi", "landcover", "ndmi",
+        "precipitation", "lst"
+    ]
+    result = {}
+    for table in tables:
+        sql = f"""
+            SELECT 
+                AVG(t.value) AS value,
+                AVG(t.shap) AS shap
+            FROM {table} t,
+                (SELECT * FROM kommunale_gebiete_aoi WHERE ogc_fid = %s) AS aoi
+            WHERE ST_Intersects(t.geom, aoi.geom)
+        """
+        cur.execute(sql, (instanceId,))
+        row = cur.fetchone()
+        result[table] = {
+            "value": row[0] if row and row[0] is not None else None,
+            "shap": row[1] if row and row[1] is not None else None
+        }
+    sql1 = f"""
+            SELECT 
+                AVG(t.ffs) AS value
+            FROM fire_susceptibility t,
+                (SELECT * FROM kommunale_gebiete_aoi WHERE ogc_fid = %s) AS aoi
+            WHERE ST_Intersects(t.geom, aoi.geom)
+        """
+    cur.execute(sql1, (instanceId,))
+    row = cur.fetchone()
+    result["ffs"] = {
+        "value": row[0] if row and row[0] is not None else None,
+    }
+    cur.close()
+    conn.close()
+    return result
+
+def get_shap_per_table_for_buffer(geojson, srid=4326):
+    conn = connect()
+    cur = conn.cursor()
+    geojson_str = json.dumps(geojson)  # ✅ Convert to string
+    
+    tables = [
+        "aspect", "dem", "ndvi", "slope", "drought_index",
+        "global_radiation", "gndvi", "landcover", "ndmi",
+        "precipitation", "lst"
+    ]
+    result = {}
+
+    for table in tables:
+        sql = f"""
+            SELECT 
+                AVG(t.value) AS value,
+                AVG(t.shap) AS shap
+            FROM {table} t
+            WHERE ST_Intersects(
+                t.geom,
+                ST_SetSRID(ST_GeomFromGeoJSON(%s), %s)
+            )
+        """
+        cur.execute(sql, (geojson_str, srid))  # ✅ Use the string
+        row = cur.fetchone()
+        result[table] = {
+            "value": row[0] if row and row[0] is not None else None,
+            "shap": row[1] if row and row[1] is not None else None
+        }
+
+    sql1 = f"""
+        SELECT 
+            AVG(t.ffs) AS value
+        FROM fire_susceptibility t
+        WHERE ST_Intersects(
+            t.geom,
+            ST_SetSRID(ST_GeomFromGeoJSON(%s), %s)
+        )
+    """
+    cur.execute(sql1, (geojson_str, srid))  # ✅ Use the string
+    row = cur.fetchone()
+    result["ffs"] = {
+        "value": row[0] if row and row[0] is not None else None,
+    }
+
+    cur.close()
+    conn.close()
+    return result

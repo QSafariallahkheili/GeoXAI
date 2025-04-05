@@ -6,12 +6,16 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest
 from .database import (
     get_home_data,
     get_indicator_list,
     get_indicator_data,
-    get_geojson_data
+    get_geojson_data,
+    get_municipality_names,
+    get_single_geom_instance,
+    get_shap_per_table_for_municipality,
+    get_shap_per_table_for_buffer
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -224,3 +228,43 @@ def get_zonal_statistics(
     
     '''
     return "ok"
+
+
+@app.get("/api/get_municipality_names")
+def get_municipality_names_from_db(
+    
+):
+    geojson = get_municipality_names()
+    return geojson
+
+@app.post("/api/get_table_instance")
+def get_municipality_names_from_db(
+    request: Request,
+    table_instance_request: TableInstanceRequest,
+):
+    tableName = table_instance_request.tableName
+    instanceId = table_instance_request.instanceId
+    geojson = get_single_geom_instance(tableName, instanceId)
+    shap_values = get_shap_per_table_for_municipality(instanceId)
+    return {"geojson": geojson, "shap_values": shap_values}
+
+
+@app.post("/api/get_shap_bufefr")
+def get_shap_values_for_buffer(
+    request: Request,
+    geojson_request: GeojsonRequest,
+):
+    payload = geojson_request.geojson
+    shap_values = get_shap_per_table_for_buffer(payload, 4326)
+    
+    return shap_values
+
+@app.post("/api/get_shap_polygon")
+def get_shap_values_for_polygonr(
+    request: Request,
+    geojson_request: GeojsonRequest,
+):
+    payload = geojson_request.geojson
+    shap_values = get_shap_per_table_for_buffer(payload, 4326)
+    
+    return shap_values
