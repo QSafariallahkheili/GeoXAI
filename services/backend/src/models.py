@@ -17,3 +17,13 @@ class TableRequest:
 class PredictorRequest:
     predictorName: str
     bbox: list
+
+@dataclass
+class TableInstanceRequest:
+    tableName: str
+    instanceId: int
+
+@dataclass
+class GeojsonRequest:
+    geojson: object
+
