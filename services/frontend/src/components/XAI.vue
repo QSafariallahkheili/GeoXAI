@@ -71,6 +71,7 @@ onMounted(() => {
 })
 
 onUnmounted(()=>{
+    console.log("unmounted")
     emit("removeLayerFromMap", "xai-pulse")
 })
 

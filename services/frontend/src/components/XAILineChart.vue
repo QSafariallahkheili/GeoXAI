@@ -9,11 +9,14 @@ import { ref, watch, onUnmounted, onMounted, defineEmits } from "vue"
 import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
 import { getLocalShapValues } from "../services/backend.calls";
+import { useMenuStore } from '../stores/menu'
 
 import * as turf from "@turf/turf";
 import * as d3 from "d3";
 import histogramValues from '../assets/histogramValues'
-let { clickedCoordinates } = storeToRefs(useXAIStore())
+let { clickedCoordinates, localShapValues } = storeToRefs(useXAIStore())
+let { activeMenu } = storeToRefs(useMenuStore())
+
 const xaiStore = useXAIStore();
 
 let shapValues = ref(null)
@@ -402,14 +405,14 @@ onMounted( async ()=>{
 
 })
 watch(clickedCoordinates, async () => {
-  
   // check if the clicked coordinates are inside the AOI
   let layerBBOX = [11.266490630334411, 51.791199895877064, 14.4502996603007, 53.558814880433424]
   let poly = turf.bboxPolygon(layerBBOX);
   let isInside = turf.inside(clickedCoordinates.value, poly);
 
-  if(isInside==true){
+  if(isInside==true && activeMenu.value==="xai"){
     const response =  await getLocalShapValues(clickedCoordinates.value)
+    console.log(response)
     xaiStore.assignLocalShapValues(response)
 
     if(response.shap_values){
@@ -423,6 +426,12 @@ watch(clickedCoordinates, async () => {
     else {
         alert(response)
     }
+  }
+  else if ( activeMenu.value=="filter" && localShapValues.value!==null) {
+    shapValues.value = localShapValues.value.shap_values.class_not_fire
+    raster_values_at_clicked_point.value = localShapValues.value.raster_values_at_clicked_point
+    predict_proba.value = localShapValues.value.predicted_probability.probability_not_fire
+    renderChart();
   }
   
     
