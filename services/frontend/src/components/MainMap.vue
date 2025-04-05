@@ -1,10 +1,14 @@
 <template>
   <div ref="mapContainer" style="height: 100dvh;">
+    
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
     <LegendUI></LegendUI>
-    <MenuUI></MenuUI>
-    <XAI v-if="activeMenu=='xai'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
+    <MenuUI @removeLayerFromMap="removeLayerFromMap"></MenuUI>
+    <FilterUI v-if="activeMenu=='filter'" @activateBufferTool="activateBufferTool" @addGeojsonLayer="addGeojsonLayer" @fitBoundsToBBOX="fitBoundsToBBOX" @removeLayerFromMap="removeLayerFromMap" @removeDrawControl="removeDrawControl" @activatePolygonTool="activatePolygonTool"> </FilterUI>
+    <XAI v-if="activeMenu=='xai' || activeMenu=='filter'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
+    
   </div>
+  
   <MetadataDialog> </MetadataDialog>
   <AlertUI> </AlertUI>
   
@@ -21,13 +25,23 @@ import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
 import AlertUI from "@/components/AlertUI.vue";
+import  FilterUI from '@/components/FilterUI.vue'
 import { addPopupToMap } from '../utils/mapUtils';
 import { addPulseLayer } from '../utils/pulseLayer';
 
 import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
+import { useFilterStore } from '../stores/filter'
+
+import * as turf from "@turf/turf";
+
+import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
+import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
+
 //import {addCubeGeometry} from '../utils/addBabylon3DModel';
 let { activeMenu } = storeToRefs(useMenuStore())
+let { drawControl } = storeToRefs(useFilterStore())
+const filterStore = useFilterStore()
 
 const XAIStore = useXAIStore();
 
@@ -41,8 +55,6 @@ let vectorServer = process.env.VUE_APP_TILE_SERVER_URL+'/';
 let map = null;
 //let popup = null
 let selectedFeatureId = null;
-
-
 onMounted(() => {
 
   map = new Map({
@@ -52,13 +64,21 @@ onMounted(() => {
     zoom: zoom.value,
     maxPitch: maxPitch.value
   });
+    drawControl = new MaplibreTerradrawControl({
+        modes: ['circle', 'polygon'], // Drawing modes to enable
+        open: false, 
+    });
+
+      // Add the drawing control to the map
+      map.addControl(drawControl, 'bottom-left');
   
 })
 
 const addLayerToMap = (layerSpecification)=>{
-
+  
   let vectorSourceLayer = "public"+"."+layerSpecification.layerNameInDatabase;
   let vectorUrl = vectorServer + vectorSourceLayer + "/{z}/{x}/{y}.pbf";
+  console.log(layerSpecification, "layerSpecification")
   if(map.getSource(layerSpecification.id)==undefined){
     map.addSource(layerSpecification.id, {
         "type": "vector",
@@ -163,17 +183,17 @@ const removeLayerFromMap = (layerId)=>{
 }
 
 const getClickedCoordinate = ()=>{
-
+  
   map.on('click', (e) => {
-    const canvasCoords = [e.point.x, e.point.y];
-    const picked = map.getLayer("cube")?.implementation?.scene.pick(canvasCoords[0], canvasCoords[1]);
-    if (activeMenu.value=='xai'&& picked?.hit == false || picked?.hit ==undefined){
+    //const canvasCoords = [e.point.x, e.point.y];
+    //const picked = map.getLayer("cube")?.implementation?.scene.pick(canvasCoords[0], canvasCoords[1]);
+    if (activeMenu.value=='xai'){
       XAIStore.assignClickedCoordinates({
         clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
       })
-          
     }
   });
+  
 }
 
 const addPulseLayerToMap = (payload) => {
@@ -194,8 +214,97 @@ const toggleCoverageLayerVisibilityWithValue = (layerID, visStatus)=>{
   
   
 }
+const activateBufferTool=()=>{
+    if (drawControl) {
+      map.removeControl(drawControl);
+      drawControl = null;
+    }
+    drawControl = new MaplibreTerradrawControl({
+        modes: ['circle', 'delete'], // Drawing modes to enable
+        open: true, 
+    });
 
+    map.addControl(drawControl, 'bottom-left');
+    const drawInstance = drawControl.getTerraDrawInstance();
+    drawInstance.on('finish', (id) => {
+      // to remove previous buffers
+      let addedBufferIds = drawInstance.getSnapshot()
+      if(addedBufferIds.length> 1){
+        drawInstance.removeFeatures([addedBufferIds[0].id]);
+      }
+      
+      const feature = Object.values(drawInstance._store.store).find(item => item.id === id);
+      const centroid = turf.centroid(feature);
+      const area = turf.area(feature);
+      filterStore.assignBufferData({
+        bufferCenter: centroid.geometry.coordinates,
+        bufferArea: area/1000000,
+        bufferRadius: feature.properties.radiusKilometers,
+        geojson: feature.geometry
+      })
+    });
+    
+ 
+}
+const activatePolygonTool=()=>{
+  if (drawControl) {
+      map.removeControl(drawControl);
+      drawControl = null;
+    }
+  drawControl = new MaplibreTerradrawControl({
+      modes: ['polygon', 'delete'], // Drawing modes to enable
+      open: true, 
+  });
 
+  map.addControl(drawControl, 'bottom-left');
+  const drawInstance = drawControl.getTerraDrawInstance();
+    drawInstance.on('finish', (id) => {
+      // to remove previous buffers
+      let addedPolygonIds = drawInstance.getSnapshot()
+      if(addedPolygonIds.length> 1){
+        drawInstance.removeFeatures([addedPolygonIds[0].id]);
+      }
+      
+      const feature = Object.values(drawInstance._store.store).find(item => item.id === id);
+      const area = turf.area(feature);
+      filterStore.assignPolygonData({
+        polygonArea: area/1000000,
+        geojson: feature.geometry
+      })
+    });
+  
+  
+
+}
+const removeDrawControl = ()=>{
+    map.removeControl(drawControl);
+    drawControl = null
+}
+
+const addGeojsonLayer= (layerSpecification)=>{
+  map.addSource(layerSpecification.id, {
+        'type': 'geojson',
+        'data': layerSpecification.data
+       
+  });
+  let layer = {
+      "id": layerSpecification.id,
+      "source": layerSpecification.id,
+      
+      "type": layerSpecification.type,
+      "paint":  layerSpecification.style,
+      'layout': {}
+  };
+  
+  map.addLayer(layer) 
+}
+const fitBoundsToBBOX = (payload)=>{
+  let bbox = payload.bbox
+  map.fitBounds([
+    [bbox[0], bbox[1]], // [lng, lat] - southwestern corner of the bounds
+    [bbox[2], bbox[3]] // [lng, lat] - northeastern corner of the bounds
+  ]);
+}
 onUnmounted(() => {
       if (map) {
         map.remove();
