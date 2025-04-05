@@ -96,3 +96,35 @@ export async function zonalStatistics (predictorName, bbox) {
     );
     return response;
 }
+
+export async function getMunicipalityNames () {
+    const response = await HTTP.get("/api/get_municipality_names")
+    return response.data;
+}
+
+export async function getTableInstance (municipality) {
+    const response = await HTTP.post("/api/get_table_instance",
+        {
+            "tableName": 'kommunale_gebiete_aoi',
+            "instanceId": municipality.id
+        }
+    )
+    return response.data;
+}
+
+export async function getShapForBuffer(geojson){
+    const response = await HTTP.post("/api/get_shap_bufefr",
+        {
+            "geojson": geojson,
+        }
+    )
+    return response.data;
+}
+export async function getShapForPolygon(geojson){
+    const response = await HTTP.post("/api/get_shap_polygon",
+        {
+            "geojson": geojson,
+        }
+    )
+    return response.data;
+}
