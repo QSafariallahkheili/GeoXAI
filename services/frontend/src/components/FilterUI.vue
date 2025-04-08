@@ -16,146 +16,148 @@
             </v-tab>
            
 
-    </v-tabs>
-    <div v-show="tab=='polygon'">
-        <v-card-text v-if="polygonData">
-            <v-row>
-                <v-col cols="8" class="text-left">
-                   
-                  <span>Area: {{ polygonData?.polygonArea.toFixed(3) }}  &#13218;</span>  
-                </v-col>
-                
-                 <v-col cols="4" class="text-right">
-                    <v-icon
-                        icon="mdi-texture-box"
-                        size="small"
-                    ></v-icon>
-
-                 </v-col>
-               
-            </v-row>
-            <v-row>
-                <v-col cols="12">
-                    <v-btn
-                        @click="applyPolygon"
-                        color="primary"
-                        dark
-                        block
-                        :disabled="polygonData?.polygonArea? false : true"
-                    >
-                        Apply Filter
-                    </v-btn>
-                </v-col>
-            </v-row>
-           
-        </v-card-text>
-        <v-card-text v-else>
-            please draw polygon on the map
-
-        </v-card-text>
-    </div>
-    <div v-show="tab=='buffer'">
-        <v-card-text v-if="bufferData">
-            <v-row>
-                <v-col cols="8" class="text-left">
-                   
-                  <span>Buffer Center: ( {{ bufferData?.bufferCenter[0].toFixed(3) }} , {{ bufferData?.bufferCenter[1].toFixed(3) }} ) </span>  
-                </v-col>
-                
-                 <v-col cols="4" class="text-right">
-                    <v-icon
-                        icon="mdi-map-marker-circle"
-                        size="small"
-                    ></v-icon>
-
-                 </v-col>
-               
-            </v-row>
-            <v-row>
-                <v-col cols="8" class="text-left">
-                   
-                  <span>Buffer Distance: {{ bufferData?.bufferRadius.toFixed(3) }} KM</span>  
-                </v-col>
-                
-                 <v-col cols="4" class="text-right">
-                    <v-icon
-                        icon="mdi-map-marker-distance"
-                        size="small"
-                    ></v-icon>
-
-                 </v-col>
-               
-            </v-row>
-            
-            <v-row>
-                <v-col cols="8" class="text-left">
-                   
-                  <span>Area: {{bufferData?.bufferArea.toFixed(3)}} &#13218;</span>  
-                </v-col>
-                
-                 <v-col cols="4" class="text-right">
-                    <v-icon
-                        icon="mdi-texture-box"
-                        size="small"
-                    ></v-icon>
-
-                 </v-col>
-               
-            </v-row>
-            <v-row>
-                <v-col cols="12">
-                    <v-btn
-                        @click="applyBuffer"
-                        color="primary"
-                        dark
-                        block
-                        :disabled="bufferData?.bufferArea? false : true"
-                    >
-                        Apply Buffer
-                    </v-btn>
-                </v-col>
-            </v-row>
-        </v-card-text>
-        <v-card-text v-else>
-            please draw buffer on the map
-        </v-card-text>
-
-    </div>
-    <div v-show="tab=='municipality'">
-        <v-card-text>
-            <v-row>
-                    <v-col cols="12" >
-                        <v-select
-                            v-model="selectedMunicipality"
-                            :items="municipalityNames"
-                            hide-details
-                            label="Select Municipality"
-                            item-title="name" 
-                            return-object
-                            @update:modelValue="getMunicipality()"
-                        ></v-select>
-                        
-                        
+        </v-tabs>
+        <div v-show="tab=='polygon'">
+            <v-card-text v-if="polygonData">
+                <v-row>
+                    <v-col cols="8" class="text-left">
                     
+                    <span>Area: {{ polygonData?.polygonArea.toFixed(3) }}  &#13218;</span>  
                     </v-col>
-            </v-row>
-            <v-row>
-                <v-col cols="12">
-                    <v-btn
-                        @click="getShapResultsForMunicipality"
-                        color="primary"
-                        dark
-                        block
-                        :disabled="selectedMunicipality? false : true"
-                    >
-                        Apply Filter
-                    </v-btn>
-                </v-col>
-            </v-row>
-           
-        </v-card-text>
-    </div>
-</v-card>
+                    
+                    <v-col cols="4" class="text-right">
+                        <v-icon
+                            icon="mdi-texture-box"
+                            size="small"
+                        ></v-icon>
+
+                    </v-col>
+                
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <v-btn
+                            @click="applyPolygon"
+                            color="rgba(75, 192, 192, 0.8)"
+                            dark
+                            block
+                            style="color: white;"
+                            :disabled="polygonData?.polygonArea? false : true"
+                        >
+                            Apply Filter
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            
+            </v-card-text>
+            <v-card-text v-else>
+                please draw polygon on the map
+
+            </v-card-text>
+        </div>
+        <div v-show="tab=='buffer'">
+            <v-card-text v-if="bufferData">
+                <v-row>
+                    <v-col cols="10" class="text-left">
+                    
+                    <span>Buffer Center: Lng: {{ bufferData?.bufferCenter[0].toFixed(3) }} | Lat: {{ bufferData?.bufferCenter[1].toFixed(3) }} </span>  
+                    </v-col>
+                    
+                    <v-col cols="2" class="text-right">
+                        <v-icon
+                            icon="mdi-map-marker-circle"
+                            size="small"
+                        ></v-icon>
+
+                    </v-col>
+                
+                </v-row>
+                <v-row>
+                    <v-col cols="8" class="text-left">
+                    
+                    <span>Buffer Distance: {{ bufferData?.bufferRadius.toFixed(3) }} KM</span>  
+                    </v-col>
+                    
+                    <v-col cols="4" class="text-right">
+                        <v-icon
+                            icon="mdi-map-marker-distance"
+                            size="small"
+                        ></v-icon>
+
+                    </v-col>
+                
+                </v-row>
+                
+                <v-row>
+                    <v-col cols="8" class="text-left">
+                    
+                    <span>Area: {{bufferData?.bufferArea.toFixed(3)}} &#13218;</span>  
+                    </v-col>
+                    
+                    <v-col cols="4" class="text-right">
+                        <v-icon
+                            icon="mdi-texture-box"
+                            size="small"
+                        ></v-icon>
+
+                    </v-col>
+                
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <v-btn
+                            @click="applyBuffer"
+                            color="rgba(75, 192, 192, 0.8)"
+                            block
+                            style="color:white"
+                            :disabled="bufferData?.bufferArea? false : true"
+                        >
+                            Apply Filter
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-text v-else>
+                please draw buffer on the map
+            </v-card-text>
+
+        </div>
+        <div v-show="tab=='municipality'">
+            <v-card-text>
+                <v-row>
+                        <v-col cols="12" >
+                            <v-select
+                                v-model="selectedMunicipality"
+                                :items="municipalityNames"
+                                hide-details
+                                label="Select Municipality"
+                                item-title="name" 
+                                return-object
+                                @update:modelValue="getMunicipality()"
+                            ></v-select>
+                            
+                            
+                        
+                        </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <v-btn
+                            @click="getShapResultsForMunicipality"
+                            color="rgba(75, 192, 192, 0.8)"
+                            dark
+                            block
+                            style="color: white;"
+                            :disabled="selectedMunicipality? false : true"
+                        >
+                            Apply Filter
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            
+            </v-card-text>
+        </div>
+    </v-card>
 </template>
 
 <script setup>
