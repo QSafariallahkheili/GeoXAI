@@ -1,6 +1,6 @@
 <template>
 <div class="menue-ui">
-    <v-tooltip text="layers" location="top">
+    <!--<v-tooltip text="layers" location="top">
         <template v-slot:activator="{ props }">
             <v-btn 
                 v-bind="props"
@@ -14,7 +14,7 @@
                 </v-icon>
             </v-btn>
         </template>
-    </v-tooltip>
+    </v-tooltip>-->
 
     <v-tooltip text="xai" location="top">
         <template v-slot:activator="{ props }">
