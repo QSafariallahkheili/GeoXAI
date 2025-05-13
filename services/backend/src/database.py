@@ -87,6 +87,27 @@ def get_geojson_data(tablename):
     cur.close()
     conn.close()
     return user
+def get_table_geojson(tablename):
+    conn = connect()
+    cur = conn.cursor()
+  
+    cur.execute("""
+                SELECT json_build_object(
+            'type', 'FeatureCollection',
+            'features', json_agg(
+                json_build_object(
+                    'type', 'Feature',
+                    'geometry', ST_AsGeoJSON(t.geom)::json,
+                    'properties', to_jsonb(t) - 'geom'
+                )
+            )
+        )
+    from "%s" as t
+        ;""" %(tablename))
+    user = cur.fetchall()[0][0]
+    cur.close()
+    conn.close()
+    return user
 
 def get_municipality_names():
     conn = connect()
@@ -190,7 +211,7 @@ def get_shap_per_table_for_buffer(geojson, srid=4326):
 
     sql1 = f"""
         SELECT 
-            AVG(t.ffs) AS value
+            AVG(t.value) AS value
         FROM fire_susceptibility t
         WHERE ST_Intersects(
             t.geom,
