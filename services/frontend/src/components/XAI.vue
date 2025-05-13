@@ -1,5 +1,5 @@
 <template >
-    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addXaiPulseLayer"> </XAILineChart>
+    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addXaiPulseLayer"> </XAILineChart>
           
 </template>
 <script setup>
