@@ -143,7 +143,6 @@
                 <v-row>
                     <v-col cols="12">
                         <v-btn
-                            @click="getShapResultsForMunicipality"
                             color="rgba(75, 192, 192, 0.8)"
                             dark
                             block
