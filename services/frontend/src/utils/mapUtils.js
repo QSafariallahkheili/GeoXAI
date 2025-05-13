@@ -47,3 +47,40 @@ export function addPopupToMap(map, layerId, vectorSourceLayer, selectedFeatureId
         }
     })
 }
+
+
+const tooltip = document.createElement('div');
+tooltip.style.position = 'absolute';
+tooltip.style.zIndex = 1;
+tooltip.style.pointerEvents = 'none';
+document.body.append(tooltip);
+
+export function addDeckglPopupToMap({ object, x, y }, prop1, prop2, prop3) {
+   
+    if (object) {
+      tooltip.style.display = 'block';
+      tooltip.style.left = `${x + 10}px`; // add small offset for cursor
+      tooltip.style.top = `${y + 10}px`;
+      tooltip.style.position = 'absolute';
+      tooltip.style.background = 'rgba(0, 0, 0, 0.6)';
+      tooltip.style.color = '#fff';
+      tooltip.style.padding = '10px';
+      tooltip.style.borderRadius = '8px';
+      tooltip.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+      tooltip.style.pointerEvents = 'none'; // prevents flicker when moving cursor
+
+      const props = object.properties;
+      let html = `
+        <div><strong>${prop1}: </strong> ${props?.[prop1]?.toFixed?.(3) ?? 'N/A'}</div>
+        <div><strong>${prop2}: </strong> ${props?.[prop2]?.toFixed?.(3) ?? 'N/A'}</div>
+        `;
+
+        if (prop3 && props?.[prop3] !== undefined) {
+        html += `<div><strong>${prop3}: </strong> ${props[prop3] ?? 'N/A'}</div>`;
+        }
+
+        tooltip.innerHTML = html;
+    } else {
+      tooltip.style.display = 'none';
+    }
+}
