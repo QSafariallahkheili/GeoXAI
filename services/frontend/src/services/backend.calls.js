@@ -85,6 +85,16 @@ export async function getLocalShapValues (coordinates) {
     );
     return response.data;
 }
+export async function getTableGeojson (tablename) {
+    const response = await HTTP.post(
+        "/api/get_table_geojson",
+        {
+            "tablename": tablename,
+        }
+    );
+    return response.data;
+}
+
 
 export async function zonalStatistics (predictorName, bbox) {
     const response = await HTTP.post(

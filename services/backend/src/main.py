@@ -15,7 +15,8 @@ from .database import (
     get_municipality_names,
     get_single_geom_instance,
     get_shap_per_table_for_municipality,
-    get_shap_per_table_for_buffer
+    get_shap_per_table_for_buffer,
+    get_table_geojson
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -171,6 +172,17 @@ def get_geojson_data_from_db(
     print(tablename)
     geojson = get_geojson_data(tablename)
     return geojson
+
+@app.post("/api/get_table_geojson")
+def get_table_geojson_from_db(
+    request: Request, 
+    table_request: TableRequest,
+):
+    tablename = table_request.tablename
+    print(tablename)
+    geojson = get_table_geojson(tablename)
+    return geojson
+
 
 @app.post("/api/get_zonal_statistics")
 def get_zonal_statistics(
