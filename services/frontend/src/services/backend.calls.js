@@ -2,7 +2,7 @@ import { HTTP } from '../utils/http-call';
 
 export async function getTableNames() {
   try {
-      const response = await HTTP.get("/api");
+      const response = await HTTP.get("/api/get_table_names");
       const transformedData = response.data.map(item => {
           const [name, type, metadata] = item;
           return {

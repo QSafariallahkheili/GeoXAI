@@ -44,7 +44,7 @@ try:
 except Exception as e:
     print("Error loading the Random Forest model:", e)
 
-@app.get("/api/")
+@app.get("/api/get_table_names")
 def home():
     data = get_home_data()
     return data
