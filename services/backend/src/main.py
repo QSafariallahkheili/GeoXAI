@@ -29,7 +29,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080","http://localhost", "http://127.0.0.1:8080", "http://127.0.0.1", "http://geo-xai.fh-potsdam.de:8080", "http://geo-xai.fh-potsdam.de", "http://tv4-geo-xai.innowest-brandenburg.de",  "https://tv4-geo-xai.innowest-brandenburg.de"],
+    allow_origins=["http://localhost:8080","http://localhost", "http://127.0.0.1:8080", "http://127.0.0.1", "http://geo-xai.fh-potsdam.de:8080", "http://geo-xai.fh-potsdam.de", "http://tv4-geo-xai.innowest-brandenburg.de", "https://194.94.235.195", "https://194.94.235.195:8080",  "https://tv4-geo-xai.innowest-brandenburg.de:8080",  "https://tv4-geo-xai.innowest-brandenburg.de"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
