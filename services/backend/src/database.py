@@ -165,7 +165,7 @@ def get_shap_per_table_for_municipality( instanceId):
         }
     sql1 = f"""
             SELECT 
-                AVG(t.ffs) AS value
+                AVG(t.value) AS value
             FROM fire_susceptibility t,
                 (SELECT * FROM kommunale_gebiete_aoi WHERE ogc_fid = %s) AS aoi
             WHERE ST_Intersects(t.geom, aoi.geom)
