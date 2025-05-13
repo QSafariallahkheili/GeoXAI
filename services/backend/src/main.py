@@ -179,7 +179,6 @@ def get_table_geojson_from_db(
     table_request: TableRequest,
 ):
     tablename = table_request.tablename
-    print(tablename)
     geojson = get_table_geojson(tablename)
     return geojson
 
