@@ -48,6 +48,21 @@
             </v-btn>
         </template>
     </v-tooltip>
+    <v-tooltip text="geovis" location="top">
+        <template v-slot:activator="{ props }">
+            <v-btn 
+                v-bind="props"
+                class="ml-2" 
+                v-ripple="{ class: 'primary--text' }"
+                @click="setActiveButton('geovis')"
+                :style="{ color: activeMenu === 'geovis' ? 'blue' : '' }"
+            >
+                <v-icon size="small">
+                    <font-awesome-icon :icon="['fas', 'palette']" />
+                </v-icon>
+            </v-btn>
+        </template>
+    </v-tooltip>
 
 </div>    
 
@@ -61,12 +76,18 @@ import { useAlertStore } from '@/stores/alert'
 const menuStore = useMenuStore();
 const alertStore = useAlertStore()
 
-const emit = defineEmits(["removeLayerFromMap"]);
-
+const emit = defineEmits(["removeLayerFromMap", "addLayerToMap"]);
+let style = ref(null)
+let layerType = ref(null)
 const activeMenu = ref(null);
 
 function setActiveButton(button) {
-    activeMenu.value = button;
+    if(activeMenu.value==button){
+        activeMenu.value = null
+    }
+    else {
+        activeMenu.value = button;
+    }
     menuStore.setActivatedMenu(activeMenu.value)
     if (button==="xai"){
         alertStore.setAlert({
@@ -74,9 +95,28 @@ function setActiveButton(button) {
             timeout: 10000,
             btnColor: "blue"
         })
+        emit("removeLayerFromMap", "grid")
     }
     else if (button==="filter"){
         emit("removeLayerFromMap", "xai-pulse")
+        emit("removeLayerFromMap", "grid")
+    }
+    else if (button==="geovis"){
+        style.value = {
+                'line-width': 1,
+                'line-color': "#808080",
+                'line-opacity': 0.3,
+            
+            }
+            layerType.value = "line"
+            let layerSpecification = {
+                layerNameInDatabase: "grid",
+                id: "grid",
+                style: style,
+                layerType: layerType
+            }
+        emit("addLayerToMap",layerSpecification)
+        emit("removeLayerFromMap", "fire_susceptibility")
     }
     
 }
