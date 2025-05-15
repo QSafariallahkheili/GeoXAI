@@ -6,7 +6,7 @@
     <MenuUI @removeLayerFromMap="removeLayerFromMap" @addLayerToMap="addLayerToMap"></MenuUI>
     <FilterUI v-if="activeMenu=='filter'" @activateBufferTool="activateBufferTool" @addGeojsonLayer="addGeojsonLayer" @fitBoundsToBBOX="fitBoundsToBBOX" @removeLayerFromMap="removeLayerFromMap" @removeDrawControl="removeDrawControl" @activatePolygonTool="activatePolygonTool"> </FilterUI>
     <XAI v-if="activeMenu=='xai' || activeMenu=='filter'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
-    <GeovisUI v-if="activeMenu=='geovis'" @addCircleLayerToMap="addCircleLayerToMap" @addSquareLayerToMap="addSquareLayerToMap" @addLayerToMap="addLayerToMap" @addFuzzyLayerToMap="addFuzzyLayerToMap" @addPositionLayerToMap="addPositionLayerToMap" @addArrowLayerToMap="addArrowLayerToMap" @addCircleLayerWithUncertainty="addCircleLayerWithUncertainty"></GeovisUI>
+    <GeovisUI v-if="activeMenu=='geovis'" @addCircleLayerToMap="addCircleLayerToMap" @addSquareLayerToMap="addSquareLayerToMap" @addLayerToMap="addLayerToMap" @addFuzzyLayerToMap="addFuzzyLayerToMap" @addPositionLayerToMap="addPositionLayerToMap" @addArrowLayerToMap="addArrowLayerToMap" @addCircleLayerWithUncertainty="addCircleLayerWithUncertainty" @addPatternLayerToMap="addPatternLayerToMap"></GeovisUI>
   </div>
   
   <MetadataDialog> </MetadataDialog>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { Map } from 'maplibre-gl';
+import { Map, MercatorCoordinate } from 'maplibre-gl';
 import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
@@ -425,7 +425,7 @@ const addCircleLayerWithUncertainty = (geojson, prop1, prop2, prop3, classes)=>{
         updateTriggers: {
           getUncertainty: [prop3]
         },
-        onClick: (info) => console.log('Clicked:', info.object.properties),
+        onClick: (info) => console.log('Clicked:', info),
         onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2, prop3),
     
   });
@@ -501,10 +501,248 @@ const addSquareLayerToMap = (geojson, prop1,prop2, classes)=>{
         getLineWidth: 0,
         pickable: true,
        
-        onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2)
+        onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2),
     
-  });
-  map.addLayer(customLayer);
+    });
+    map.addLayer(customLayer);
+    
+}
+
+const addPatternLayerToMap = (geojson, prop1,prop2, classes)=>{
+      removeDeckglLayers()
+      function createSquarePolygonFromPoint(center, sizeInMeters) {
+        const [lon, lat] = center;
+
+        // Approximate meters per degree at given latitude
+        const metersPerDegreeLat = 111320;
+        const metersPerDegreeLon = 40075000 * Math.cos(lat * Math.PI / 180) / 360;
+
+        const halfWidthLon = (sizeInMeters / 2) / metersPerDegreeLon;
+        const halfHeightLat = (sizeInMeters / 2) / metersPerDegreeLat;
+
+        return {
+          type: "Polygon",
+          coordinates: [[
+            [lon - halfWidthLon, lat - halfHeightLat],
+            [lon + halfWidthLon, lat - halfHeightLat],
+            [lon + halfWidthLon, lat + halfHeightLat],
+            [lon - halfWidthLon, lat + halfHeightLat],
+            [lon - halfWidthLon, lat - halfHeightLat], // Close the ring
+          ]]
+        };
+      }
+      const squareGeojson = {
+      type: "FeatureCollection",
+      features: geojson.features.map(feature => {
+        const center = feature.geometry.coordinates;
+        const size = feature.properties[prop1+'_d']* (720/1200);
+        if (feature.properties.uncertainty === 0) {
+          feature.properties.uncertainty = 0.0001;
+        }
+        return {
+          type: "Feature",
+          geometry: createSquarePolygonFromPoint(center, size),
+          properties: feature.properties,
+        };
+      })
+    };
+    console.log(squareGeojson, "squareGeojson")
+    const highlightLayer = {
+      id: 'highlight',
+      type: 'custom',
+
+      onAdd(map, gl) {
+        const vertexSource = `#version 300 es
+          uniform mat4 u_matrix;
+
+          in vec2 a_pos;
+          in vec2 a_local;
+          in vec3 a_color;
+
+          out vec2 v_local;
+          out vec3 v_color;
+
+          in float a_uncertainty;
+          out float v_uncertainty;
+
+          void main() {
+              gl_Position = u_matrix * vec4(a_pos, 0.0, 1.0);
+              v_local = a_local;
+              v_color = a_color;
+              v_uncertainty = a_uncertainty;
+          }`;
+
+        const fragmentSource = `#version 300 es
+          precision highp float;
+
+        in vec2 v_local;
+        in vec3 v_color;
+        in float v_uncertainty;
+        out vec4 fragColor;
+
+        void main() {
+    
+           float stripeCount = 10.0;
+            float xNorm = (v_local.x + 1.0) / 2.0;
+            float posInStripe = mod(xNorm * stripeCount, 1.0);
+
+            // Scale stripe width based on uncertainty
+            float u = v_uncertainty;
+            float stripeWidth = mix(1.0, 0.01, u);  // ← clean inversion
+
+            // Color only inside the stripe
+            float isInStripe = step(posInStripe, stripeWidth);
+            //fragColor = vec4(v_color.rgb, isInStripe);
+            if (u == 0.0001) {
+              fragColor = vec4(v_color.rgb, 1.0); // Full color, no stripes
+            } else {
+                fragColor = vec4(v_color.rgb, isInStripe); // Stripe logic
+            }
+            }`;
+
+        // Compile shaders
+        const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vertexSource);
+        gl.compileShader(vertexShader);
+
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, fragmentSource);
+        gl.compileShader(fragmentShader);
+
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vertexShader);
+        gl.attachShader(this.program, fragmentShader);
+        gl.linkProgram(this.program);
+
+        this.aPos = gl.getAttribLocation(this.program, 'a_pos');
+
+        const vertices = [];
+        const localCoords = [];
+        const colors = [];
+        const uncertainties = [];
+
+        squareGeojson.features.forEach(feature => {
+          const uncertainty = feature.properties.uncertainty || 1; 
+          const stripeWidth = Math.min(Math.max(uncertainty, 0), 10); 
+
+          for (let i = 0; i < 4; i++) {
+            uncertainties.push(stripeWidth);
+          }
+          const coords = feature.geometry.coordinates[0];
+          const props = feature.properties;
+          const squareLocal = [
+            [-1, -1],
+            [ 1, -1],
+            [ 1,  1],
+            [-1,  1]
+          ];
+
+          const category = props[prop2];
+          const value5 = JSON.parse(classes); // assuming `classes` is defined outside
+          let color;
+
+          if (category < value5[0]) color = [215, 25, 28];
+          else if (category <= value5[1]) color = [253, 174, 97];
+          else if (category <= value5[2]) color = [255, 255, 191];
+          else if (category <= value5[3]) color = [166, 217, 106];
+          else if (category <= value5[4]) color = [26, 150, 65];
+          else color = [0, 0, 0];
+          
+          coords.slice(0, 4).forEach((coord, i) => {
+            const merc = MercatorCoordinate.fromLngLat({ lng: coord[0], lat: coord[1] });
+            vertices.push(merc.x, merc.y);
+            localCoords.push(...squareLocal[i]);
+            colors.push(...color.map(c => c / 255)); // normalize to [0,1] range
+          });
+        });
+
+
+        this.vertexCount = squareGeojson.features.length;
+
+        this.buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+        // local coord buffer
+        this.localBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.localBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(localCoords), gl.STATIC_DRAW);
+
+        this.colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+        // uncertainty buffer
+        this.uncertaintyBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uncertaintyBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uncertainties), gl.STATIC_DRAW);
+      },
+
+      render(gl, args) {
+        gl.useProgram(this.program);
+
+        // matrix
+        gl.uniformMatrix4fv(
+          gl.getUniformLocation(this.program, 'u_matrix'),
+          false,
+          args.defaultProjectionData.mainMatrix
+        );
+
+        // position buffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.enableVertexAttribArray(this.aPos);
+        gl.vertexAttribPointer(this.aPos, 2, gl.FLOAT, false, 0, 0);
+
+        // color buffer
+        const aColor = gl.getAttribLocation(this.program, 'a_color');
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+        gl.enableVertexAttribArray(aColor);
+        gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+
+        // local coord buffer
+        const aLocal = gl.getAttribLocation(this.program, 'a_local');
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.localBuffer);
+        gl.enableVertexAttribArray(aLocal);
+        gl.vertexAttribPointer(aLocal, 2, gl.FLOAT, false, 0, 0);
+
+        // Bind uncertainty attribute
+        const aUncertainty = gl.getAttribLocation(this.program, 'a_uncertainty');
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uncertaintyBuffer);
+        gl.enableVertexAttribArray(aUncertainty);
+        gl.vertexAttribPointer(aUncertainty, 1, gl.FLOAT, false, 0, 0);
+
+        // draw
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        for (let i = 0; i < this.vertexCount; i++) {
+          gl.drawArrays(gl.TRIANGLE_FAN, i * 4, 4);
+        }
+
+      }
+
+    };
+
+    // add the custom style layer to the map
+    map.addLayer(highlightLayer);
+    map.on('click', (e) => {
+      const point = turf.point([e.lngLat.lng, e.lngLat.lat]);
+      const feature = squareGeojson.features.find(f =>
+        turf.booleanPointInPolygon(point, f)
+      );
+      let feat
+        feat ={
+          object:{
+            "properties": feature?.properties,
+          },
+          
+          x: e.point.x,
+          y: e.point.y
+        }
+
+        addDeckglPopupToMap(feat, prop1, prop2, 'uncertainty')
+    });
+
     
 
 }
@@ -746,6 +984,7 @@ map.addLayer(sceneLayer);
 const removeDeckglLayers = ()=>{
   console.log("remove")
   let deckglLayers = ['glow-points', 'ffs-uncertainty-dot-layer', 'scatterplot', 'scatterplotCenter',  'arrow-layer', 'hexagon']
+  let mapboxLayers = ['highlight']
   if (mapboxOverlayLayer.value ) {
     map.removeControl(mapboxOverlayLayer.value);
     mapboxOverlayLayer.value = null;
@@ -754,6 +993,11 @@ const removeDeckglLayers = ()=>{
     if (map.getLayer(deckglLayers[i])!== undefined) {
       map.removeLayer(deckglLayers[i])
       map.__deck.setProps({ layers: [] })
+    }
+  }
+  for (let i = 0; i < mapboxLayers.length; i++) {
+    if (map.getLayer(mapboxLayers[i])!== undefined) {
+      map.removeLayer(mapboxLayers[i])
     }
   }
 }

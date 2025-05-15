@@ -57,7 +57,7 @@ document.body.append(tooltip);
 
 export function addDeckglPopupToMap({ object, x, y }, prop1, prop2, prop3) {
    
-    if (object) {
+    if (object?.properties) {
       tooltip.style.display = 'block';
       tooltip.style.left = `${x + 10}px`; // add small offset for cursor
       tooltip.style.top = `${y + 10}px`;

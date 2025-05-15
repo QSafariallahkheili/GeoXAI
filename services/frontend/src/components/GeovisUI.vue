@@ -113,7 +113,7 @@ import { ref, defineEmits } from 'vue'
 import { useMenuStore } from '../stores/menu'
 import { storeToRefs } from 'pinia'
 import {getTableGeojson} from '../services/backend.calls'
-const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap"]);
+const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap"]);
 
 
 let { activeMenu } = storeToRefs(useMenuStore())
@@ -121,7 +121,9 @@ let selectedStyle = ref(null)
 let geovisStyles = ref([
     { name: 'Circular symbol', value: 'circle', symbol: 'circle' },
     { name: 'Square symbol', value: 'square', symbol: 'square' },
-    { name: 'Bivariate', value: 'bivariate', symbol: 'bivariate' }
+    { name: 'Bivariate', value: 'bivariate', symbol: 'bivariate' },
+    { name: 'Pattern', value: 'pattern', symbol: 'pattern' },
+
 
 ])
 let geovisStylesFFS = ref([
@@ -255,6 +257,10 @@ const applyStyle = ()=>{
     }
     else if (selectedStyle.value.value=='arrow'){
         emit("addArrowLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, shapClassesForArrow.value)
+
+    }
+    else if(selectedStyle.value.value=='pattern'){
+        emit("addPatternLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
 
     }
 }
