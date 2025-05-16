@@ -190,7 +190,7 @@ export function addDeckglFuzzyLayerToMap (geojson, prop1, prop2, map){
     });
     map.addLayer(customLayer);
     
-};
+}
 
 export function addDeckglPositionLayerToMap (geojson, prop1, prop2, map){
   // 5-class YlOrRd from colorbrewer
