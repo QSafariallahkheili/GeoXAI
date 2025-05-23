@@ -6,7 +6,15 @@ export const useMapLegendStore = defineStore ({
         minMax: null,
         classIntervalsAndColor: null,
         rasterLegendUrl: null,
-        rasterLegendTitle: null
+        rasterLegendTitle: null,
+        activatedGeovisStyle: null,
+        bivariateColorpalette: {
+            'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
+            'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
+           'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
+        },
+        firstProperties: null,
+        secondProperties: null,
     }),
     actions: {
         assignClassificationValues(data) {

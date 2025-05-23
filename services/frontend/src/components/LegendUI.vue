@@ -42,17 +42,72 @@
                  <img :src="rasterLegendUrl" alt="Legend" />
             </div>
         </v-card-item>
+        <v-card-item  v-if="activatedGeovisStyle === 'bivariate'">
+            <div class="bivariate-legend-container">
+                <span  style="text-orientation: mixed;  writing-mode: vertical-rl; "> 
+                        
+                       {{firstProperties }}
+                </span>
+                    
+                <div class="bivariate-y-axis">
+                    <span>High</span>
+                    <span style="font-weight: bold; font-size: 1.5rem;">&uarr;</span>
+                    <span>Low</span>
+                        
+                 </div>
+                    
+                    
+
+                <!-- Legend Grid -->
+                <div class="bivariate-legend">
+                
+                    <div class="bivariate-legend-grid">
+                        <div
+                            v-for="(color, index) in bivariateColorpalette"
+                            :key="index"
+                            :id="'bivariate'+index"
+                            :style="{ backgroundColor: color }"
+                            class="bivariate-legend-cell"
+                        >
+                        <!--<span class="bivariate-legend-label">{{ key.replace('_', ' / ') }}</span>-->
+                        </div>
+                    </div>
+
+                    <!-- X-axis Labels and Arrow -->
+                    <div class="bivariate-x-axis">
+                        <span>Low</span>
+                        
+                        <span style="font-weight: bold; font-size: 1.5rem;">&rarr;</span>
+                        
+                        <span>High</span>
+                    </div>
+                    <span> 
+                    
+                    {{ secondProperties }}
+                    </span>
+                    
+                
+                    
+                </div>
+            </div>
+        </v-card-item>
+        
     </v-card>
 </template>
 <script setup>
+import {ref} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMapLegendStore } from '../stores/mapLegend'
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import featureMetadata from '../assets/featureMetadata'
 
 const metadataDialogStore = useMetadataDialogStore();
-let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle} = storeToRefs(useMapLegendStore())
-
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, secondProperties} = storeToRefs(useMapLegendStore())
+let  bivariateColorpalette= ref({
+             'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
+             'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
+            'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
+        }) 
 const showMetadata = (featureName) =>{
     metadataDialogStore.assignMetadata(featureMetadata[featureName].metadata, featureName)
 
@@ -96,6 +151,68 @@ const showMetadata = (featureName) =>{
     left: 300px;
     white-space: normal;
     justify-content: center;
+    font-size: 0.7rem;
+}
+.bivariate-legend-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bivariate-legend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bivariate-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 50px); /* 3 columns */
+  grid-template-rows: repeat(3, 50px); /* 3 rows */
+  gap: 0px;
+}
+
+.bivariate-legend-cell {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bivariate-legend-label {
+  font-size: 0.8rem;
+  color: #333;
+  text-align: center;
+}
+
+/* X-axis Labels and Arrow */
+.bivariate-x-axis {
+  display: flex;
+  justify-content: space-between;
+  width: 150px; /* To match the width of the grid */
+  margin-top: 5px;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+/* Y-axis Labels and Arrow */
+.bivariate-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 150px; /* To match the height of the grid */
+  margin-right: 5px;
+  margin-bottom: 15px;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.label-container {
+    display: flex;
+    flex-direction: columnrow; /* Horizontal layout */
+    gap: 30px; /* Optional: space between items */
+    align-items: center; /* Align items vertically in the center */
     font-size: 0.7rem;
 }
 

@@ -113,6 +113,8 @@ import { ref, defineEmits } from 'vue'
 import { useMenuStore } from '../stores/menu'
 import { storeToRefs } from 'pinia'
 import {getTableGeojson} from '../services/backend.calls'
+import { useMapLegendStore } from '../stores/mapLegend'
+let {activatedGeovisStyle, firstProperties, secondProperties} = storeToRefs(useMapLegendStore())
 const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap"]);
 
 
@@ -209,13 +211,13 @@ const applyStyle = ()=>{
         }
         //emit("addCircleLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
         emit("addCircleLayerWithUncertainty", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, uncertaintyProp, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'] )
+         activatedGeovisStyle.value = 'circle'
     }
     else if (selectedStyle.value.value=='square'){
         emit("addSquareLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
     }
     else if (selectedStyle.value.value=='bivariate'){
         let matchExpression = []
-        console.log(bivariateColorpalette.value)
         matchExpression = ['match', ['get', 'id']];
         for (const row of selectedFeatureGeojson.value.features) {
             const class1 = row.properties[selectedfeatureProperties1.value.value+'3']; // First dataset
@@ -245,6 +247,9 @@ const applyStyle = ()=>{
                 layerType: layerType
             }
         emit("addLayerToMap",layerSpecification)
+        activatedGeovisStyle.value = 'bivariate'
+        firstProperties.value=selectedfeatureProperties1.value.name
+        secondProperties.value=selectedfeatureProperties2.value.name
         //emit("setLayerPaintProperty",'grid', 'fill-color', matchExpression)
     }
     else if(selectedStyle.value.value=='fuzzy'){
