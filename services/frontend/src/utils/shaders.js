@@ -74,9 +74,18 @@ export class CustomScatterplotLayer extends ScatterplotLayer {
           // Modify the color output: apply radial fade + attribute-based alpha
           'fs:DECKGL_FILTER_COLOR': `
             float dist = length(vUV);
-            float fade = smoothstep((1.0-vUncertainty), 1.0, dist);
-            color.a *= (1.0 - fade);
-            color = vec4(color.rgb, color.a);
+
+// Define how much thickness to preserve for the outline
+float outlineThreshold = 0.98;
+
+// Edge area is everything from outlineThreshold to 1.0
+float isEdge = smoothstep(outlineThreshold, 1.0, dist);
+
+// Now apply the fade only to the *non-edge* (interior)
+float fade = smoothstep((1.0 - vUncertainty), 1.0, dist);
+
+// Combine: fade the inner area, but preserve the edge
+color.a *= mix(1.0 - fade, 1.0, isEdge);
 
           `
         };

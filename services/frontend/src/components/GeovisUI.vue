@@ -1,5 +1,5 @@
 <template>
-    <v-card class="geovis-ui" v-show="activeMenu=='geovis'" width="400" max-height="400">
+    <v-card class="geovis-ui" v-show="activeMenu=='geovis'" width="400" max-height="900">
         <div >
             <v-card-text>
                 <v-row>
@@ -52,6 +52,75 @@
                     </v-col>
                     <v-col cols="6">
                         <v-select
+                                v-model="selectedVisualVariable1"
+                                :items="visualVariables"
+                                hide-details
+                                label="1st vis variable"
+                                item-title="name" 
+                                return-object
+                                variant="outlined"
+                                :disabled="featureRetrieved == false? true : false"
+                            ></v-select>
+
+                 
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="6" v-if="selectedVisualVariable1?.value!==null && secondPropertiesAllowed==false">
+                       <v-btn :disabled="selectedVisualVariable1?.value==null?true:false" variant="outlined" prepend-icon="mdi-plus-circle" @click="secondPropertiesAllowed=true">
+                        <template v-slot:prepend>
+                            <v-icon color="success" ></v-icon>
+                        </template>
+                        add variable
+                        </v-btn>
+
+                    </v-col>
+                </v-row>
+                <v-row v-if="secondPropertiesAllowed==true">
+                    <v-col cols="6">
+                        <v-select
+                                v-model="selectedfeatureProperties2"
+                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
+                                hide-details
+                                label="1st variable"
+                                item-title="name" 
+                                return-object
+                                round
+                                variant="outlined"
+                                :disabled="featureRetrieved == false? true : false"
+                            ></v-select>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-select
+                                v-model="selectedVisualVariable2"
+                                :items="visualVariables"
+                                hide-details
+                                label="2nd vis variable"
+                                item-title="name" 
+                                return-object
+                                variant="outlined"
+                                :disabled="featureRetrieved == false? true : false"
+                            ></v-select>
+
+                 
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="6">
+                        <v-select
+                                v-model="selectedfeatureProperties1"
+                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
+                                hide-details
+                                label="1st variable"
+                                item-title="name" 
+                                return-object
+                                round
+                                variant="outlined"
+                                :disabled="featureRetrieved == false? true : false"
+                            ></v-select>
+                    </v-col>
+                    <v-col cols="6" v-if="selectedUncertaintyStyle?.value==null || secondPropertiesAllowed==true">
+                        <v-select
                                 v-model="selectedfeatureProperties2"
                                 :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
                                 hide-details
@@ -61,6 +130,15 @@
                                 variant="outlined"
                                 :disabled="featureRetrieved == false? true : false"
                             ></v-select>
+
+                    </v-col>
+                    <v-col cols="6" v-if="selectedUncertaintyStyle?.value!=null && secondPropertiesAllowed==false">
+                       <v-btn variant="outlined" prepend-icon="mdi-plus-circle" @click="secondPropertiesAllowed=true">
+                        <template v-slot:prepend>
+                            <v-icon color="success"></v-icon>
+                        </template>
+                        add variable
+                        </v-btn>
 
                     </v-col>
                 </v-row>
@@ -80,14 +158,23 @@
                             ></v-select>
                     </v-col>
                 </v-row>
-                <v-row v-if="selectedStyle?.value=='circle'">
-                    <v-checkbox
-                        v-model="uncertainty"
-                        hide-details
-                        class="ml-1"
-                        :label="`Uncertainty: ${uncertainty.toString()}`"
-                    ></v-checkbox>
+
+                <v-row v-if="relatedUncertaintyStyles.length > 0">
+                        <v-col cols="12" >
+                            <v-select
+                                v-model="selectedUncertaintyStyle"
+                                :items="relatedUncertaintyStyles"
+                                hide-details
+                                label="Select Uncertainty Style"
+                                item-title="name" 
+                                return-object
+                                variant="outlined"
+                            ></v-select>
+                            
+                        
+                        </v-col>
                 </v-row>
+
                 <v-row>
                     <v-col cols="12">
                         <v-btn
@@ -102,6 +189,73 @@
                         </v-btn>
                     </v-col>
                 </v-row>
+               
+                <v-row v-if="selectedColorPalette" no-gutters style="" class="d-flex mt-4 mb-4">
+                    <v-col cols="12" sm="2" class=" ">
+                        <div class="v-label" >color palette</div>
+                    </v-col>
+                    <v-col cols="12" sm="9" class="d-flex justify-end align-center">
+                        <v-menu :close-on-content-click="true"  location="start">
+                            <template v-slot:activator="{ props }">
+                                <span
+                                    v-for="(colorItem, j) in selectedColorPalette.colors"
+                                    :key="j"
+                                    v-bind="props"
+                                    :style="{
+                                        backgroundColor: colorItem,
+                                        width: '36px',
+                                        height: '12px',
+                                        display: 'inline-block',
+                                        margin: '0px',
+                                        cursor: 'pointer'
+                                    }"
+                                ></span>
+                            </template>
+                            <v-list style="max-height:300px" v-if="selectedfeatureProperties1?.value=='value'">
+                                <v-list-item  v-for="([, item], i) in Object.entries(colorbrewer.default.schemeGroups.sequential).filter(([key]) => key !== 'schemeGroups')"  :key="i" >
+                                        <div @click="assignColorPalette(item, colorbrewer.default[item][5])">
+                                            
+                                            <span
+                                                v-for="(colorItem, j) in (colorbrewer.default[item][5])"
+                                                :key="j"
+                                                :style="{
+                                                    backgroundColor: colorItem,
+                                                    width: '30px',
+                                                    height: '20px',
+                                                    display: 'inline-block',
+                                                    margin: '0px',
+                                                    cursor: 'pointer'
+                                                }"
+                                            ></span>
+                                        </div>
+                                        
+                                </v-list-item>
+                            </v-list>
+                            <v-list v-else style="max-height:300px" >
+                                <v-list-item  v-for="([, item], i) in Object.entries(colorbrewer.default.schemeGroups.diverging).filter(([key]) => key !== 'schemeGroups')"  :key="i" >
+                                        <div @click="assignColorPalette(i, colorbrewer.default[item][5])">
+                                            
+                                            <span
+                                                v-for="(colorItem, j) in (colorbrewer.default[item][5])"
+                                                :key="j"
+                                                :style="{
+                                                    backgroundColor: colorItem,
+                                                    width: '30px',
+                                                    height: '20px',
+                                                    display: 'inline-block',
+                                                    margin: '0px',
+                                                    cursor: 'pointer'
+                                                }"
+                                            ></span>
+                                        </div>
+                                        
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    
+                    </v-col>
+
+                </v-row>
             
             </v-card-text>
         </div>
@@ -109,13 +263,15 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { ref, defineEmits, computed } from 'vue'
 import { useMenuStore } from '../stores/menu'
 import { storeToRefs } from 'pinia'
 import {getTableGeojson} from '../services/backend.calls'
 import { useMapLegendStore } from '../stores/mapLegend'
-let {activatedGeovisStyle, firstProperties, secondProperties} = storeToRefs(useMapLegendStore())
-const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap"]);
+import * as colorbrewer from 'colorbrewer';
+
+let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle} = storeToRefs(useMapLegendStore())
+const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap", "addCircleLayerWithInkUncertainty", "addCircleLayerWithInkUncertaintyOneProp", "addFuzzyLayerWithThreePropToMap", "addArrowLayerWithTwoPropToMap", "addCustomBorderLayerToMap", "addCustomMapboxGrainNoiseLayerToMap"]);
 
 
 let { activeMenu } = storeToRefs(useMenuStore())
@@ -124,10 +280,21 @@ let geovisStyles = ref([
     { name: 'Circular symbol', value: 'circle', symbol: 'circle' },
     { name: 'Square symbol', value: 'square', symbol: 'square' },
     { name: 'Bivariate', value: 'bivariate', symbol: 'bivariate' },
-    { name: 'Pattern', value: 'pattern', symbol: 'pattern' },
-
+    { name: 'Arrow', value: 'arrow', symbol: 'arrow' },
 
 ])
+let uncertaintyStyles = ref([
+    { name: 'Pattern Width', value: 'pattern_width'},
+    { name: 'Pattern Orientation', value: 'pattern_orientation'},
+    { name: 'Fuzzy', value: 'fuzzy'},
+    { name: 'Ink', value: 'ink'},
+    { name: 'Position', value: 'position'},
+    { name: 'Orientation', value: 'orientation'},
+    { name: 'Noise With Line Width', value: 'noise_with_line_width'},
+    { name: 'Noise With Grain Size', value: 'noise_with_grain_size'},
+    
+])
+let selectedUncertaintyStyle = ref(null)
 let geovisStylesFFS = ref([
     { name: 'Fuzzy', value: 'fuzzy' },
     { name: 'Position', value: 'position' },
@@ -173,7 +340,29 @@ let bivariateColorpalette = ref({
 let style = ref(null)
 let layerType = ref(null)
 let shapClassesForArrow= ref(null)
-let uncertainty = ref(false)
+let secondPropertiesAllowed = ref(false)
+let visualVariables = ref([
+    { name: 'Color', value: 'color' },
+    { name: 'Size', value: 'size' },
+]);
+let selectedVisualVariable1 = ref(null)
+let selectedVisualVariable2 = ref(null)
+const relatedUncertaintyStyles = computed(() => {
+  const styleMap = {
+    circle: ['fuzzy', 'ink', 'position'],
+    square: ['pattern_width', 'pattern_orientation'],
+    arrow: ['orientation'],
+    bivariate: ['noise_with_line_width', 'noise_with_grain_size']
+  };
+
+  const selected = selectedStyle.value?.value;
+  const allowedValues = styleMap[selected] || [];
+
+  return uncertaintyStyles.value.filter(style =>
+    allowedValues.includes(style.value)
+  );
+});
+
 const getPredictor = async() => {
    
     featureRetrieved.value = false
@@ -190,7 +379,6 @@ const getShapForPredictor = async() => {
     feature.features.forEach(feature => {
         shapMap[feature.properties.id] = feature.properties.shap;
     });
-    console.log(shapMap, "shapMap")
     selectedFeatureGeojson.value.features.forEach(feature => {
         //console.log(feature.properties, "feature.properties")
     const id = feature.properties.id;
@@ -201,21 +389,99 @@ const getShapForPredictor = async() => {
     featureRetrieved.value = true
 }
 const applyStyle = ()=>{
+    uncertaintyStyle.value=selectedUncertaintyStyle.value?.value
     if (selectedStyle.value.value=='circle'){
-        let uncertaintyProp
-        if (uncertainty.value==true){
-            uncertaintyProp = "uncertainty"
+        if (selectedUncertaintyStyle.value?.value=='ink'){
+            if (secondPropertiesAllowed.value==true){
+                emit("addCircleLayerWithInkUncertainty", 
+                    selectedFeatureGeojson.value, 
+                    selectedfeatureProperties1.value.value, 
+                    selectedfeatureProperties2.value.value, 
+                    'uncertainty', 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                    selectedVisualVariable1.value.value,
+                    selectedVisualVariable2.value.value
+                )
+
+            }
+            else {
+                emit("addCircleLayerWithInkUncertaintyOneProp", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                'uncertainty',
+                selectedVisualVariable1.value.value,
+                )
+            }
+        }
+        else if(selectedUncertaintyStyle.value?.value=='fuzzy'){
+            if(secondPropertiesAllowed.value==true){
+                emit("addFuzzyLayerWithThreePropToMap", 
+                    selectedFeatureGeojson.value, 
+                    selectedfeatureProperties1.value.value, 
+                    selectedfeatureProperties2.value.value, 
+                    'uncertainty', 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+                )
+            }
+            else {
+                emit("addFuzzyLayerToMap", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                'uncertainty')
+                
+            }
+
+        }
+        else if (selectedUncertaintyStyle.value?.value=='position'){
+            emit("addPositionLayerToMap", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                'uncertainty',
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+            )
+            
         }
         else {
-            uncertaintyProp = null
+             emit("addCircleLayerToMap", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                selectedfeatureProperties2.value.value, 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                selectedVisualVariable1.value.value,
+                selectedVisualVariable2.value.value
+            )
+
         }
-        //emit("addCircleLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
-        emit("addCircleLayerWithUncertainty", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, uncertaintyProp, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'] )
-         activatedGeovisStyle.value = 'circle'
+        activatedGeovisStyle.value = 'circle'
+        firstProperties.value=selectedfeatureProperties1.value.name
+        firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
     }
     else if (selectedStyle.value.value=='square'){
-        emit("addSquareLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
+        if (selectedUncertaintyStyle.value?.value=='pattern_width'){
+            console.log("apply pattern width")
+            emit("addPatternLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
+        }
+        else if(selectedUncertaintyStyle.value?.value=='pattern_orientation'){
+            emit("addPatternLayerWithOrientationToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value,  'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+        }
+        
+
+        else {
+
+            emit("addSquareLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+        }
+        activatedGeovisStyle.value = 'square'
+        firstProperties.value=selectedfeatureProperties1.value.name
+        firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
     }
+   
     else if (selectedStyle.value.value=='bivariate'){
         let matchExpression = []
         matchExpression = ['match', ['get', 'id']];
@@ -251,6 +517,15 @@ const applyStyle = ()=>{
         firstProperties.value=selectedfeatureProperties1.value.name
         secondProperties.value=selectedfeatureProperties2.value.name
         //emit("setLayerPaintProperty",'grid', 'fill-color', matchExpression)
+        if (selectedUncertaintyStyle.value?.value=='noise_with_line_width'){
+            emit("addCustomMapboxBorderLayerToMap",  selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
+        }
+        else if(selectedUncertaintyStyle.value?.value=='noise_with_grain_size'){
+            emit("addCustomMapboxGrainNoiseLayerToMap",  selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
+        }
+
     }
     else if(selectedStyle.value.value=='fuzzy'){
         emit("addFuzzyLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value)
@@ -261,7 +536,29 @@ const applyStyle = ()=>{
 
     }
     else if (selectedStyle.value.value=='arrow'){
-        emit("addArrowLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, shapClassesForArrow.value)
+        if (selectedUncertaintyStyle.value?.value=='orientation'){
+            if(secondPropertiesAllowed.value==true){
+                emit("addArrowLayerWithThreePropToMap", 
+                    selectedFeatureGeojson.value, 
+                    selectedfeatureProperties1.value.value, 
+                    selectedfeatureProperties2.value.value, 
+                    'uncertainty', 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'], 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5']
+                )
+            }
+            else {
+                emit("addArrowLayerWithTwoPropToMap",
+                    selectedFeatureGeojson.value, 
+                    selectedfeatureProperties1.value.value, 
+                    'uncertainty', 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'], 
+                )
+            }
+           
+        }
+        
+        
 
     }
     else if(selectedStyle.value.value=='pattern'){
@@ -269,6 +566,27 @@ const applyStyle = ()=>{
 
     }
 }
+const assignColorPalette = (item, palette) => {
+    useMapLegendStore().assignColorPalette({name: item, colors: palette});
+    applyStyle()
+    /*if (selectedStyle.value.value==='circle'){
+       
+        if (selectedUncertaintyStyle.value?.value=='ink'){
+            emit("addCircleLayerWithInkUncertainty", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'] )
+        }
+        else {
+             emit("addCircleLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
+        }
+        activatedGeovisStyle.value = 'circle'
+    }
+    else if (selectedStyle.value.value=='square'){
+        emit("addSquareLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+    }*/
+   
+}
+
+
 </script>
 
 <style lang="scss" scoped>
