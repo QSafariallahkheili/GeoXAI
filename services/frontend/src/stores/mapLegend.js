@@ -14,7 +14,10 @@ export const useMapLegendStore = defineStore ({
            'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
         },
         firstProperties: null,
+        firstPropertiesClassIntervals: null,
         secondProperties: null,
+        selectedColorPalette: null,
+        uncertaintyStyle: null,
     }),
     actions: {
         assignClassificationValues(data) {
@@ -32,6 +35,9 @@ export const useMapLegendStore = defineStore ({
                 this.rasterLegendTitle = null
             }
             
+        },
+        assignColorPalette(colorPalette) {
+            this.selectedColorPalette = colorPalette
         }
        
     }
