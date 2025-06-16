@@ -91,6 +91,78 @@
                 </div>
             </div>
         </v-card-item>
+
+         <!-- Legend for fuzzy circle uncertainty -->
+        <v-card-item style="font-size: 0.7rem;"  v-if="activatedGeovisStyle === 'circle' && uncertaintyStyle === 'fuzzy'">
+            <div class="legend-item mr-1">
+                <div class="fuzzy-circle level-very-low"></div>
+                <span>Very Low</span>
+            </div>
+            <div class="legend-item mr-1">
+                <div class="fuzzy-circle level-low"></div>
+                <span>Low</span>
+            </div>
+            <div class="legend-item mr-1">
+                <div class="fuzzy-circle level-medium"></div>
+                <span>Medium</span>
+            </div>
+            <div class="legend-item mr-1">
+                <div class="fuzzy-circle level-high"></div>
+                <span>High</span>
+            </div>
+            <div class="legend-item">
+                <div class="fuzzy-circle level-very-high"></div>
+                <span>Very High</span>
+            </div>
+            <div class="font-weight-bold">
+                Uncertainty
+            </div>
+            
+        </v-card-item>
+        <!-- Legend for Circle position uncertainty -->
+        <v-card-item v-if="activatedGeovisStyle === 'circle' && uncertaintyStyle === 'position'">
+            <div class="circle">
+                <div class="point center"></div>
+                <div class="label center-label">Certain</div>
+                <div class="point edge"></div>
+                <div class="label edge-label">Uncertain</div>
+                <div class="arrow"></div>
+                </div>
+                <div class="font-weight-bold">
+                Uncertainty
+                </div>
+        </v-card-item>
+        <!-- Legend for Circle and Square styles that applies the first selected variable always mapped on color -->
+        <v-card-item v-if="activatedGeovisStyle === 'circle' || activatedGeovisStyle === 'square'">
+           
+            <div class="legend-item">
+                <div class="color-strip strip1"  :style="{ backgroundColor: selectedColorPalette.colors[0]}"></div>
+                <div class="legend-label">{{ firstPropertiesClassIntervals[0].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip2" :style="{ backgroundColor: selectedColorPalette.colors[1]}"></div>
+                <div class="legend-label">{{ firstPropertiesClassIntervals[1].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip3" :style="{ backgroundColor: selectedColorPalette.colors[2]}"></div>
+                <div class="legend-label">{{ firstPropertiesClassIntervals[2].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip4" :style="{ backgroundColor: selectedColorPalette.colors[3]}"></div>
+                <div class="legend-label">{{ firstPropertiesClassIntervals[3].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip5" :style="{ backgroundColor: selectedColorPalette.colors[4]}"></div>
+                <div class="legend-label">{{ firstPropertiesClassIntervals[4].toFixed(2) }}</div>
+           
+            </div>
+            <div class="mb-0 font-weight-bold">
+                {{firstProperties}}    
+            </div>
+        </v-card-item>
+
+      
+
         
     </v-card>
 </template>
@@ -102,7 +174,7 @@ import { useMetadataDialogStore } from '../stores/metadataDialog'
 import featureMetadata from '../assets/featureMetadata'
 
 const metadataDialogStore = useMetadataDialogStore();
-let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, secondProperties} = storeToRefs(useMapLegendStore())
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
              'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
              'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
@@ -138,6 +210,7 @@ const showMetadata = (featureName) =>{
 
 .legend-item {
     display: inline-block; 
+
   
 }
 
@@ -216,4 +289,107 @@ const showMetadata = (featureName) =>{
     font-size: 0.7rem;
 }
 
+.circle {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin-left: 32%;
+  }
+
+.point {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background-color: red;
+  border-radius: 50%;
+}
+
+.center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.edge {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(225deg) translateX(50px);
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 1.5px;
+  background-color: rgb(14, 8, 8);
+  transform-origin: left center;
+  transform: rotate(225deg);
+}
+
+.arrow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid rgb(11, 11, 11);
+}
+.label {
+  position: absolute;
+  color: black;
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+.center-label {
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -150%); /* above center point */
+}
+
+.edge-label {
+  top: 40%;
+  left: 10%;
+  transform: rotate(225deg) translateX(65px) rotate(-225deg); /* follow arrow direction */
+}
+
+
+
+.fuzzy-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, black 0%, transparent 80%);
+}
+
+.level-very-low {
+  background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%);
+}
+
+/* Low Uncertainty — small fade */
+.level-low {
+  background: radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+/* Medium Uncertainty — moderate fade */
+.level-medium {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.8) 30%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+/* High Uncertainty — noticeable fuzzy edge */
+.level-high {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.6) 20%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Very High Uncertainty — almost invisible center */
+.level-very-high {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 10%, rgba(0, 0, 0, 0) 100%);
+}
 </style>
