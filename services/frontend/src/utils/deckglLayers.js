@@ -769,6 +769,8 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
   let colorVariable
   let classForRadius
   let classesForColor
+  let bivariateColorVariable1
+  let bivariateColorVariable2
   if(visVar1=='color' && visVar2=='size'){
     colorVariable= prop1;
     radiusVariable= prop2;
@@ -783,78 +785,127 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
     classForRadius = classes1;
     classesForColor = classes;
   }
+  else if(visVar1=='color' && visVar2=='color'){
+    bivariateColorVariable1 = prop1;
+    bivariateColorVariable2 = prop2;
+  }
+
   let colorPalette = null;
+  let colorPaletteName
+
   if (useMapLegendStore().selectedColorPalette!==null) {
     colorPalette = useMapLegendStore().selectedColorPalette.colors;
   }
   else {
-    let colorPaletteName
     if (colorVariable== 'value'){
       colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
     }
-    else{
+    else if(colorVariable== 'shap'){
       colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
     }
      colorPalette = colorbrewer.default[colorPaletteName][5];
     useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   }
+      console.log(radiusVariable, "radiusVariable")
+        console.log( bivariateColorVariable1, bivariateColorVariable2,"bivar")
  let customLayerr = new MapboxLayer({
    id: 'fuzzy-layer-three-props',
    type: CustomScatterplotLayer,
    data: [...geojson.features],
    getPosition: d => d.geometry.coordinates,
    getRadius: d => {
-          const category = d.properties[radiusVariable];
-          const value5 = JSON.parse(classForRadius)
-          if(category<value5[0]){
-            return 150 * (362/1200)
-          }
-          else if(category>value5[0] && category<=value5[1]){
-            return 400 * (362/1200)
-          }
-          else if(category>value5[1] && category<=value5[2]){
-            return 600 * (362/1200)
-          }
-          else if(category>value5[2] && category<=value5[3]){
-            return 900 * (362/1200)
-          }
-          else if(category>value5[3] && category<=value5[4]){
-            return 1200 * (362/1200)
-          }
-          else {
-            return 1200 * (362/1200)
-          }
+      if(radiusVariable!==undefined){
+        const category = d.properties[radiusVariable];
+        const value5 = JSON.parse(classForRadius)
+        if(category<value5[0]){
+          return 150 * (362/1200)
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          return 400 * (362/1200)
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          return 600 * (362/1200)
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          return 900 * (362/1200)
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          return 1200 * (362/1200)
+        }
+        else {
+          return 1200 * (362/1200)
+        }
+
+      }
+
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+        return 1200 * (362/1200)
+      }   
           
-        },
+    },
    radiusUnits: 'meters',
    getFillColor: d => {
-          const category = d.properties[colorVariable];
-          //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-          const value5 = JSON.parse(classesForColor)
-          if(category<value5[0]){
-            //return [215,25,28]; 
-            return hexToRgb(colorPalette[0]);
-          }
-          else if(category>value5[0] && category<=value5[1]){
-            //return [253,174,97]; 
-            return hexToRgb(colorPalette[1]);
-          }
-          else if(category>value5[1] && category<=value5[2]){
-            // return [255,255,191]; 
-            return hexToRgb(colorPalette[2]);
-          }
-          else if(category>value5[2] && category<=value5[3]){
-            //return [166,217,106];
-            return hexToRgb(colorPalette[3]);
-          }
-          else if(category>value5[3] && category<=value5[4]){
-            //return [26,150,65];
-            return hexToRgb(colorPalette[4]);
-          }
-          else {
-            return [0, 0, 0]; // black
-          }
-        },
+      if(colorVariable!==undefined){
+        const category = d.properties[colorVariable];
+        //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+        const value5 = JSON.parse(classesForColor)
+        if(category<value5[0]){
+          //return [215,25,28]; 
+          return hexToRgb(colorPalette[0]);
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          //return [253,174,97]; 
+          return hexToRgb(colorPalette[1]);
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          // return [255,255,191]; 
+          return hexToRgb(colorPalette[2]);
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          //return [166,217,106];
+          return hexToRgb(colorPalette[3]);
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          //return [26,150,65];
+          return hexToRgb(colorPalette[4]);
+        }
+        else {
+          return [0, 0, 0]; // black
+        }
+      }
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+          const category1 = d.properties[bivariateColorVariable1+'3'];
+        const category2 = d.properties[bivariateColorVariable2+'3'];
+        if(category1 == "low" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['low_low'])
+        }
+        else if(category1 == "low" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['low_medium'])
+        }
+        else if(category1 == "low" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['low_high'])
+        }
+        else if(category1 == "medium" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['medium_low'])
+        }
+        else if(category1 == "medium" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['medium_medium'])
+        }
+        else if(category1 == "medium" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['medium_high'])
+        }
+        else if(category1 == "high" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['high_low'])
+        }
+        else if(category1 == "high" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['high_medium'])
+        }
+        else if(category1 == "high" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['high_high'])
+        }
+      }
+          
+    },
 
    filled: true,
    stroked: true,
