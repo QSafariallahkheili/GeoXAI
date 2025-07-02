@@ -565,32 +565,7 @@ const applyStyle = ()=>{
         emit("addPositionLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value)
 
     }
-    else if (selectedStyle.value.value=='arrow'){
-        if (selectedUncertaintyStyle.value?.value=='orientation'){
-            if(secondPropertiesAllowed.value==true){
-                emit("addArrowLayerWithThreePropToMap", 
-                    selectedFeatureGeojson.value, 
-                    selectedfeatureProperties1.value.value, 
-                    selectedfeatureProperties2.value.value, 
-                    'uncertainty', 
-                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'], 
-                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5']
-                )
-            }
-            else {
-                emit("addArrowLayerWithTwoPropToMap",
-                    selectedFeatureGeojson.value, 
-                    selectedfeatureProperties1.value.value, 
-                    'uncertainty', 
-                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'], 
-                )
-            }
-           
-        }
-        
-        
-
-    }
+  
     else if(selectedStyle.value.value=='pattern'){
         emit("addPatternLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
 
