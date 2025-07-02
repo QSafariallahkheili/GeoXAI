@@ -234,7 +234,7 @@ import {getTableGeojson} from '../services/backend.calls'
 import { useMapLegendStore } from '../stores/mapLegend'
 import * as colorbrewer from 'colorbrewer';
 
-let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle} = storeToRefs(useMapLegendStore())
+let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
 const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap", "addCircleLayerWithInkUncertainty", "addCircleLayerWithInkUncertaintyOneProp", "addFuzzyLayerWithThreePropToMap", "addArrowLayerWithTwoPropToMap", "addCustomBorderLayerToMap", "addCustomMapboxGrainNoiseLayerToMap"]);
 
 
@@ -425,9 +425,15 @@ const applyStyle = ()=>{
             )
 
         }
-        activatedGeovisStyle.value = 'circle'
-        firstProperties.value=selectedfeatureProperties1.value.name
-        firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+        specifyLegendProperties(
+            selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value ==='color'? activatedGeovisStyle.value = 'bivariate': activatedGeovisStyle.value ='circle',
+            firstProperties.value=selectedfeatureProperties1.value.name,
+            firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']),
+            legendVisVar1.value= selectedVisualVariable1.value.value,
+            legendVisVar2.value=selectedVisualVariable2?.value?.value,
+            
+        )
+        
     }
     else if (selectedStyle.value.value=='square'){
         if (selectedUncertaintyStyle.value?.value=='pattern_width'){
@@ -472,15 +478,14 @@ const applyStyle = ()=>{
                 selectedVisualVariable2?.value?.value
             )
         }
-        if(selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value=='color'){
-            activatedGeovisStyle.value = 'bivariate'
-        }
-        else {
-            activatedGeovisStyle.value = 'square'
-        }
-        
-        firstProperties.value=selectedfeatureProperties1.value.name
-        firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+        specifyLegendProperties(
+            selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value ==='color'? activatedGeovisStyle.value = 'bivariate': activatedGeovisStyle.value ='circle',
+            firstProperties.value=selectedfeatureProperties1.value.name,
+            firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']),
+            legendVisVar1.value= selectedVisualVariable1.value.value,
+            legendVisVar2.value=selectedVisualVariable2?.value?.value,
+            
+        )
 
     }
     else if (selectedStyle.value.value=='arrow'){
@@ -591,7 +596,9 @@ const assignColorPalette = (item, palette) => {
    
 }
 
-
+const specifyLegendProperties =(payload)=>{
+    console.log(payload, "payload")
+}
 </script>
 
 <style lang="scss" scoped>

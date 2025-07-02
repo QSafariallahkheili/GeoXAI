@@ -133,7 +133,7 @@
                 </div>
         </v-card-item>
         <!-- Legend for Circle and Square styles that applies the first selected variable always mapped on color -->
-        <v-card-item v-if="activatedGeovisStyle === 'circle' || activatedGeovisStyle === 'square'">
+        <v-card-item v-if="(activatedGeovisStyle === 'circle' || activatedGeovisStyle === 'square') && (legendVisVar1 === 'color' || legendVisVar2 === 'color')">
            
             <div class="legend-item">
                 <div class="color-strip strip1"  :style="{ backgroundColor: selectedColorPalette.colors[0]}"></div>
@@ -174,7 +174,7 @@ import { useMetadataDialogStore } from '../stores/metadataDialog'
 import featureMetadata from '../assets/featureMetadata'
 
 const metadataDialogStore = useMetadataDialogStore();
-let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle} = storeToRefs(useMapLegendStore())
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
              'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
              'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',

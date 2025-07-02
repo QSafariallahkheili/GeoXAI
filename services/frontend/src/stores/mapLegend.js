@@ -18,6 +18,8 @@ export const useMapLegendStore = defineStore ({
         secondProperties: null,
         selectedColorPalette: null,
         uncertaintyStyle: null,
+        legendVisVar1: null,
+        legendVisVar2: null,
     }),
     actions: {
         assignClassificationValues(data) {
