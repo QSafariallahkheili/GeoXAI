@@ -9,6 +9,11 @@ import { MercatorCoordinate } from 'maplibre-gl';
 import * as colorbrewer from 'colorbrewer';
 import {hexToRgb} from '../utils/colorConversion';
 import { useMapLegendStore } from '../stores/mapLegend'
+let bivariateColorpalette = ({
+             'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
+             'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
+            'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
+})
 
 
 export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1, visVar1, visVar2, map){
@@ -16,6 +21,9 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
   let colorVariable
   let classForRadius
   let classesForColor
+  let bivariateColorVariable1
+  let bivariateColorVariable2
+
   
   if(visVar1=='color' && visVar2=='size'){
     colorVariable= prop1;
@@ -31,76 +39,75 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
     classForRadius = classes1;
     classesForColor = classes;
   }
+  else if(visVar1=='color' && visVar2=='color'){
+    bivariateColorVariable1 = prop1;
+    bivariateColorVariable2 = prop2;
+  }
+
+  // to support univariate mapping
+  else if(visVar2==undefined){
+    if(visVar1=='color'){
+      colorVariable= prop1;
+      classesForColor = classes1;
+    }
+    else if(visVar1=='size'){
+      radiusVariable= prop1;
+      classForRadius = classes1;
+    }
+  }
  
   let colorPalette = null;
  
   let colorPaletteName
-  console.log(colorVariable, "colorVariable")
   if (colorVariable== 'value'){
     colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
   }
   else{
     colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
   }
-    colorPalette = colorbrewer.default[colorPaletteName][5];
+  colorPalette = colorbrewer.default[colorPaletteName][5];
   useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
-  
-  let scatter = new MapboxLayer({
+  let scatter
+  if(bivariateColorVariable1 && bivariateColorVariable2){
+     scatter = new MapboxLayer({
         id: 'hexagon',
         type: ScatterplotLayer,
         data:  [...geojson.features],
         getPosition: d => d.geometry.coordinates,
-        getRadius: d => {
-          const category = d.properties[radiusVariable];
-          const value5 = JSON.parse(classForRadius)
-          if(category<value5[0]){
-            return 150 * (362/1200)
-          }
-          else if(category>value5[0] && category<=value5[1]){
-            return 400 * (362/1200)
-          }
-          else if(category>value5[1] && category<=value5[2]){
-            return 600 * (362/1200)
-          }
-          else if(category>value5[2] && category<=value5[3]){
-            return 900 * (362/1200)
-          }
-          else if(category>value5[3] && category<=value5[4]){
-            return 1200 * (362/1200)
-          }
-          else {
-            return 1200 * (362/1200)
-          }
-          
-        },
+        getRadius: 1200 * (362/1200),
+
         radiusUnits: 'meters',
         getFillColor: d => {
-          const category = d.properties[colorVariable];
-          //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-          const value5 = JSON.parse(classesForColor)
-          if(category<value5[0]){
-            //return [215,25,28]; 
-            return hexToRgb(colorPalette[0]);
+          const category1 = d.properties[bivariateColorVariable1+'3'];
+          const category2 = d.properties[bivariateColorVariable2+'3'];
+          if(category1 == "low" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['low_low'])
           }
-          else if(category>value5[0] && category<=value5[1]){
-            //return [253,174,97]; 
-            return hexToRgb(colorPalette[1]);
+          else if(category1 == "low" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['low_medium'])
           }
-          else if(category>value5[1] && category<=value5[2]){
-           // return [255,255,191]; 
-           return hexToRgb(colorPalette[2]);
+          else if(category1 == "low" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['low_high'])
           }
-          else if(category>value5[2] && category<=value5[3]){
-            //return [166,217,106];
-            return hexToRgb(colorPalette[3]);
+          else if(category1 == "medium" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['medium_low'])
           }
-          else if(category>value5[3] && category<=value5[4]){
-            //return [26,150,65];
-            return hexToRgb(colorPalette[4]);
+          else if(category1 == "medium" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['medium_medium'])
           }
-          else {
-            return [0, 0, 0]; // black
+          else if(category1 == "medium" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['medium_high'])
           }
+          else if(category1 == "high" && category2 == "low"){
+             return hexToRgb(bivariateColorpalette['high_low'])
+          }
+          else if(category1 == "high" && category2 == "medium"){
+             return hexToRgb(bivariateColorpalette['high_medium'])
+          }
+          else if(category1 == "high" && category2 == "high"){
+             return hexToRgb(bivariateColorpalette['high_high'])
+          }
+
         },
         getLineColor: [0, 0, 0],
         getLineWidth: 0,
@@ -108,12 +115,94 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
         pickable: true,
         autoHighlight: true,
         highlightColor: [0, 255, 0],
-        
-        
         onClick: (info) => console.log('Clicked:', info),
         onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2),
     
-  });
+    });
+     
+  }
+  else {
+      scatter = new MapboxLayer({
+        id: 'hexagon',
+        type: ScatterplotLayer,
+        data:  [...geojson.features],
+        getPosition: d => d.geometry.coordinates,
+        getRadius: d => {
+          if (radiusVariable!==undefined){
+            const category = d.properties[radiusVariable];
+            const value5 = JSON.parse(classForRadius)
+            if(category<value5[0]){
+              return 150 * (362/1200)
+            }
+            else if(category>value5[0] && category<=value5[1]){
+              return 400 * (362/1200)
+            }
+            else if(category>value5[1] && category<=value5[2]){
+              return 600 * (362/1200)
+            }
+            else if(category>value5[2] && category<=value5[3]){
+              return 900 * (362/1200)
+            }
+            else if(category>value5[3] && category<=value5[4]){
+              return 1200 * (362/1200)
+            }
+            else {
+              return 1200 * (362/1200)
+            }
+          }
+          else{
+            return 1200 * (362/1200)
+          }
+          
+          
+        },
+        radiusUnits: 'meters',
+        getFillColor: d => {
+          if (colorVariable!==undefined){
+            const category = d.properties[colorVariable];
+            //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+            const value5 = JSON.parse(classesForColor)
+            if(category<value5[0]){
+              //return [215,25,28]; 
+              return hexToRgb(colorPalette[0]);
+            }
+            else if(category>value5[0] && category<=value5[1]){
+              //return [253,174,97]; 
+              return hexToRgb(colorPalette[1]);
+            }
+            else if(category>value5[1] && category<=value5[2]){
+              // return [255,255,191]; 
+              return hexToRgb(colorPalette[2]);
+            }
+            else if(category>value5[2] && category<=value5[3]){
+              //return [166,217,106];
+              return hexToRgb(colorPalette[3]);
+            }
+            else if(category>value5[3] && category<=value5[4]){
+              //return [26,150,65];
+              return hexToRgb(colorPalette[4]);
+            }
+            else {
+              return [0, 0, 0]; // black
+            }
+          }
+          else {
+              return [255, 0, 0]; // red
+          }
+          
+        },
+        getLineColor: [0, 0, 0],
+        getLineWidth: 0,
+        radiusScale: 1,
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [0, 255, 0],
+        onClick: (info) => console.log('Clicked:', info),
+        onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2),
+    
+    });
+  }
+  
   map.addLayer(scatter);
 
 }
@@ -139,7 +228,6 @@ export function addDeckglCircleLayerWithUncertainty (geojson, prop1, prop2, prop
     classForRadius = classes1;
     classesForColor = classes;
   }
-  console.log(colorVariable, radiusVariable, "colorVariable, radiusVariable")
   let colorPalette = null;
   if (useMapLegendStore().selectedColorPalette!==null) {
     colorPalette = useMapLegendStore().selectedColorPalette.colors;
@@ -240,7 +328,7 @@ export function addDeckglCircleLayerWithUncertainty (geojson, prop1, prop2, prop
   
 }
 export function addDeckglCircleLayerOnePropWithUncertainty (geojson, prop1, classes1, prop2, visVar1, map){
- let radiusVariable
+  let radiusVariable
   let colorVariable
   let classForRadius
   let classesForColor
@@ -361,7 +449,57 @@ export function addDeckglCircleLayerOnePropWithUncertainty (geojson, prop1, clas
   
 }
 
-export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes1, map) {
+export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes1,visVar1, visVar2, map) {
+  let radiusVariable
+  let colorVariable
+  let classForRadius
+  let classesForColor
+  let bivariateColorVariable1
+  let bivariateColorVariable2
+
+  
+  if(visVar1=='color' && visVar2=='size'){
+    colorVariable= prop1;
+    radiusVariable= prop2;
+
+    classForRadius = classes;
+    classesForColor = classes1;
+  }
+  else if(visVar1=='size' && visVar2=='color'){
+    colorVariable= prop2;
+    radiusVariable= prop1;
+
+    classForRadius = classes1;
+    classesForColor = classes;
+  }
+  else if(visVar1=='color' && visVar2=='color'){
+    bivariateColorVariable1 = prop1;
+    bivariateColorVariable2 = prop2;
+  }
+  // to support univariate mapping
+  else if(visVar2==undefined){
+    if(visVar1=='color'){
+      colorVariable= prop1;
+      classesForColor = classes1;
+    }
+    else if(visVar1=='size'){
+      radiusVariable= prop1;
+      classForRadius = classes1;
+    }
+  }
+ 
+  let colorPalette = null;
+ 
+  let colorPaletteName
+  if (colorVariable== 'value'){
+    colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+  }
+  else{
+    colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+  }
+  colorPalette = colorbrewer.default[colorPaletteName][5];
+  useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
+  
     function createSquarePolygonFromPoint(center, sizeInMeters) {
       const [lon, lat] = center;
 
@@ -383,87 +521,116 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
         ]]
       };
     }
+
     const squareGeojson = {
-    type: "FeatureCollection",
-    features: geojson.features.map(feature => {
-      const center = feature.geometry.coordinates;
-      //const size = feature.properties[prop1+'_d']* (720/1200);
-      const category = feature.properties[prop1];
-      const value5 = JSON.parse(classes1)
-      let size;
-      if(category<value5[0]){
-        size =  150 * (720/1200)
-      }
-      else if(category>value5[0] && category<=value5[1]){
-        size = 400 * (720/1200)
-      }
-      else if(category>value5[1] && category<=value5[2]){
-        size = 600 * (720/1200)
-      }
-      else if(category>value5[2] && category<=value5[3]){
-        size = 900 * (720/1200)
-      }
-      else if(category>value5[3] && category<=value5[4]){
-        size = 1180 * (720/1200)
-      }
-      else {
-        size = 1200 * (720/1200)
-      }
+      type: "FeatureCollection",
+      features: geojson.features.map(feature => {
+        const center = feature.geometry.coordinates;
+        //const size = feature.properties[prop1+'_d']* (720/1200);
+        let size;
+        if (radiusVariable!== undefined){
+          const category = feature.properties[radiusVariable];
+          const value5 = JSON.parse(classForRadius)
+          
+          if(category<value5[0]){
+            size =  150 * (720/1200)
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            size = 400 * (720/1200)
+          }
+          else if(category>value5[1] && category<=value5[2]){
+            size = 600 * (720/1200)
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            size = 900 * (720/1200)
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            size = 1180 * (720/1200)
+          }
+          else {
+            size = 1200 * (720/1200)
+          }
+        }
+        else{
+          size = 1100 * (720/1200)
+        }
 
+        return {
+          type: "Feature",
+          geometry: createSquarePolygonFromPoint(center, size),
+          properties: feature.properties,
+        };
+      })
+    };
+  
 
-      return {
-        type: "Feature",
-        geometry: createSquarePolygonFromPoint(center, size),
-        properties: feature.properties,
-      };
-    })
-  };
-  let colorPalette = null;
-  if (useMapLegendStore().selectedColorPalette!==null) {
-    colorPalette = useMapLegendStore().selectedColorPalette.colors;
-  }
-  else {
-    let colorPaletteName
-    if (prop2== 'value'){
-      colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
-    }
-    else{
-      colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
-    }
-     colorPalette = colorbrewer.default[colorPaletteName][5];
-    useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
-  }
-  let customLayer = new MapboxLayer({
-      id: 'hexagon',
+    let customLayer = new MapboxLayer({
+      id: 'square-layer',
       type: PolygonLayer,
-      data: squareGeojson.features,
+      data: [...squareGeojson.features],
       getPolygon: d => d.geometry.coordinates,
       getFillColor: d => {
-        const category = d.properties[prop2];
-        //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-        const value5 = JSON.parse(classes)
-        if(category<value5[0]){
-          //return [215,25,28]; 
-          return hexToRgb(colorPalette[0]);
+        if (colorVariable!==undefined ){
+          const category = d.properties[colorVariable];
+          //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+          const value5 = JSON.parse(classesForColor)
+          if(category<value5[0]){
+            //return [215,25,28]; 
+            return hexToRgb(colorPalette[0]);
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            //return [253,174,97]; 
+            return hexToRgb(colorPalette[1]);
+          }
+          else if(category>value5[1] && category<=value5[2]){
+          // return [255,255,191]; 
+          return hexToRgb(colorPalette[2]);
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            //return [166,217,106];
+            return hexToRgb(colorPalette[3]);
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            //return [26,150,65];
+            return hexToRgb(colorPalette[4]);
+          }
+          else {
+            return [0, 0, 0]; // black
+          }
         }
-        else if(category>value5[0] && category<=value5[1]){
-          //return [253,174,97]; 
-          return hexToRgb(colorPalette[1]);
-        }
-        else if(category>value5[1] && category<=value5[2]){
-         // return [255,255,191]; 
-         return hexToRgb(colorPalette[2]);
-        }
-        else if(category>value5[2] && category<=value5[3]){
-          //return [166,217,106];
-          return hexToRgb(colorPalette[3]);
-        }
-        else if(category>value5[3] && category<=value5[4]){
-          //return [26,150,65];
-          return hexToRgb(colorPalette[4]);
+        else if (bivariateColorVariable1 && bivariateColorVariable2) {
+          const category1 = d.properties[bivariateColorVariable1+'3'];
+          const category2 = d.properties[bivariateColorVariable2+'3'];
+          if(category1 == "low" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['low_low'])
+          }
+          else if(category1 == "low" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['low_medium'])
+          }
+          else if(category1 == "low" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['low_high'])
+          }
+          else if(category1 == "medium" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['medium_low'])
+          }
+          else if(category1 == "medium" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['medium_medium'])
+          }
+          else if(category1 == "medium" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['medium_high'])
+          }
+          else if(category1 == "high" && category2 == "low"){
+             return hexToRgb(bivariateColorpalette['high_low'])
+          }
+          else if(category1 == "high" && category2 == "medium"){
+             return hexToRgb(bivariateColorpalette['high_medium'])
+          }
+          else if(category1 == "high" && category2 == "high"){
+             return hexToRgb(bivariateColorpalette['high_high'])
+          }
         }
         else {
-          return [0, 0, 0]; // black
+          return [255, 0, 0]; // red
         }
       },
       getLineColor: [0, 0, 0],
@@ -479,15 +646,27 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
   
 }
 
-export function addDeckglFuzzyLayerToMap (geojson, prop1, classes1, prop2, map){
+export function addDeckglFuzzyLayerToMap (geojson, prop1, classes1, prop2, visVar1, map){
+  let radiusVariable
+  let colorVariable
+  let classForRadius
+  let classesForColor
+  if(visVar1=='color'){
+    colorVariable= prop1;
+    classesForColor = classes1;
+  }
+  else if(visVar1=='size'){
+    radiusVariable= prop1;
+
+    classForRadius = classes1;
+  }
   let colorPalette = null;
   if (useMapLegendStore().selectedColorPalette!==null) {
     colorPalette = useMapLegendStore().selectedColorPalette.colors;
-    
   }
   else {
     let colorPaletteName
-    if (prop1== 'value'){
+    if (colorVariable== 'value'){
       colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
     }
     else{
@@ -496,41 +675,72 @@ export function addDeckglFuzzyLayerToMap (geojson, prop1, classes1, prop2, map){
      colorPalette = colorbrewer.default[colorPaletteName][5];
     useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   }
-   
     let customLayer = new MapboxLayer({
       id: 'glow-points',
       type: CustomScatterplotLayer,
-      data: geojson.features,
+      data: [...geojson.features],
       getPosition: d => d.geometry.coordinates,
-      getRadius: 360,
+      getRadius: d => {
+        if(radiusVariable!==undefined){
+          const category = d.properties[radiusVariable];
+          const value5 = JSON.parse(classForRadius)
+          if(category<value5[0]){
+            return 150 * (362/1200)
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            return 400 * (362/1200)
+          }
+          else if(category>value5[1] && category<=value5[2]){
+            return 600 * (362/1200)
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            return 900 * (362/1200)
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            return 1200 * (362/1200)
+          }
+          else {
+            return 1200 * (362/1200)
+          }
+          
+        }else{
+          return 360
+        }
+      },
       radiusUnits: 'meters',
       getFillColor: d => {
-        const category = d.properties[prop1];
-        //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-        const value5 = JSON.parse(classes1)
-        if(category<value5[0]){
-          //return [215,25,28]; 
-          return hexToRgb(colorPalette[0]);
+        if(colorVariable!==undefined){
+          const category = d.properties[colorVariable];
+          //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+          const value5 = JSON.parse(classesForColor)
+          if(category<value5[0]){
+            //return [215,25,28]; 
+            return hexToRgb(colorPalette[0]);
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            //return [253,174,97]; 
+            return hexToRgb(colorPalette[1]);
+          }
+          else if(category>value5[1] && category<=value5[2]){
+            // return [255,255,191]; 
+            return hexToRgb(colorPalette[2]);
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            //return [166,217,106];
+            return hexToRgb(colorPalette[3]);
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            //return [26,150,65];
+            return hexToRgb(colorPalette[4]);
+          }
+          else {
+            return [0, 0, 0]; // black
+          }
         }
-        else if(category>value5[0] && category<=value5[1]){
-          //return [253,174,97]; 
-          return hexToRgb(colorPalette[1]);
+        else{
+          return [255, 0, 0]; // black
         }
-        else if(category>value5[1] && category<=value5[2]){
-          // return [255,255,191]; 
-          return hexToRgb(colorPalette[2]);
-        }
-        else if(category>value5[2] && category<=value5[3]){
-          //return [166,217,106];
-          return hexToRgb(colorPalette[3]);
-        }
-        else if(category>value5[3] && category<=value5[4]){
-          //return [26,150,65];
-          return hexToRgb(colorPalette[4]);
-        }
-        else {
-          return [0, 0, 0]; // black
-        }
+        
       },
   
       filled: true,
@@ -554,15 +764,32 @@ export function addDeckglFuzzyLayerToMap (geojson, prop1, classes1, prop2, map){
     map.addLayer(customLayer);
     
 }
-export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, prop3, classes, classes1, map){
+export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map){
+  let radiusVariable
+  let colorVariable
+  let classForRadius
+  let classesForColor
+  if(visVar1=='color' && visVar2=='size'){
+    colorVariable= prop1;
+    radiusVariable= prop2;
+
+    classForRadius = classes;
+    classesForColor = classes1;
+  }
+  else if(visVar1=='size' && visVar2=='color'){
+    colorVariable= prop2;
+    radiusVariable= prop1;
+
+    classForRadius = classes1;
+    classesForColor = classes;
+  }
   let colorPalette = null;
   if (useMapLegendStore().selectedColorPalette!==null) {
     colorPalette = useMapLegendStore().selectedColorPalette.colors;
-    
   }
   else {
     let colorPaletteName
-    if (prop1== 'value'){
+    if (colorVariable== 'value'){
       colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
     }
     else{
@@ -577,57 +804,57 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
    data: [...geojson.features],
    getPosition: d => d.geometry.coordinates,
    getRadius: d => {
-    const category = d.properties[prop2];
-    const value5 = JSON.parse(classes)
-    if(category<value5[0]){
-      return 150 * (362/1200)
-    }
-    else if(category>value5[0] && category<=value5[1]){
-      return 400 * (362/1200)
-    }
-    else if(category>value5[1] && category<=value5[2]){
-      return 600 * (362/1200)
-    }
-    else if(category>value5[2] && category<=value5[3]){
-      return 900 * (362/1200)
-    }
-    else if(category>value5[3] && category<=value5[4]){
-      return 1200 * (362/1200)
-    }
-    else {
-      return 1200 * (362/1200)
-    }
-    
-  },
+          const category = d.properties[radiusVariable];
+          const value5 = JSON.parse(classForRadius)
+          if(category<value5[0]){
+            return 150 * (362/1200)
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            return 400 * (362/1200)
+          }
+          else if(category>value5[1] && category<=value5[2]){
+            return 600 * (362/1200)
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            return 900 * (362/1200)
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            return 1200 * (362/1200)
+          }
+          else {
+            return 1200 * (362/1200)
+          }
+          
+        },
    radiusUnits: 'meters',
    getFillColor: d => {
-    const category = d.properties[prop1];
-    //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-    const value5 = JSON.parse(classes1)
-    if(category<value5[0]){
-      //return [215,25,28]; 
-      return hexToRgb(colorPalette[0]);
-    }
-    else if(category>value5[0] && category<=value5[1]){
-      //return [253,174,97]; 
-      return hexToRgb(colorPalette[1]);
-    }
-    else if(category>value5[1] && category<=value5[2]){
-     // return [255,255,191]; 
-     return hexToRgb(colorPalette[2]);
-    }
-    else if(category>value5[2] && category<=value5[3]){
-      //return [166,217,106];
-      return hexToRgb(colorPalette[3]);
-    }
-    else if(category>value5[3] && category<=value5[4]){
-      //return [26,150,65];
-      return hexToRgb(colorPalette[4]);
-    }
-    else {
-      return [0, 0, 0]; // black
-    }
-  },
+          const category = d.properties[colorVariable];
+          //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+          const value5 = JSON.parse(classesForColor)
+          if(category<value5[0]){
+            //return [215,25,28]; 
+            return hexToRgb(colorPalette[0]);
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            //return [253,174,97]; 
+            return hexToRgb(colorPalette[1]);
+          }
+          else if(category>value5[1] && category<=value5[2]){
+            // return [255,255,191]; 
+            return hexToRgb(colorPalette[2]);
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            //return [166,217,106];
+            return hexToRgb(colorPalette[3]);
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            //return [26,150,65];
+            return hexToRgb(colorPalette[4]);
+          }
+          else {
+            return [0, 0, 0]; // black
+          }
+        },
 
    filled: true,
    stroked: true,
@@ -796,32 +1023,49 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, classes, map
     
 }
 
-export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, prop3, classes1, classes2, map){
-    let colorPalette = null;
-    if (useMapLegendStore().selectedColorPalette!==null) {
-      colorPalette = useMapLegendStore().selectedColorPalette.colors;
-      
-    }
-    else {
-      let colorPaletteName
-      if (prop1== 'value'){
-        colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
-      }
-      else{
-        colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
-      }
-      colorPalette = colorbrewer.default[colorPaletteName][5];
-      useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
-    }
+export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map){
+    let radiusVariable
+  let colorVariable
+  let classForRadius
+  let classesForColor
+
+  
+  if(visVar1=='color' && visVar2=='size'){
+    colorVariable= prop1;
+    radiusVariable= prop2;
+
+    classForRadius = classes;
+    classesForColor = classes1;
+  }
+  else if(visVar1=='size' && visVar2=='color'){
+    colorVariable= prop2;
+    radiusVariable= prop1;
+
+    classForRadius = classes1;
+    classesForColor = classes;
+  }
+  
+ 
+  let colorPalette = null;
+ 
+  let colorPaletteName
+  if (colorVariable== 'value'){
+    colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+  }
+  else{
+    colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+  }
+  colorPalette = colorbrewer.default[colorPaletteName][5];
+  useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
     const sceneLayer = new MapboxLayer({
     id: 'arrow-layer',
     type: ScenegraphLayer,
     data: [...geojson.features],
     scenegraph: 'direction_arrow.glb', // public path
     getColor: d => {
-      const category = d.properties[prop1];
+      const category = d.properties[colorVariable];
       //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-      const value5 = JSON.parse(classes1)
+      const value5 = JSON.parse(classesForColor)
       if(category<value5[0]){
         //return [215,25,28]; 
         return hexToRgb(colorPalette[0]);
@@ -855,68 +1099,85 @@ export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, pr
     //getOrientation: [0, 90, 90],
     sizeScale: 100,
     getScale: d => {
-        const category = d.properties[prop2];
-        //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-        const value5 = JSON.parse(classes2)
-            if (prop2){
-              if(category<value5[0]){
-              return [1, 1, 1]; 
-              }
-              else if(category>value5[0] && category<=value5[1]){
-                return [1.3, 1, 1.3]; 
-              }
-              else if(category>value5[1] && category<=value5[2]){
-                return [1.6, 1, 1.6]; 
-              }
-              else if(category>value5[2] && category<=value5[3]){
-                return [1.9, 1, 1.9];
-              }
-              else if(category>value5[3] && category<=value5[4]){
-                return [2.2, 1, 2.2];
-              }
-              else {
-                return [1, 1, 1];
-              }
-            }
-            else {
-              return [1, 1, 1];
-            }
-            
-          },
-          pickable: true,
-         onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2,prop3)
-   
+      const category = d.properties[radiusVariable];
+      //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+      const value5 = JSON.parse(classForRadius)
+      if (radiusVariable){
+        if(category<value5[0]){
+        return [1, 1, 1]; 
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          return [1.3, 1, 1.3]; 
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          return [1.6, 1, 1.6]; 
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          return [1.9, 1, 1.9];
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          return [2.2, 1, 2.2];
+        }
+        else {
+          return [1, 1, 1];
+        }
+      }
+      else {
+        return [1, 1, 1];
+      }
+    },
+    pickable: true,
+    onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2,prop3)
+
   });
   
   map.addLayer(sceneLayer);
   
 }
-export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2, classes1, map){
+export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2 , classes, classes1, visVar1, visVar2, map){
+  let radiusVariable
+  let colorVariable
+  let classForRadius
+  let classesForColor
+
+  
+  if(visVar1=='color' && visVar2=='size'){
+    colorVariable= prop1;
+    radiusVariable= prop2;
+
+    classForRadius = classes;
+    classesForColor = classes1;
+  }
+  else if(visVar1=='size' && visVar2=='color'){
+    colorVariable= prop2;
+    radiusVariable= prop1;
+
+    classForRadius = classes1;
+    classesForColor = classes;
+  }
+  
+ 
   let colorPalette = null;
-  if (useMapLegendStore().selectedColorPalette!==null) {
-    colorPalette = useMapLegendStore().selectedColorPalette.colors;
-    
+ 
+  let colorPaletteName
+  if (colorVariable== 'value'){
+    colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
   }
-  else {
-    let colorPaletteName
-    if (prop1== 'value'){
-      colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
-    }
-    else{
-      colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
-    }
-    colorPalette = colorbrewer.default[colorPaletteName][5];
-    useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
+  else{
+    colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
   }
+  colorPalette = colorbrewer.default[colorPaletteName][5];
+  useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
+
   const sceneLayer = new MapboxLayer({
   id: 'arrow-layer',
   type: ScenegraphLayer,
   data: [...geojson.features],
   scenegraph: 'direction_arrow.glb', // public path
   getColor: d => {
-    const category = d.properties[prop1];
+    const category = d.properties[colorVariable];
     //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-    const value5 = JSON.parse(classes1)
+    const value5 = JSON.parse(classesForColor)
     if(category<value5[0]){
       //return [215,25,28]; 
       return hexToRgb(colorPalette[0]);
@@ -942,16 +1203,39 @@ export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2, clas
     }
   },
   getPosition: d => d.geometry.coordinates,
-  getOrientation: d => {
-    const u = d.properties[prop2] ?? 0;
-    const yaw = 90 - 180 * u; // Maps 0 → 90, 1 → -90
-    return [0, yaw, 90];       // [pitch, yaw, roll]
-  },
-  //getOrientation: [0, 90, 90],
+  
+  getOrientation: [0, 90, 90],
   sizeScale: 100,
-  getScale: [1.3, 1.3, 1.3],
-        pickable: true,
-       onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2)
+  getScale: d => {
+    const category = d.properties[radiusVariable];
+    //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+    const value5 = JSON.parse(classForRadius)
+    if (radiusVariable){
+      if(category<value5[0]){
+      return [1, 1, 1]; 
+      }
+      else if(category>value5[0] && category<=value5[1]){
+        return [1.3, 1, 1.3]; 
+      }
+      else if(category>value5[1] && category<=value5[2]){
+        return [1.6, 1, 1.6]; 
+      }
+      else if(category>value5[2] && category<=value5[3]){
+        return [1.9, 1, 1.9];
+      }
+      else if(category>value5[3] && category<=value5[4]){
+        return [2.2, 1, 2.2];
+      }
+      else {
+        return [1, 1, 1];
+      }
+    }
+    else {
+      return [1, 1, 1];
+    }
+  },
+  pickable: true,
+  onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2)
  
 });
 
