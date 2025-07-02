@@ -82,7 +82,7 @@
                                 v-model="selectedfeatureProperties2"
                                 :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
                                 hide-details
-                                label="1st variable"
+                                label="2nd variable"
                                 item-title="name" 
                                 return-object
                                 round
@@ -105,43 +105,7 @@
                  
                     </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="6">
-                        <v-select
-                                v-model="selectedfeatureProperties1"
-                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
-                                hide-details
-                                label="1st variable"
-                                item-title="name" 
-                                return-object
-                                round
-                                variant="outlined"
-                                :disabled="featureRetrieved == false? true : false"
-                            ></v-select>
-                    </v-col>
-                    <v-col cols="6" v-if="selectedUncertaintyStyle?.value==null || secondPropertiesAllowed==true">
-                        <v-select
-                                v-model="selectedfeatureProperties2"
-                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
-                                hide-details
-                                label="2nd variable"
-                                item-title="name" 
-                                return-object
-                                variant="outlined"
-                                :disabled="featureRetrieved == false? true : false"
-                            ></v-select>
-
-                    </v-col>
-                    <v-col cols="6" v-if="selectedUncertaintyStyle?.value!=null && secondPropertiesAllowed==false">
-                       <v-btn variant="outlined" prepend-icon="mdi-plus-circle" @click="secondPropertiesAllowed=true">
-                        <template v-slot:prepend>
-                            <v-icon color="success"></v-icon>
-                        </template>
-                        add variable
-                        </v-btn>
-
-                    </v-col>
-                </v-row>
+                
                 <v-row v-if="selectedfeature?.value=='fire_susceptibility' && selectedStyle?.value=='arrow'">
                     <v-col cols="6">
                         <v-select
@@ -279,7 +243,7 @@ let selectedStyle = ref(null)
 let geovisStyles = ref([
     { name: 'Circular symbol', value: 'circle', symbol: 'circle' },
     { name: 'Square symbol', value: 'square', symbol: 'square' },
-    { name: 'Bivariate', value: 'bivariate', symbol: 'bivariate' },
+    //{ name: 'Bivariate', value: 'bivariate', symbol: 'bivariate' },
     { name: 'Arrow', value: 'arrow', symbol: 'arrow' },
 
 ])
@@ -350,7 +314,7 @@ let selectedVisualVariable2 = ref(null)
 const relatedUncertaintyStyles = computed(() => {
   const styleMap = {
     circle: ['fuzzy', 'ink', 'position'],
-    square: ['pattern_width', 'pattern_orientation'],
+    square: ['pattern_width', 'pattern_orientation','noise_with_line_width', 'noise_with_grain_size'],
     arrow: ['orientation'],
     bivariate: ['noise_with_line_width', 'noise_with_grain_size']
   };
@@ -423,15 +387,19 @@ const applyStyle = ()=>{
                     selectedfeatureProperties2.value.value, 
                     'uncertainty', 
                     selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
-                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                    selectedVisualVariable1.value.value,
+                    selectedVisualVariable2.value.value
                 )
             }
             else {
                 emit("addFuzzyLayerToMap", 
-                selectedFeatureGeojson.value, 
-                selectedfeatureProperties1.value.value, 
-                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
-                'uncertainty')
+                    selectedFeatureGeojson.value, 
+                    selectedfeatureProperties1.value.value, 
+                    selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                    'uncertainty',
+                    selectedVisualVariable1.value.value,
+                )
                 
             }
 
@@ -449,11 +417,11 @@ const applyStyle = ()=>{
              emit("addCircleLayerToMap", 
                 selectedFeatureGeojson.value, 
                 selectedfeatureProperties1.value.value, 
-                selectedfeatureProperties2.value.value, 
-                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
+                selectedfeatureProperties2?.value?.value, 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2?.value?.value+'5'], 
                 selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
                 selectedVisualVariable1.value.value,
-                selectedVisualVariable2.value.value
+                selectedVisualVariable2?.value?.value
             )
 
         }
@@ -463,25 +431,87 @@ const applyStyle = ()=>{
     }
     else if (selectedStyle.value.value=='square'){
         if (selectedUncertaintyStyle.value?.value=='pattern_width'){
-            console.log("apply pattern width")
-            emit("addPatternLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
+            emit("addPatternLayerToMap",
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                'uncertainty', 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+            )
 
         }
         else if(selectedUncertaintyStyle.value?.value=='pattern_orientation'){
-            emit("addPatternLayerWithOrientationToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value,  'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+            emit("addPatternLayerWithOrientationToMap", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value,  
+                'uncertainty', 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+            )
+        }
+        else if (selectedUncertaintyStyle.value?.value=='noise_with_line_width'){
+            emit("addCustomMapboxBorderLayerToMap", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                'uncertainty', 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+            )
+
+        }
+        else if(selectedUncertaintyStyle.value?.value=='noise_with_grain_size'){
+            emit("addCustomMapboxGrainNoiseLayerToMap",  selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
+
+        }
+        else {
+            emit("addSquareLayerToMap",
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                selectedfeatureProperties2?.value?.value, 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2?.value?.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1?.value?.value+'5'],
+                selectedVisualVariable1.value.value,
+                selectedVisualVariable2?.value?.value
+            )
+        }
+        if(selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value=='color'){
+            activatedGeovisStyle.value = 'bivariate'
+        }
+        else {
+            activatedGeovisStyle.value = 'square'
         }
         
-
-        else {
-
-            emit("addSquareLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
-        }
-        activatedGeovisStyle.value = 'square'
         firstProperties.value=selectedfeatureProperties1.value.name
         firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
 
     }
-   
+    else if (selectedStyle.value.value=='arrow'){
+        if (selectedUncertaintyStyle.value?.value=='orientation'){
+            emit("addArrowLayerWithThreePropToMap", 
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                selectedfeatureProperties2.value.value, 
+                'uncertainty', 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                selectedVisualVariable1.value.value,
+                selectedVisualVariable2.value.value
+            )
+          
+        }  
+        else {
+            emit("addArrowLayerWithTwoPropToMap",
+                selectedFeatureGeojson.value, 
+                selectedfeatureProperties1.value.value, 
+                selectedfeatureProperties2.value.value, 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                selectedVisualVariable1.value.value,
+                selectedVisualVariable2.value.value
+            )
+                
+        }
+           
+    }
+    
     else if (selectedStyle.value.value=='bivariate'){
         let matchExpression = []
         matchExpression = ['match', ['get', 'id']];
