@@ -91,9 +91,34 @@
                 </div>
             </div>
         </v-card-item>
-
+          <!-- Legend for ink circle uncertainty -->
+        <v-card-item style="font-size: 0.7rem;" v-if=" uncertaintyStyle === 'ink'">
+          <div class="legend-item mr-1">
+            <div class="ink-circle ink-level-very-low"></div>
+            <span>Very Low</span>
+          </div>
+          <div class="legend-item mr-1">
+            <div class="ink-circle ink-level-low"></div>
+            <span>Low</span>
+          </div>
+          <div class="legend-item mr-1">
+            <div class="ink-circle ink-level-medium"></div>
+            <span>Medium</span>
+          </div>
+          <div class="legend-item mr-1">
+            <div class="ink-circle ink-level-high"></div>
+            <span>High</span>
+          </div>
+          <div class="legend-item">
+            <div class="ink-circle ink-level-very-high"></div>
+            <span>Very High</span>
+          </div>
+          <div class="font-weight-bold">
+            Uncertainty
+          </div>
+        </v-card-item>
          <!-- Legend for fuzzy circle uncertainty -->
-        <v-card-item style="font-size: 0.7rem;"  v-if="activatedGeovisStyle === 'circle' && uncertaintyStyle === 'fuzzy'">
+        <v-card-item style="font-size: 0.7rem;"  v-if="uncertaintyStyle === 'fuzzy'">
             <div class="legend-item mr-1">
                 <div class="fuzzy-circle level-very-low"></div>
                 <span>Very Low</span>
@@ -137,27 +162,71 @@
            
             <div class="legend-item">
                 <div class="color-strip strip1"  :style="{ backgroundColor: selectedColorPalette.colors[0]}"></div>
-                <div class="legend-label">{{ firstPropertiesClassIntervals[0].toFixed(2) }}</div>
+                <div class="legend-label">{{  legendVisVar1 === 'color'?firstPropertiesClassIntervals[0].toFixed(2):secondPropertiesClassIntervals[0].toFixed(2)}}</div>
             </div>
             <div class="legend-item">
                 <div class="color-strip strip2" :style="{ backgroundColor: selectedColorPalette.colors[1]}"></div>
-                <div class="legend-label">{{ firstPropertiesClassIntervals[1].toFixed(2) }}</div>
+                <div class="legend-label">{{ legendVisVar1 === 'color'?firstPropertiesClassIntervals[1].toFixed(2):secondPropertiesClassIntervals[1].toFixed(2) }}</div>
             </div>
             <div class="legend-item">
                 <div class="color-strip strip3" :style="{ backgroundColor: selectedColorPalette.colors[2]}"></div>
-                <div class="legend-label">{{ firstPropertiesClassIntervals[2].toFixed(2) }}</div>
+                <div class="legend-label">{{ legendVisVar1 === 'color'?firstPropertiesClassIntervals[2].toFixed(2):secondPropertiesClassIntervals[2].toFixed(2) }}</div>
             </div>
             <div class="legend-item">
                 <div class="color-strip strip4" :style="{ backgroundColor: selectedColorPalette.colors[3]}"></div>
-                <div class="legend-label">{{ firstPropertiesClassIntervals[3].toFixed(2) }}</div>
+                <div class="legend-label">{{ legendVisVar1 === 'color'?firstPropertiesClassIntervals[3].toFixed(2):secondPropertiesClassIntervals[3].toFixed(2) }}</div>
             </div>
             <div class="legend-item">
                 <div class="color-strip strip5" :style="{ backgroundColor: selectedColorPalette.colors[4]}"></div>
-                <div class="legend-label">{{ firstPropertiesClassIntervals[4].toFixed(2) }}</div>
+                <div class="legend-label">{{ legendVisVar1 === 'color'?firstPropertiesClassIntervals[4].toFixed(2):secondPropertiesClassIntervals[4].toFixed(2) }}</div>
            
             </div>
             <div class="mb-0 font-weight-bold">
-                {{firstProperties}}    
+                {{legendVisVar1 === 'color'?firstProperties:secondProperties}}    
+            </div>
+        </v-card-item>
+        <!-- Legend for Circle size -->
+        <v-card-item style="font-size: 0.7rem;" v-if="(activatedGeovisStyle === 'circle'|| activatedGeovisStyle === 'square') && (legendVisVar1 === 'size' || legendVisVar2 === 'size')">
+            <div class="diagonal-line"></div>
+            <div class="horizontal-line"></div>
+            <div class="legend-item mr-1">
+                <div :class="[
+                  activatedGeovisStyle === 'circle' ? 'circle-very-low' :
+                  activatedGeovisStyle === 'square' ? 'square-very-low' : ''
+                ]"></div>
+               <div >{{  legendVisVar1 === 'size'?firstPropertiesClassIntervals[0].toFixed(2):secondPropertiesClassIntervals[0].toFixed(2)}}</div>
+            </div>
+            <div class="legend-item mr-6">
+               <div :class="[
+                  activatedGeovisStyle === 'circle' ? 'circle-low' :
+                  activatedGeovisStyle === 'square' ? 'square-low' : ''
+                ]"></div>
+               <div >{{  legendVisVar1 === 'size'?firstPropertiesClassIntervals[1].toFixed(2):secondPropertiesClassIntervals[1].toFixed(2)}}</div>
+            </div>
+            <div class="legend-item mr-6">
+               <div :class="[
+                  activatedGeovisStyle === 'circle' ? 'circle-medium' :
+                  activatedGeovisStyle === 'square' ? 'square-medium' : ''
+                ]"></div>
+               <div >{{  legendVisVar1 === 'size'?firstPropertiesClassIntervals[2].toFixed(2):secondPropertiesClassIntervals[2].toFixed(2)}}</div>
+            </div>
+            <div class="legend-item  mr-6">
+                <div :class="[
+                  activatedGeovisStyle === 'circle' ? 'circle-high' :
+                  activatedGeovisStyle === 'square' ? 'square-high' : ''
+                ]"></div>
+               <div >{{  legendVisVar1 === 'size'?firstPropertiesClassIntervals[3].toFixed(2):secondPropertiesClassIntervals[3].toFixed(2)}}</div>
+            </div>
+            <div class="legend-item">
+               <div :class="[
+                  activatedGeovisStyle === 'circle' ? 'circle-very-high' :
+                  activatedGeovisStyle === 'square' ? 'square-very-high' : ''
+                ]"></div>
+               <div >{{  legendVisVar1 === 'size'?firstPropertiesClassIntervals[4].toFixed(2):secondPropertiesClassIntervals[4].toFixed(2)}}</div>
+           
+            </div>
+            <div class="mb-0 font-weight-bold">
+               {{legendVisVar1 === 'size'?firstProperties:secondProperties}}        
             </div>
         </v-card-item>
 
@@ -174,7 +243,7 @@ import { useMetadataDialogStore } from '../stores/metadataDialog'
 import featureMetadata from '../assets/featureMetadata'
 
 const metadataDialogStore = useMetadataDialogStore();
-let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
              'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
              'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
@@ -392,4 +461,118 @@ const showMetadata = (featureName) =>{
 .level-very-high {
   background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 10%, rgba(0, 0, 0, 0) 100%);
 }
+
+.ink-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #000000 100%, #000000 100%);
+ -webkit-mask-image: radial-gradient(circle, transparent 100%, black 100%);
+  mask-image: radial-gradient(circle, transparent 100%, black 100%);
+}
+
+/* Very Low — mostly solid, sharp edge */
+.ink-level-very-low {
+   -webkit-mask-image: radial-gradient(circle, transparent 60%, black 100%);
+  mask-image: radial-gradient(circle, transparent 60%, black 100%);
+}
+
+/* Low Uncertainty — moderate edge blur */
+.ink-level-low {
+   -webkit-mask-image: radial-gradient(circle, transparent 50%, black 100%);
+  mask-image: radial-gradient(circle, transparent 50%, black 100%);
+}
+
+/* Medium Uncertainty — center less visible */
+.ink-level-medium {
+    -webkit-mask-image: radial-gradient(circle, transparent 40%, black 100%);
+  mask-image: radial-gradient(circle, transparent 40%, black 100%);
+}
+
+/* High Uncertainty — strong fade inward */
+.ink-level-high {
+   -webkit-mask-image: radial-gradient(circle, transparent 20%, black 100%);
+  mask-image: radial-gradient(circle, transparent 20%, black 100%);
+}
+
+/* Very High Uncertainty — center nearly invisible */
+.ink-level-very-high {
+  -webkit-mask-image: radial-gradient(circle, transparent 10%, black 100%);
+  mask-image: radial-gradient(circle, transparent 10%, black 100%);
+}
+
+.circle-very-high{
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+.circle-high{
+ width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+.circle-medium{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+.circle-low{
+ width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+.circle-very-low{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+.diagonal-line {
+  position: absolute;
+  bottom: calc(58px); /* top of the very-low circle */
+  left: 30px;
+  width: calc(60px * 4 + 12px); /* total horizontal span across 5 circles + gaps */
+  border-top: 1px solid rgb(43, 41, 41);
+  transform: rotate(-12deg); /* adjust angle visually */
+  transform-origin: top left;
+}
+.horizontal-line {
+  position: absolute;
+  bottom: calc(50px); /* top of the very-low circle */
+  left: 30px;
+  width: calc(60px * 4 + 14px); /* total horizontal span across 5 circles + gaps */
+  border-top: 1px solid rgb(43, 41, 41);
+  transform: rotate(0deg); /* adjust angle visually */
+  transform-origin: top left;
+}
+.square-very-high{
+  width: 53px;
+  height: 53px;
+  border: 2px solid black;
+}
+.square-high{
+ width: 40px;
+  height: 40px;
+  border: 2px solid black;
+}
+.square-medium{
+  width: 30px;
+  height: 30px;
+  border: 2px solid black;
+}
+.square-low{
+ width: 20px;
+  height: 20px;
+  border: 2px solid black;
+}
+.square-very-low{
+  width: 10px;
+  height: 10px;
+  border: 2px solid black;
+}
+
 </style>

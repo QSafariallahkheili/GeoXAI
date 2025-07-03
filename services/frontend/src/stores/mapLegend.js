@@ -20,6 +20,7 @@ export const useMapLegendStore = defineStore ({
         uncertaintyStyle: null,
         legendVisVar1: null,
         legendVisVar2: null,
+        secondPropertiesClassIntervals: null,
     }),
     actions: {
         assignClassificationValues(data) {
