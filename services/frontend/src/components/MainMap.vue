@@ -335,9 +335,9 @@ const addSquareLayerToMap = (geojson, prop1,prop2, classes, classes1,visVar1, vi
     addDeckglSquareLayerToMap(geojson, prop1, prop2, classes, classes1,visVar1, visVar2, map) 
 }
 
-const addPatternLayerToMap = (geojson, prop1,prop2, classes)=>{
+const addPatternLayerToMap = (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2)=>{
       removeDeckglLayers()
-      addCustomPatternLayerToMap(geojson, prop1, prop2, classes, map)
+      addCustomPatternLayerToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 const addCustomMapboxBorderLayerToMap=(geojson, prop1,prop2, classes)=>{
   preserveSquareLayer = true;

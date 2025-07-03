@@ -1434,7 +1434,59 @@ map.addLayer(sceneLayer);
 
 }
 
-export function addCustomPatternLayerToMap (geojson, prop1,prop2, classes, map){
+export function addCustomPatternLayerToMap (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map){
+    let radiusVariable
+    let colorVariable
+    let classForRadius
+    let classesForColor
+    let bivariateColorVariable1
+    let bivariateColorVariable2
+    if(visVar1=='color' && visVar2=='size'){
+      colorVariable= prop1;
+      radiusVariable= prop2;
+
+      classForRadius = classes;
+      classesForColor = classes1;
+    }
+    else if(visVar1=='size' && visVar2=='color'){
+      colorVariable= prop2;
+      radiusVariable= prop1;
+
+      classForRadius = classes1;
+      classesForColor = classes;
+    }
+    else if(visVar1=='color' && visVar2=='color'){
+      bivariateColorVariable1 = prop1;
+      bivariateColorVariable2 = prop2;
+    }
+    else if(visVar1=='color' && visVar2==undefined){
+        colorVariable= prop1;
+      classesForColor = classes1;
+    }
+    else if(visVar1=='size' && visVar2==undefined){
+        radiusVariable= prop1;
+        classForRadius = classes1;
+    }
+
+
+    let colorPalette = null;
+    let colorPaletteName
+
+    if (useMapLegendStore().selectedColorPalette!==null) {
+      colorPalette = useMapLegendStore().selectedColorPalette.colors;
+    }
+    else {
+      if (colorVariable== 'value'){
+        colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+        colorPalette = colorbrewer.default[colorPaletteName][5];
+      }
+      else if(colorVariable== 'shap'){
+        colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+        colorPalette = colorbrewer.default[colorPaletteName][5];
+      }
+      
+      useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
+    }
     function createSquarePolygonFromPoint(center, sizeInMeters) {
       const [lon, lat] = center;
 
@@ -1460,7 +1512,38 @@ export function addCustomPatternLayerToMap (geojson, prop1,prop2, classes, map){
         type: "FeatureCollection",
         features: geojson.features.map(feature => {
             const center = feature.geometry.coordinates;
-            const size = 600;
+            let size
+          if(radiusVariable!==undefined){
+            const category = feature.properties[radiusVariable];
+            const value5 = JSON.parse(classForRadius)
+            if(category<value5[0]){
+              size= 150 * (720/1200)
+            }
+            else if(category>value5[0] && category<=value5[1]){
+              size= 400 * (720/1200)
+            }
+            else if(category>value5[1] && category<=value5[2]){
+              size= 600 * (720/1200)
+            }
+            else if(category>value5[2] && category<=value5[3]){
+              size= 900 * (720/1200)
+            }
+            else if(category>value5[3] && category<=value5[4]){
+              size= 1100 * (720/1200)
+            }
+            else {
+              size= 1100 * (720/1200)
+            }
+
+          }
+          else if(radiusVariable===undefined){
+            size= 1100 * (720/1200)
+          }
+          
+
+          else if(bivariateColorVariable1 && bivariateColorVariable2){
+            size= 1100 * (720/1200)
+          } 
             if (feature.properties.uncertainty === 0) {
                 feature.properties.uncertainty = 0.0001;
             }
@@ -1561,47 +1644,69 @@ export function addCustomPatternLayerToMap (geojson, prop1,prop2, classes, map){
             [-1,  1]
             ];
 
-            const category = props[prop1];
-            const value5 = JSON.parse(classes); // assuming `classes` is defined outside
-            let colorPalette = null;
-            if (useMapLegendStore().selectedColorPalette!==null) {
-              colorPalette = useMapLegendStore().selectedColorPalette.colors;
-            }
-            else {
-              let colorPaletteName
-              if (prop1== 'value'){
-                colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
-              }
-              else{
-                colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
-              }
-              colorPalette = colorbrewer.default[colorPaletteName][5];
-              useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
-            }
             let color
-            if(category<value5[0]){
-              //return [215,25,28]; 
-              color= hexToRgb(colorPalette[0]);
-            }
-            else if(category>value5[0] && category<=value5[1]){
-              //return [253,174,97]; 
-              color= hexToRgb(colorPalette[1]);
-            }
-            else if(category>value5[1] && category<=value5[2]){
-             // return [255,255,191]; 
-             color= hexToRgb(colorPalette[2]);
-            }
-            else if(category>value5[2] && category<=value5[3]){
-              //return [166,217,106];
-              color= hexToRgb(colorPalette[3]);
-            }
-            else if(category>value5[3] && category<=value5[4]){
-              //return [26,150,65];
-              color= hexToRgb(colorPalette[4]);
-            }
-            else {
-              color= [0, 0, 0]; // black
-            }
+        if(colorVariable!==undefined){
+          const category = props[colorVariable];
+          //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+          const value5 = JSON.parse(classesForColor)
+          if(category<value5[0]){
+            //return [215,25,28]; 
+            color =  hexToRgb(colorPalette[0]);
+          }
+          else if(category>value5[0] && category<=value5[1]){
+            //return [253,174,97]; 
+            color = hexToRgb(colorPalette[1]);
+          }
+          else if(category>value5[1] && category<=value5[2]){
+            // return [255,255,191]; 
+            color = hexToRgb(colorPalette[2]);
+          }
+          else if(category>value5[2] && category<=value5[3]){
+            //return [166,217,106];
+            color = hexToRgb(colorPalette[3]);
+          }
+          else if(category>value5[3] && category<=value5[4]){
+            //return [26,150,65];
+            color = hexToRgb(colorPalette[4]);
+          }
+          else {
+            color = [0, 0, 0]; // black
+          }
+        }
+        else if(bivariateColorVariable1 && bivariateColorVariable2){
+          const category1 = props[bivariateColorVariable1+'3'];
+          const category2 = props[bivariateColorVariable2+'3'];
+          if(category1 == "low" && category2 == "low"){
+            color = hexToRgb(bivariateColorpalette['low_low'])
+          }
+          else if(category1 == "low" && category2 == "medium"){
+            color = hexToRgb(bivariateColorpalette['low_medium'])
+          }
+          else if(category1 == "low" && category2 == "high"){
+            color = hexToRgb(bivariateColorpalette['low_high'])
+          }
+          else if(category1 == "medium" && category2 == "low"){
+            color = hexToRgb(bivariateColorpalette['medium_low'])
+          }
+          else if(category1 == "medium" && category2 == "medium"){
+            color = hexToRgb(bivariateColorpalette['medium_medium'])
+          }
+          else if(category1 == "medium" && category2 == "high"){
+            color = hexToRgb(bivariateColorpalette['medium_high'])
+          }
+          else if(category1 == "high" && category2 == "low"){
+              color = hexToRgb(bivariateColorpalette['high_low'])
+          }
+          else if(category1 == "high" && category2 == "medium"){
+              color = hexToRgb(bivariateColorpalette['high_medium'])
+          }
+          else if(category1 == "high" && category2 == "high"){
+              color = hexToRgb(bivariateColorpalette['high_high'])
+          }
+        }
+        else {
+          color = [0, 0, 0]; 
+        }
             /*if (category < value5[0]) color = [215, 25, 28];
             else if (category <= value5[1]) color = [253, 174, 97];
             else if (category <= value5[2]) color = [255, 255, 191];
@@ -1701,7 +1806,7 @@ export function addCustomPatternLayerToMap (geojson, prop1,prop2, classes, map){
             y: e.point.y
         }
 
-        addDeckglPopupToMap(feat, prop1, prop2, 'uncertainty')
+        addDeckglPopupToMap(feat, prop1, prop2, prop3)
     });
 
 }
