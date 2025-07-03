@@ -345,9 +345,9 @@ const addCustomMapboxBorderLayerToMap=(geojson, prop1,prop2, classes)=>{
   addCustomBorderLayerToMap(geojson, prop1, prop2, classes, map)
 }
 
-const addPatternLayerWithOrientationToMap=(geojson, prop1,prop2, classes)=>{
+const addPatternLayerWithOrientationToMap=(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2)=>{
   removeDeckglLayers()
-  addCustomPatternLayerWithOrientationToMap(geojson, prop1, prop2, classes, map)
+  addCustomPatternLayerWithOrientationToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 /*const addPatternLayerToMap = (geojson, prop1,prop2, classes)=>{
       removeDeckglLayers()
