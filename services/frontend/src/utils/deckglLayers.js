@@ -847,11 +847,13 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
   else {
     if (colorVariable== 'value'){
       colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+      colorPalette = colorbrewer.default[colorPaletteName][5];
     }
     else if(colorVariable== 'shap'){
       colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+      colorPalette = colorbrewer.default[colorPaletteName][5];
     }
-     colorPalette = colorbrewer.default[colorPaletteName][5];
+     
     useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   }
       console.log(radiusVariable, "radiusVariable")
@@ -957,7 +959,7 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
 
    filled: true,
    stroked: true,
-   getLineColor: [0, 0, 0],
+   getLineColor: [0, 0, 0, 100],
    getLineWidth: 1,
    lineWidthMinPixels: 1,
    getUncertainty: d => {
@@ -982,18 +984,43 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
  
 }
 
-export function addDeckglPositionLayerToMap (geojson, prop1, prop2, classes, map){
+export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map){
+    let radiusVariable
+    let colorVariable
+    let classForRadius
+    let classesForColor
+    let bivariateColorVariable1
+    let bivariateColorVariable2
+    if(visVar1=='color' && visVar2=='size'){
+      colorVariable= prop1;
+      radiusVariable= prop2;
+
+      classForRadius = classes;
+      classesForColor = classes1;
+    }
+    else if(visVar1=='size' && visVar2=='color'){
+      colorVariable= prop2;
+      radiusVariable= prop1;
+
+      classForRadius = classes1;
+      classesForColor = classes;
+    }
+    else if(visVar1=='color' && visVar2=='color'){
+      bivariateColorVariable1 = prop1;
+      bivariateColorVariable2 = prop2;
+    }
+
     let colorPalette = null;
+    let colorPaletteName
+
     if (useMapLegendStore().selectedColorPalette!==null) {
       colorPalette = useMapLegendStore().selectedColorPalette.colors;
-      
     }
     else {
-      let colorPaletteName
-      if (prop1== 'value'){
+      if (colorVariable== 'value'){
         colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
       }
-      else{
+      else if(colorVariable== 'shap'){
         colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
       }
       colorPalette = colorbrewer.default[colorPaletteName][5];
@@ -1006,11 +1033,42 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, classes, map
       type: ScatterplotLayer,
       data: [...geojson.features],
       getPosition: d => d.geometry.coordinates,
-      getRadius: 360,
-      getFillColor: d => {
-        const category = d.properties[prop1];
+      getRadius: d => {
+      if(radiusVariable!==undefined){
+        const category = d.properties[radiusVariable];
+        const value5 = JSON.parse(classForRadius)
+        if(category<value5[0]){
+          return 150 * (362/1200)
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          return 400 * (362/1200)
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          return 600 * (362/1200)
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          return 900 * (362/1200)
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          return 1200 * (362/1200)
+        }
+        else {
+          return 1200 * (362/1200)
+        }
+
+      }
+
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+        return 1200 * (362/1200)
+      }   
+          
+    },
+   radiusUnits: 'meters',
+   getFillColor: d => {
+      if(colorVariable!==undefined){
+        const category = d.properties[colorVariable];
         //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-        const value5 = JSON.parse(classes)
+        const value5 = JSON.parse(classesForColor)
         if(category<value5[0]){
           //return [215,25,28]; 
           return hexToRgb(colorPalette[0]);
@@ -1020,8 +1078,8 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, classes, map
           return hexToRgb(colorPalette[1]);
         }
         else if(category>value5[1] && category<=value5[2]){
-         // return [255,255,191]; 
-         return hexToRgb(colorPalette[2]);
+          // return [255,255,191]; 
+          return hexToRgb(colorPalette[2]);
         }
         else if(category>value5[2] && category<=value5[3]){
           //return [166,217,106];
@@ -1034,16 +1092,50 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, classes, map
         else {
           return [0, 0, 0]; // black
         }
-      },
+      }
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+          const category1 = d.properties[bivariateColorVariable1+'3'];
+        const category2 = d.properties[bivariateColorVariable2+'3'];
+        if(category1 == "low" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['low_low'])
+        }
+        else if(category1 == "low" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['low_medium'])
+        }
+        else if(category1 == "low" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['low_high'])
+        }
+        else if(category1 == "medium" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['medium_low'])
+        }
+        else if(category1 == "medium" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['medium_medium'])
+        }
+        else if(category1 == "medium" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['medium_high'])
+        }
+        else if(category1 == "high" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['high_low'])
+        }
+        else if(category1 == "high" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['high_medium'])
+        }
+        else if(category1 == "high" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['high_high'])
+        }
+      }
+          
+    },
+
       getLineColor: [255, 255, 255],
       lineWidthMinPixels: 1,
       getUncertainty: d => {
         //console.log(d.properties.uncertainty);
-        return d.properties[prop2];
+        return d.properties[prop3];
       },
       //getUncertainty:1,
       updateTriggers: {
-        getUncertainty: [prop2]
+        getUncertainty: [prop3]
       },
       //onClick: (info) => console.log('Clicked:', info.object.properties)
       pickable: true,
@@ -1053,27 +1145,27 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, classes, map
     map.addLayer(customLayer);
   
     function shiftPosition(center, uncertainty) {
-    const [lon, lat] = center;
-  
-    // Approximate meters per degree at given latitude
-    const metersPerDegreeLat = 111320;
-    const metersPerDegreeLon = 40075000 * Math.cos(lat * Math.PI / 180) / 360;
-  
-    // Circle radius in meters (fixed to 360 meters in this case)
-    const radius = 360;
-    const shiftDistance = uncertainty * radius; // Shift depends on uncertainty
-  
-    // Calculate shift in degrees
-    const shiftLon = shiftDistance / metersPerDegreeLon;
-    const shiftLat = shiftDistance / metersPerDegreeLat;
-  
-    // Calculate the shift in the direction of 45 degrees (π/4 radians)
-    const angle = - 5 * (Math.PI / 4); // 45 degrees
-    const offsetLon = shiftLon * Math.cos(angle);
-    const offsetLat = shiftLat * Math.sin(angle);
-  
-    // Return the new shifted position
-    return [lon + offsetLon, lat + offsetLat];
+      const [lon, lat] = center;
+    
+      // Approximate meters per degree at given latitude
+      const metersPerDegreeLat = 111320;
+      const metersPerDegreeLon = 40075000 * Math.cos(lat * Math.PI / 180) / 360;
+    
+      // Circle radius in meters (fixed to 360 meters in this case)
+      const radius = 360;
+      const shiftDistance = uncertainty * radius; // Shift depends on uncertainty
+    
+      // Calculate shift in degrees
+      const shiftLon = shiftDistance / metersPerDegreeLon;
+      const shiftLat = shiftDistance / metersPerDegreeLat;
+    
+      // Calculate the shift in the direction of 45 degrees (π/4 radians)
+      const angle = - 5 * (Math.PI / 4); // 45 degrees
+      const offsetLon = shiftLon * Math.cos(angle);
+      const offsetLat = shiftLat * Math.sin(angle);
+    
+      // Return the new shifted position
+      return [lon + offsetLon, lat + offsetLat];
   }
   
   function applyUncertaintyShiftToFeatures(features) {

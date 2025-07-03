@@ -607,9 +607,9 @@ const addFuzzyLayerWithThreePropToMap= (geojson, prop1, prop2, prop3, classes, c
   addDeckglFuzzyLayerWithThreePropToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 
-const addPositionLayerToMap = (geojson, prop1, prop2, classes)=>{
+const addPositionLayerToMap = (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2,)=>{
   removeDeckglLayers()
-  addDeckglPositionLayerToMap(geojson, prop1, prop2,classes, map)
+  addDeckglPositionLayerToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 
 const addArrowLayerWithThreePropToMap = (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2,)=>{

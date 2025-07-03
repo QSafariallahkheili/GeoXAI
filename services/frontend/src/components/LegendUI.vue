@@ -145,7 +145,7 @@
             
         </v-card-item>
         <!-- Legend for Circle position uncertainty -->
-        <v-card-item v-if="activatedGeovisStyle === 'circle' && uncertaintyStyle === 'position'">
+        <v-card-item v-if="uncertaintyStyle === 'position'">
             <div class="circle">
                 <div class="point center"></div>
                 <div class="label center-label">Certain</div>
