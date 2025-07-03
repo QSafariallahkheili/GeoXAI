@@ -2008,7 +2008,7 @@ export function addCustomBorderLayerToMap (geojson, prop1,prop2, classes, map){
       type: "FeatureCollection",
       features: geojson.features.map(feature => {
           const center = feature.geometry.coordinates;
-          const size = 700;
+          const size = 1100 * (720/1200)
           if (feature.properties.uncertainty === 0) {
               feature.properties.uncertainty = 0.0001;
           }
@@ -2284,7 +2284,7 @@ export function addCustomBorderLayerWithNoisegrainToMap (geojson, prop1,prop2, c
       type: "FeatureCollection",
       features: geojson.features.map(feature => {
           const center = feature.geometry.coordinates;
-          const size = 700;
+          const size = size = 1100 * (720/1200);
           if (feature.properties.uncertainty === 0) {
               feature.properties.uncertainty = 0.0001;
           }
