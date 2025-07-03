@@ -1843,23 +1843,23 @@ export function addCustomPatternLayerWithOrientationToMap (geojson, prop1,prop2,
         ];
 
         const category = props[prop1];
-            const value5 = JSON.parse(classes); // assuming `classes` is defined outside
-            let colorPalette = null;
-            if (useMapLegendStore().selectedColorPalette!==null) {
-              colorPalette = useMapLegendStore().selectedColorPalette.colors;
-            }
-            else {
-              let colorPaletteName
-              if (prop1== 'value'){
-                colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
-              }
-              else{
-                colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
-              }
-              colorPalette = colorbrewer.default[colorPaletteName][5];
-              useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
-            }
-            let color
+        const value5 = JSON.parse(classes); // assuming `classes` is defined outside
+        let colorPalette = null;
+        if (useMapLegendStore().selectedColorPalette!==null) {
+          colorPalette = useMapLegendStore().selectedColorPalette.colors;
+        }
+        else {
+          let colorPaletteName
+          if (prop1== 'value'){
+            colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+          }
+          else{
+            colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+          }
+          colorPalette = colorbrewer.default[colorPaletteName][5];
+          useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
+        }
+        let color
             if(category<value5[0]){
               //return [215,25,28]; 
               color= hexToRgb(colorPalette[0]);
@@ -2284,7 +2284,7 @@ export function addCustomBorderLayerWithNoisegrainToMap (geojson, prop1,prop2, c
       type: "FeatureCollection",
       features: geojson.features.map(feature => {
           const center = feature.geometry.coordinates;
-          const size = size = 1100 * (720/1200);
+          const size = 1100 * (720/1200);
           if (feature.properties.uncertainty === 0) {
               feature.properties.uncertainty = 0.0001;
           }
