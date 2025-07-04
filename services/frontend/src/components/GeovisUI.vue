@@ -154,7 +154,7 @@
                     </v-col>
                 </v-row>
                
-                <v-row v-if="selectedColorPalette" no-gutters style="" class="d-flex mt-4 mb-4">
+                <v-row v-if="selectedColorPalette && activatedGeovisStyle!=='bivariate'" no-gutters style="" class="d-flex mt-4 mb-4">
                     <v-col cols="12" sm="2" class=" ">
                         <div class="v-label" >color palette</div>
                     </v-col>
@@ -536,6 +536,16 @@ const applyStyle = ()=>{
             )
                 
         }
+        specifyLegendProperties(
+            selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value ==='color'? activatedGeovisStyle.value = 'bivariate': activatedGeovisStyle.value ='square',
+            firstProperties.value=selectedfeatureProperties1.value.name,
+            firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']),
+            secondProperties.value=selectedfeatureProperties2?.value?.name,
+            selectedfeatureProperties2?.value?.name?secondPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2?.value?.value+'5']): secondPropertiesClassIntervals.value = null,
+            legendVisVar1.value= selectedVisualVariable1.value.value,
+            legendVisVar2.value=selectedVisualVariable2?.value?.value,
+            
+        )
            
     }
     
