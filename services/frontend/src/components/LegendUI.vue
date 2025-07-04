@@ -187,8 +187,7 @@
         </v-card-item>
         <!-- Legend for Circle size -->
         <v-card-item style="font-size: 0.7rem;" v-if="(activatedGeovisStyle === 'circle'|| activatedGeovisStyle === 'square') && (legendVisVar1 === 'size' || legendVisVar2 === 'size')">
-            <div class="diagonal-line"></div>
-            <div class="horizontal-line"></div>
+           
             <div class="legend-item mr-1">
                 <div :class="[
                   activatedGeovisStyle === 'circle' ? 'circle-very-low' :
@@ -229,8 +228,42 @@
                {{legendVisVar1 === 'size'?firstProperties:secondProperties}}        
             </div>
         </v-card-item>
-
-      
+        <!-- Legend for pattern size -->
+        <v-card-item v-if="uncertaintyStyle==='pattern_width'">
+          <div  v-for="(thickness, index) in stripeThicknesses"
+            :key="index"
+            style="font-size: 0.7rem; display: inline-block;">
+            <div
+              class="square-pattern-width legend-item "
+              :class="index === 4 ? 'mr-0' : 'mr-6'"
+              :style="getStripeStyle(thickness)"
+            ></div>
+          </div>
+          <div class="legend-arrow-container mt-4">
+              <div class="legend-arrow-label" style="float: left;">Uncertain</div>
+              <div class="uncertainty-square-arrow"></div>
+              <div class="legend-arrow-label" style="float: right;">Certain</div>
+          </div>
+          
+        </v-card-item>
+         <!-- Legend for pattern orientation -->
+        <v-card-item v-if="uncertaintyStyle==='pattern_orientation'">
+          <div  v-for="(angle, index) in stripeAngles"
+            :key="index"
+            style="font-size: 0.7rem; display: inline-block;">
+            <div
+              class="square-pattern-width legend-item "
+              :class="index === 4 ? 'mr-0' : 'mr-6'"
+              :style="getStripeAngleStyle(angle)"
+            ></div>
+          </div>
+          <div class="legend-arrow-container mt-4">
+              <div class="legend-arrow-label" style="float: left;">Uncertain</div>
+              <div class="uncertainty-square-arrow"></div>
+              <div class="legend-arrow-label" style="float: right;">Certain</div>
+          </div>
+          
+        </v-card-item>
 
         
     </v-card>
@@ -241,7 +274,34 @@ import { storeToRefs } from 'pinia'
 import { useMapLegendStore } from '../stores/mapLegend'
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import featureMetadata from '../assets/featureMetadata'
+const stripeSpacing = 9; // Constant spacing
+const stripeThicknesses = [1, 3, 5, 7, 9]; // Varying stripe widths
 
+function getStripeStyle(thickness) {
+  return {
+    backgroundImage: `repeating-linear-gradient(
+      90deg,
+      #000 0px,
+      #000 ${thickness}px,
+      transparent ${thickness}px,
+      transparent ${stripeSpacing}px
+    )`
+  };
+}
+const stripeWidth = 3;
+const stripeAngles = [80, 45, 0, -45, -90];
+
+function getStripeAngleStyle(angle) {
+  return {
+    backgroundImage: `repeating-linear-gradient(
+      ${angle}deg,
+      #000 0px,
+      #000 ${stripeWidth}px,
+      transparent ${stripeWidth}px,
+      transparent ${stripeSpacing}px
+    )`,
+  };
+}
 const metadataDialogStore = useMetadataDialogStore();
 let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
@@ -573,6 +633,41 @@ const showMetadata = (featureName) =>{
   width: 10px;
   height: 10px;
   border: 2px solid black;
+}
+
+.square-pattern-width {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+}
+.uncertainty-square-arrow {
+  flex: 1;
+  height: 1px;
+  background: black;
+  position: relative;
+  margin: 0 4px;
+}
+
+.uncertainty-square-arrow::before,
+.uncertainty-square-arrow::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.uncertainty-square-arrow::before {
+  left: 0;
+  border-width: 4px 5px 4px 0;
+  border-color: transparent black transparent transparent;
+}
+
+.uncertainty-square-arrow::after {
+  right: 0;
+  border-width: 4px 0 4px 5px;
+  border-color: transparent transparent transparent black;
 }
 
 </style>
