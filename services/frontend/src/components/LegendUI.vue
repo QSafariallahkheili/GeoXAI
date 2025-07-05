@@ -147,18 +147,18 @@
         <!-- Legend for Circle position uncertainty -->
         <v-card-item v-if="uncertaintyStyle === 'position'">
             <div class="circle">
-                <div class="point center"></div>
-                <div class="label center-label">Certain</div>
-                <div class="point edge"></div>
-                <div class="label edge-label">Uncertain</div>
-                <div class="arrow"></div>
-                </div>
-                <div class="font-weight-bold">
-                Uncertainty
-                </div>
+              <div class="point center"></div>
+              <div class="label center-label">Certain</div>
+              <div class="point edge"></div>
+              <div class="label edge-label">Uncertain</div>
+              <div class="arrow"></div>
+              </div>
+              <div class="font-weight-bold">
+              Uncertainty
+            </div>
         </v-card-item>
         <!-- Legend for Circle and Square styles that applies the first selected variable always mapped on color -->
-        <v-card-item v-if="(activatedGeovisStyle === 'circle' || activatedGeovisStyle === 'square') && (legendVisVar1 === 'color' || legendVisVar2 === 'color')">
+        <v-card-item v-if="(activatedGeovisStyle === 'circle' || activatedGeovisStyle === 'square' || activatedGeovisStyle === 'arrow') && (legendVisVar1 === 'color' || legendVisVar2 === 'color')">
            
             <div class="legend-item">
                 <div class="color-strip strip1"  :style="{ backgroundColor: selectedColorPalette.colors[0]}"></div>
@@ -265,6 +265,50 @@
           
         </v-card-item>
 
+        <v-card-item v-if="activatedGeovisStyle === 'arrow'">
+          <div class="arrow-wrapper">
+              <div
+                v-for="(height, index) in arrowVisHeights"
+                :key="index"
+                class="arrow-column"
+              >
+              <div
+                  class="arrow-head"
+                  :style="{
+                    borderLeft: (arrowVisWidth[index] * 0.8) + 'px solid transparent',
+                    borderRight: (arrowVisWidth[index] * 0.8) + 'px solid transparent',
+                    borderBottom: (arrowVisWidth[index] * 0.8) + 'px solid black',
+                  }"
+                ></div>
+                <div
+                  class="arrow-vis"
+                  :style="{ height: height + 'px', width: arrowVisWidth[index] + 'px' }"
+                ></div>
+                <div class="arrow-label">
+                  {{  legendVisVar1 === 'size'?firstPropertiesClassIntervals[index].toFixed(2):secondPropertiesClassIntervals[index].toFixed(2)}}
+                </div>
+              </div>
+               
+          </div>
+          <div class="mb-0 font-weight-bold">
+               {{legendVisVar1 === 'size'?firstProperties:secondProperties}}        
+            </div>
+        </v-card-item>
+        <!-- Legend for Circle position uncertainty -->
+        <v-card-item v-if="uncertaintyStyle === 'orientation'">
+            <div class="circle mt-4 mb-4">
+               <div class="point center"></div>
+              <div class="label arrow-vis-uncertainty-label">Certain</div>
+              <div class="label arrow-vis-uncertainty-label-down">Uncertain</div>
+              <div class="arrow-vis-uncertainty"></div>
+              <div class="arrow-vis-uncertainty-low"></div>
+              <div class="arrow-vis-uncertainty-medium"></div>
+              <div class="arrow-vis-uncertainty-high"></div>
+              <div class="arrow-vis-uncertainty-down"></div>
+              </div>
+             
+        </v-card-item>
+
         
     </v-card>
 </template>
@@ -302,6 +346,8 @@ function getStripeAngleStyle(angle) {
     )`,
   };
 }
+const arrowVisHeights = [10, 15, 20, 25, 30]; // Adjust heights as needed
+const arrowVisWidth = [5, 10, 15, 20, 25]; // Adjust heights as needed
 const metadataDialogStore = useMetadataDialogStore();
 let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
@@ -668,6 +714,156 @@ const showMetadata = (featureName) =>{
   right: 0;
   border-width: 4px 0 4px 5px;
   border-color: transparent transparent transparent black;
+}
+.arrow-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+}
+
+.arrow-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.arrow-vis {
+  width: 6px;
+  background: black;
+}
+
+.arrow-label {
+  font-size: 0.6rem;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.arrow-vis-uncertainty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 1.5px;
+  background-color: rgb(14, 8, 8);
+  transform-origin: left center;
+  transform: rotate(-90deg);
+}
+
+.arrow-vis-uncertainty::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid rgb(11, 11, 11);
+}
+.arrow-vis-uncertainty-low{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 1.5px;
+  background-color: rgb(11, 11, 11, 0.3);
+  transform-origin: left center;
+  transform: rotate(-45deg);
+}
+.arrow-vis-uncertainty-low::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid rgb(11, 11, 11, 0.3);
+}
+.arrow-vis-uncertainty-medium {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 1.5px;
+  background-color: rgb(11, 11, 11, 0.3);
+  transform-origin: left center;
+  transform: rotate(0deg);
+}
+.arrow-vis-uncertainty-medium::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid rgb(11, 11, 11, 0.3);
+}
+.arrow-vis-uncertainty-high {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 1.5px;
+  background-color: rgb(11, 11, 11, 0.3);
+  transform-origin: left center;
+  transform: rotate(45deg);
+}
+.arrow-vis-uncertainty-high::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid rgb(11, 11, 11, 0.3);
+}
+.arrow-vis-uncertainty-down {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 1.5px;
+  background-color: rgb(14, 8, 8);
+  transform-origin: left center;
+  transform: rotate(90deg);
+}
+
+.arrow-vis-uncertainty-down::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 8px solid rgb(11, 11, 11);
+}
+
+
+.arrow-vis-uncertainty-label {
+  top:10%;
+  left: 50%;
+  transform: translate(-50%, -150%); /* above center point */
+}
+
+.arrow-vis-uncertainty-label-down {
+  top: 130%;
+  left: 50%;
+  transform: translate(-50%, -150%);
 }
 
 </style>

@@ -537,7 +537,7 @@ const applyStyle = ()=>{
                 
         }
         specifyLegendProperties(
-            selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value ==='color'? activatedGeovisStyle.value = 'bivariate': activatedGeovisStyle.value ='square',
+            selectedVisualVariable1.value.value=='color' && selectedVisualVariable2?.value?.value ==='color'? activatedGeovisStyle.value = 'bivariate': activatedGeovisStyle.value ='arrow',
             firstProperties.value=selectedfeatureProperties1.value.name,
             firstPropertiesClassIntervals.value = JSON.parse(selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']),
             secondProperties.value=selectedfeatureProperties2?.value?.name,
