@@ -474,17 +474,26 @@ const applyStyle = ()=>{
             emit("addCustomMapboxBorderLayerToMap", 
                 selectedFeatureGeojson.value, 
                 selectedfeatureProperties1.value.value, 
+                selectedfeatureProperties2?.value?.value, 
                 'uncertainty', 
-                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5']
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2?.value?.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                selectedVisualVariable1.value.value,
+                selectedVisualVariable2?.value?.value
             )
 
         }
         else if(selectedUncertaintyStyle.value?.value=='noise_with_grain_size'){
             emit("addCustomMapboxGrainNoiseLayerToMap",  
-                selectedFeatureGeojson.value, 
+               selectedFeatureGeojson.value, 
                 selectedfeatureProperties1.value.value, 
-                'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'
-            ])
+                selectedfeatureProperties2?.value?.value, 
+                'uncertainty', 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2?.value?.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
+                selectedVisualVariable1.value.value,
+                selectedVisualVariable2?.value?.value
+            )
 
         }
         else {

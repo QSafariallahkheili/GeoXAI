@@ -339,10 +339,9 @@ const addPatternLayerToMap = (geojson, prop1, prop2, prop3, classes, classes1, v
       removeDeckglLayers()
       addCustomPatternLayerToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
-const addCustomMapboxBorderLayerToMap=(geojson, prop1,prop2, classes)=>{
-  preserveSquareLayer = true;
+const addCustomMapboxBorderLayerToMap=(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2)=>{
   removeDeckglLayers()
-  addCustomBorderLayerToMap(geojson, prop1, prop2, classes, map)
+  addCustomBorderLayerToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 
 const addPatternLayerWithOrientationToMap=(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2)=>{
@@ -612,7 +611,7 @@ const addPositionLayerToMap = (geojson, prop1, prop2, prop3, classes, classes1, 
   addDeckglPositionLayerToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 
-const addArrowLayerWithThreePropToMap = (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2,)=>{
+const addArrowLayerWithThreePropToMap = (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2)=>{
   removeDeckglLayers()
   addDeckglArrowLayerWithThreePropToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
@@ -621,13 +620,11 @@ const addArrowLayerWithTwoPropToMap= (geojson, prop1,prop2, classes, classes1,vi
   addDeckglArrowLayerWithtwoPropToMap(geojson, prop1,prop2, classes, classes1,visVar1, visVar2, map)
 }
 
-const addCustomMapboxGrainNoiseLayerToMap=(geojson, prop1,prop2, classes)=>{
-  preserveSquareLayer = true;
+const addCustomMapboxGrainNoiseLayerToMap=(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2)=>{
   removeDeckglLayers()
-  addCustomBorderLayerWithNoisegrainToMap(geojson, prop1,prop2, classes, map)
+  addCustomBorderLayerWithNoisegrainToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
 
-let preserveSquareLayer = false;
 const removeDeckglLayers = ()=>{
   let deckglLayers = [ 'fuzzy-layer-three-props','hexagon', 'glow-points', 'ffs-uncertainty-dot-layer', 'scatterplot', 'scatterplotCenter', 'arrow-layer', 'ink-layer', 'square-layer']
   let mapboxLayers = ['highlight', 'border-uncertainty', 'border-uncertainty-noise-grain']
@@ -637,7 +634,7 @@ const removeDeckglLayers = ()=>{
   }
   for (let i = 0; i < deckglLayers.length; i++) {
     if (map.getLayer(deckglLayers[i])!== undefined) {
-      if (preserveSquareLayer ) continue;
+     
       map.removeLayer(deckglLayers[i])
       map.__deck.setProps({ layers: [] })
     }
@@ -647,7 +644,6 @@ const removeDeckglLayers = ()=>{
       map.removeLayer(mapboxLayers[i])
     }
   }
-  preserveSquareLayer = false;
 }
 
 onUnmounted(() => {
