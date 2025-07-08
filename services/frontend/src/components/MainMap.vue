@@ -6,7 +6,7 @@
     <MenuUI @removeLayerFromMap="removeLayerFromMap" @addLayerToMap="addLayerToMap"></MenuUI>
     <FilterUI v-if="activeMenu=='filter'" @activateBufferTool="activateBufferTool" @addGeojsonLayer="addGeojsonLayer" @fitBoundsToBBOX="fitBoundsToBBOX" @removeLayerFromMap="removeLayerFromMap" @removeDrawControl="removeDrawControl" @activatePolygonTool="activatePolygonTool"> </FilterUI>
     <XAI v-if="activeMenu=='xai' || activeMenu=='filter'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
-    <GeovisUI v-show="activeMenu=='geovis'" @addCircleLayerToMap="addCircleLayerToMap" @addSquareLayerToMap="addSquareLayerToMap" @addLayerToMap="addLayerToMap" @addFuzzyLayerToMap="addFuzzyLayerToMap" @addPositionLayerToMap="addPositionLayerToMap" @addArrowLayerWithThreePropToMap="addArrowLayerWithThreePropToMap" @addCircleLayerWithInkUncertainty="addCircleLayerWithInkUncertainty" @addPatternLayerToMap="addPatternLayerToMap" @addCircleLayerWithInkUncertaintyOneProp="addCircleLayerWithInkUncertaintyOneProp" @addFuzzyLayerWithThreePropToMap="addFuzzyLayerWithThreePropToMap" @addPatternLayerWithOrientationToMap="addPatternLayerWithOrientationToMap" @addArrowLayerWithTwoPropToMap="addArrowLayerWithTwoPropToMap" @addCustomMapboxBorderLayerToMap="addCustomMapboxBorderLayerToMap" @addCustomMapboxGrainNoiseLayerToMap="addCustomMapboxGrainNoiseLayerToMap"></GeovisUI>
+    <GeovisUI v-show="activeMenu=='geovis'" @addCircleLayerToMap="addCircleLayerToMap" @addSquareLayerToMap="addSquareLayerToMap" @addLayerToMap="addLayerToMap" @addFuzzyLayerToMap="addFuzzyLayerToMap" @addPositionLayerToMap="addPositionLayerToMap" @addArrowLayerWithThreePropToMap="addArrowLayerWithThreePropToMap" @addCircleLayerWithInkUncertainty="addCircleLayerWithInkUncertainty" @addPatternLayerToMap="addPatternLayerToMap" @addCircleLayerWithInkUncertaintyOneProp="addCircleLayerWithInkUncertaintyOneProp" @addFuzzyLayerWithThreePropToMap="addFuzzyLayerWithThreePropToMap" @addPatternLayerWithOrientationToMap="addPatternLayerWithOrientationToMap" @addArrowLayerWithTwoPropToMap="addArrowLayerWithTwoPropToMap" @addCustomMapboxBorderLayerToMap="addCustomMapboxBorderLayerToMap" @addCustomMapboxGrainNoiseLayerToMap="addCustomMapboxGrainNoiseLayerToMap" @addAggregatedSHAPLayerToMap="addAggregatedSHAPLayerToMap"></GeovisUI>
   </div>
   
   <MetadataDialog> </MetadataDialog>
@@ -38,7 +38,7 @@ import * as turf from "@turf/turf";
 
 import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
 import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
-import {addDeckglCircleLayerWithUncertainty, addDeckglCircleLayerOnePropWithUncertainty,addDeckglSquareLayerToMap, addDeckglFuzzyLayerToMap, addDeckglPositionLayerToMap, addDeckglArrowLayerWithThreePropToMap, addCustomPatternLayerToMap,addDeckglCircleLayer, addDeckglFuzzyLayerWithThreePropToMap, addCustomPatternLayerWithOrientationToMap, addDeckglArrowLayerWithtwoPropToMap, addCustomBorderLayerToMap, addCustomBorderLayerWithNoisegrainToMap} from '../utils/deckglLayers';
+import {addDeckglCircleLayerWithUncertainty, addDeckglCircleLayerOnePropWithUncertainty,addDeckglSquareLayerToMap, addDeckglFuzzyLayerToMap, addDeckglPositionLayerToMap, addDeckglArrowLayerWithThreePropToMap, addCustomPatternLayerToMap,addDeckglCircleLayer, addDeckglFuzzyLayerWithThreePropToMap, addCustomPatternLayerWithOrientationToMap, addDeckglArrowLayerWithtwoPropToMap, addCustomBorderLayerToMap, addCustomBorderLayerWithNoisegrainToMap, addDeckglAggregationPieLayer} from '../utils/deckglLayers';
 
 
 let { activeMenu } = storeToRefs(useMenuStore())
@@ -624,9 +624,13 @@ const addCustomMapboxGrainNoiseLayerToMap=(geojson, prop1, prop2, prop3, classes
   removeDeckglLayers()
   addCustomBorderLayerWithNoisegrainToMap(geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map)
 }
+const addAggregatedSHAPLayerToMap=(geojson,mode)=>{
+  removeDeckglLayers()
+  addDeckglAggregationPieLayer(geojson,mode, map)
 
+}
 const removeDeckglLayers = ()=>{
-  let deckglLayers = [ 'fuzzy-layer-three-props','hexagon', 'glow-points', 'ffs-uncertainty-dot-layer', 'scatterplot', 'scatterplotCenter', 'arrow-layer', 'ink-layer', 'square-layer']
+  let deckglLayers = [ 'fuzzy-layer-three-props','hexagon', 'glow-points', 'ffs-uncertainty-dot-layer', 'scatterplot', 'scatterplotCenter', 'arrow-layer', 'ink-layer', 'square-layer', 'aggregation-pie-layer']
   let mapboxLayers = ['highlight', 'border-uncertainty', 'border-uncertainty-noise-grain']
   if (mapboxOverlayLayer.value ) {
     map.removeControl(mapboxOverlayLayer.value);

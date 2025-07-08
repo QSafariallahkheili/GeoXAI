@@ -1,4 +1,4 @@
-import {CustomFuzzyCircleLayer, CustomScatterplotLayer} from "./shaders"
+import {CustomFuzzyCircleLayer, CustomScatterplotLayer, CustomDeckglPieLayer} from "./shaders"
 
 import {MapboxLayer} from '@deck.gl/mapbox';
 import { addDeckglPopupToMap } from '../utils/mapUtils';
@@ -2990,4 +2990,59 @@ vec2 cellular2x2(vec2 P) {
       addDeckglPopupToMap(feat, prop1, prop2, prop3)
   });
 
+}
+
+export function addDeckglAggregationPieLayer(geojson, mode, map){
+  const featureNames = [
+  'aspect', 'dem', 'ndvi', 'slope', 'drought_index',
+  'global_radiation', 'gndvi', 'landcover', 'ndmi',
+  'precipitation', 'lst'
+];
+
+    let shapMode=null
+    if (mode=='positive'){
+      shapMode = 'top5Positive'
+    }
+    else if (mode=='negative'){
+    shapMode = 'bottom5Negative'
+    }
+    console.log('shapMode:', shapMode);
+const computeBreakdown = (shapArray) => {
+  const sum = shapArray.reduce((a, b) => a + b, 0) || 1;
+  const norm = shapArray.map(x => x / sum);
+  const cumulative = norm.map((val, i) => norm.slice(0, i + 1).reduce((a, b) => a + b));
+  return cumulative;
+};
+
+const getColorIndex = (d) => {
+  return  d.properties[shapMode].map(feature => featureNames.indexOf(feature.table_name));
+};
+const pieLayer = new MapboxLayer({
+  id: 'aggregation-pie-layer',
+  type: CustomDeckglPieLayer,
+  data: [...geojson.features],
+  getPosition: d => d.geometry.coordinates,
+  getRadius: 1200 * (362 / 1200),
+ getBreakdown: d => computeBreakdown(d.properties[shapMode].map(e => e.shap)),
+  getColorIndex: d => getColorIndex(d),
+  colors: [
+    '#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99',
+    '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99'
+  ],
+  radiusUnits: 'meters',
+  getLineColor: [0, 0, 0],
+  getLineWidth: 1,
+  radiusScale: 1,
+  pickable: true,
+  autoHighlight: false,
+  highlightColor: [0, 255, 0],
+  updateTriggers: {
+    getBreakdown: [computeBreakdown],
+    getColorIndex: [getColorIndex]
+  },
+  onClick: (info) => console.log('Clicked:', info)
+});
+  
+  
+  map.addLayer(pieLayer);
 }
