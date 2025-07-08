@@ -1,6 +1,16 @@
 <template>
     <v-card class="geovis-ui" v-show="activeMenu=='geovis'" width="400" max-height="900">
-        <div >
+        <v-tabs
+            bg-color="rgba(75, 192, 192, 0.8)"
+            color="white"
+            fixed-tabs
+            v-model="activatedGeovisTab"
+        >
+            <v-tab color="white" value="single-feature" text="Single Feature"></v-tab>
+
+            <v-tab color="white" value="accumulative" text="Accumulative" @click="getPointsGeojson()"></v-tab>
+        </v-tabs>
+        <div v-if="activatedGeovisTab=='single-feature'">
             <v-card-text>
                 <v-row>
                         <v-col cols="12" >
@@ -223,6 +233,39 @@
             
             </v-card-text>
         </div>
+        <div v-if="activatedGeovisTab=='accumulative'">
+            <v-card-text>
+                <v-row>
+                        <v-col cols="12" >
+                            <v-select
+                                v-model="selectedShapContributionMode"
+                                :items="shapContributionModes"
+                                hide-details
+                                label="SHAP Contribution"
+                                item-title="name" 
+                                return-object
+                                variant="outlined"
+                            ></v-select>
+                            
+                        
+                        </v-col>
+                </v-row>
+                 <v-row>
+                    <v-col cols="12">
+                        <v-btn
+                            color="rgba(75, 192, 192, 0.8)"
+                            dark
+                            block
+                            style="color: white;"
+                            :disabled="pointsGeojson && selectedShapContributionMode? false : true"
+                            @click="applyAggregatedSHAP()"
+                        >
+                            Apply
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </div>
     </v-card>
 </template>
 
@@ -230,14 +273,20 @@
 import { ref, defineEmits, computed } from 'vue'
 import { useMenuStore } from '../stores/menu'
 import { storeToRefs } from 'pinia'
-import {getTableGeojson} from '../services/backend.calls'
+import {getTableGeojson, getAggregatedSHAPValues} from '../services/backend.calls'
 import { useMapLegendStore } from '../stores/mapLegend'
 import * as colorbrewer from 'colorbrewer';
 
 let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, secondPropertiesClassIntervals} = storeToRefs(useMapLegendStore())
 const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap", "addCircleLayerWithInkUncertainty", "addCircleLayerWithInkUncertaintyOneProp", "addFuzzyLayerWithThreePropToMap", "addArrowLayerWithTwoPropToMap", "addCustomBorderLayerToMap", "addCustomMapboxGrainNoiseLayerToMap"]);
 
-
+let activatedGeovisTab = ref()
+let shapContributionModes = ref([
+     { name: 'Positive', value: 'positive'},
+    { name: 'Negative', value: 'negative'},
+])
+let selectedShapContributionMode = ref(null)
+let pointsGeojson = ref(null)
 let { activeMenu } = storeToRefs(useMenuStore())
 let selectedStyle = ref(null)
 let geovisStyles = ref([
@@ -615,6 +664,76 @@ const applyStyle = ()=>{
         emit("addPatternLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'])
 
     }
+}
+
+const getPointsGeojson= async () => {
+   
+    const feature =  await getTableGeojson('dem')
+    pointsGeojson.value = feature
+}
+const applyAggregatedSHAP= async ()=>{
+   
+    const aggregatedSHAPData = await getAggregatedSHAPValues();
+    const rawData = aggregatedSHAPData[0][0];
+
+    const groupedById = {};
+
+    for (const { id, table_name, shap } of rawData) {
+        if (!groupedById[id]) {
+        groupedById[id] = [];
+        }
+        groupedById[id].push({ table_name, shap });
+    }
+
+    const topBottomPerId = Object.entries(groupedById).map(([id, values]) => {
+        // Defensive copy
+        const valuesCopy = values.slice();
+
+        const top5Positive = valuesCopy
+        .filter(v => v.shap > 0)
+        .sort((a, b) => b.shap - a.shap)
+        .slice(0, 5);
+
+        const bottom5Negative = valuesCopy
+        .filter(v => v.shap < 0)
+        .sort((a, b) => a.shap - b.shap) // ascending sort: most negative first
+        .slice(0, 5);
+
+        return {
+        id: Number(id),
+        top5Positive,
+        bottom5Negative,
+        };
+    });
+
+    // Build a lookup map by ID for faster access
+    const shapById = new Map();
+    topBottomPerId.forEach(item => {
+        shapById.set(item.id, item);
+    });
+
+    pointsGeojson.value.features.forEach(feature => {
+    const id = feature.properties.id;
+
+    if (shapById.has(id)) {
+        const { top5Positive, bottom5Negative } = shapById.get(id);
+
+        // Add them as new properties
+        feature.properties.top5Positive = top5Positive;
+        feature.properties.bottom5Negative = bottom5Negative;
+    } else {
+        // assign empty if no SHAP info found
+        feature.properties.top5Positive = [];
+        feature.properties.bottom5Negative = [];
+    }
+    });
+    console.log(pointsGeojson.value);
+     emit("addAggregatedSHAPLayerToMap", 
+        pointsGeojson.value,
+        selectedShapContributionMode.value.value,
+    )
+    activatedGeovisStyle.value = 'accumulative'
+
 }
 const assignColorPalette = (item, palette) => {
     useMapLegendStore().assignColorPalette({name: item, colors: palette});
