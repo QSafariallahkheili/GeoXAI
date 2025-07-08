@@ -227,3 +227,44 @@ def get_shap_per_table_for_buffer(geojson, srid=4326):
     cur.close()
     conn.close()
     return result
+
+def get_aggregated_shap():
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute(""" 
+        SELECT json_agg(
+                json_build_object(
+                    'table_name', t.table_name,
+                    'shap', t.shap,
+                    'id', t.id
+            )) AS result
+        FROM (
+            SELECT 'aspect' AS table_name, shap,id FROM aspect
+            UNION ALL
+            SELECT 'dem' AS table_name, shap, id FROM dem
+            UNION ALL
+            SELECT 'ndvi' AS table_name, shap,id FROM ndvi
+            UNION ALL
+            SELECT 'slope' AS table_name, shap,id FROM slope
+            UNION ALL
+            SELECT 'drought_index' AS table_name, shap,id FROM drought_index
+            UNION ALL
+            SELECT 'global_radiation' AS table_name, shap,id FROM global_radiation
+            UNION ALL
+            SELECT 'gndvi' AS table_name, shap,id FROM gndvi
+            UNION ALL
+            SELECT 'landcover' AS table_name, shap,id FROM landcover
+            UNION ALL
+            SELECT 'ndmi' AS table_name, shap,id FROM ndmi
+            UNION ALL
+            SELECT 'precipitation' AS table_name, shap,id FROM precipitation
+            UNION ALL
+            SELECT 'lst' AS table_name, shap,id FROM lst
+
+        ) t;
+
+    """)
+    data = cur.fetchall()
+    cur.close()
+    conn.close()
+    return data 

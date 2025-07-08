@@ -16,7 +16,8 @@ from .database import (
     get_single_geom_instance,
     get_shap_per_table_for_municipality,
     get_shap_per_table_for_buffer,
-    get_table_geojson
+    get_table_geojson,
+    get_aggregated_shap
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -279,3 +280,9 @@ def get_shap_values_for_polygonr(
     shap_values = get_shap_per_table_for_buffer(payload, 4326)
     
     return shap_values
+
+@app.get("/api/get_aggregated_shap")
+def get_aggregated_shap_values():
+    
+    aggregated_shap = get_aggregated_shap()
+    return aggregated_shap
