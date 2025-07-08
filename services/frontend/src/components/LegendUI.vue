@@ -295,7 +295,7 @@
             </div>
         </v-card-item>
         <!-- Legend for Circle position uncertainty -->
-        <v-card-item v-if="uncertaintyStyle === 'orientation'">
+        <v-card-item v-if="uncertaintyStyle === 'orientation' && activatedGeovisStyle === 'arrow'">
             <div class="circle mt-4 mb-4">
                <div class="point center"></div>
               <div class="label arrow-vis-uncertainty-label">Certain</div>
@@ -308,6 +308,31 @@
               </div>
              
         </v-card-item>
+       <v-card-item v-if="activatedGeovisStyle === 'accumulative'">
+        <div class="mb-4 font-weight-bold">
+               Accumulative Feature       
+            </div>
+        <v-row class="pa-2" style="width: 160px;" dense>
+          <v-col
+            v-for="(color, feature) in accumulativeFeatureColor"
+            :key="feature"
+            cols="12"
+            class="d-flex align-center"
+          >
+            <div
+              :style="{
+                backgroundColor: color,
+                width: '20px',
+                height: '20px',
+                borderRadius: '4px',
+                marginRight: '8px',
+                border: '1px solid #ccc'
+              }"
+            ></div>
+            <span class="text-body-2">{{ feature }}</span>
+          </v-col>
+        </v-row>
+      </v-card-item>
 
         
     </v-card>
@@ -355,6 +380,12 @@ let  bivariateColorpalette= ref({
              'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
             'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
         }) 
+
+let accumulativeFeatureColor = ref({
+    'aspect':'#a6cee3', 'dem':'#1f78b4', 'ndvi':'#b2df8a', 'slope':'#33a02c', 'drought_index':'#fb9a99',
+    'global_radiation':'#e31a1c', 'gndvi':'#fdbf6f', 'landcover':'#ff7f00', 'ndmi':'#cab2d6', 'precipitation':'#6a3d9a', 'lst':'#ffff99'
+})
+  console.log(accumulativeFeatureColor.value)
 const showMetadata = (featureName) =>{
     metadataDialogStore.assignMetadata(featureMetadata[featureName].metadata, featureName)
 
