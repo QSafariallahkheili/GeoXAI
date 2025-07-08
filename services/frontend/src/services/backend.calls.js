@@ -138,3 +138,8 @@ export async function getShapForPolygon(geojson){
     )
     return response.data;
 }
+
+export async function getAggregatedSHAPValues () {
+    const response = await HTTP.get("/api/get_aggregated_shap")
+    return response.data;
+}
