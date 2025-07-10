@@ -289,4 +289,6 @@ def get_shap_values_for_polygonr(
 def get_aggregated_shap_values():
     
     aggregated_shap = get_aggregated_shap()
-    return aggregated_shap
+    data = json.dumps(aggregated_shap)
+    gzipped_data = gzip.compress(data.encode('utf-8'))
+    return Response(content=gzipped_data, headers={"Content-Encoding": "gzip", "Content-Type": "application/json"})
