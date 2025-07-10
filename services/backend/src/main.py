@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import subprocess
@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import rioxarray
 from osgeo import gdal
 import json
+import gzip
 
 
 app = FastAPI()
@@ -181,7 +182,10 @@ def get_table_geojson_from_db(
 ):
     tablename = table_request.tablename
     geojson = get_table_geojson(tablename)
-    return geojson
+    data = json.dumps(geojson)
+    gzipped_data = gzip.compress(data.encode('utf-8'))
+    return Response(content=gzipped_data, headers={"Content-Encoding": "gzip", "Content-Type": "application/json"})
+
 
 
 @app.post("/api/get_zonal_statistics")

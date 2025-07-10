@@ -93,6 +93,7 @@
                         <v-select
                                 v-model="selectedfeatureProperties2"
                                 :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
+                                item-props="props"
                                 hide-details
                                 label="2nd variable"
                                 item-title="name" 
@@ -106,6 +107,7 @@
                         <v-select
                                 v-model="selectedVisualVariable2"
                                 :items="visualVariables"
+                                item-props="props"
                                 hide-details
                                 label="2nd vis variable"
                                 item-title="name" 
