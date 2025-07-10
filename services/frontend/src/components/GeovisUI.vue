@@ -51,6 +51,7 @@
                         <v-select
                                 v-model="selectedfeatureProperties1"
                                 :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
+                                item-props="props"
                                 hide-details
                                 label="1st variable"
                                 item-title="name" 
@@ -64,6 +65,7 @@
                         <v-select
                                 v-model="selectedVisualVariable1"
                                 :items="visualVariables"
+                                item-props="props"
                                 hide-details
                                 label="1st vis variable"
                                 item-title="name" 
@@ -331,8 +333,8 @@ let features = ref([
     
 ])
 let featureProperties = ref([
-    { name: 'SHAP Value', value: 'shap'},
-    { name: 'Feature Value', value: 'value'}, 
+    { name: 'SHAP Value', value: 'shap' ,props: { disabled: false }},
+    { name: 'Feature Value', value: 'value', props: { disabled: false }}, 
 ])
 let FFSProperties = ref([
     { name: 'Value', value: 'value'},
@@ -355,8 +357,8 @@ let layerType = ref(null)
 let shapClassesForArrow= ref(null)
 let secondPropertiesAllowed = ref(false)
 let visualVariables = ref([
-    { name: 'Color', value: 'color' },
-    { name: 'Size', value: 'size' },
+    { name: 'Color', value: 'color',props: { disabled: false } },
+    { name: 'Size', value: 'size', props: { disabled: false } },
 ]);
 let selectedVisualVariable1 = ref(null)
 let selectedVisualVariable2 = ref(null)
