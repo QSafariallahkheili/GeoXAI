@@ -76,7 +76,7 @@ export class CustomScatterplotLayer extends ScatterplotLayer {
             float dist = length(vUV);
 
 // Define how much thickness to preserve for the outline
-float outlineThreshold = 0.98;
+float outlineThreshold = 1.0;
 
 // Edge area is everything from outlineThreshold to 1.0
 float isEdge = smoothstep(outlineThreshold, 1.0, dist);

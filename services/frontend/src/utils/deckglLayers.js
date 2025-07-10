@@ -959,8 +959,8 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
 
    filled: true,
    stroked: true,
-   getLineColor: [0, 0, 0, 100],
-   getLineWidth: 1,
+   getLineColor: [0, 0, 0, 0],
+   getLineWidth: 0,
    lineWidthMinPixels: 1,
    getUncertainty: d => {
     //console.log(d.properties.uncertainty);
