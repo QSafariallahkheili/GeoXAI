@@ -40,6 +40,7 @@
                                 item-title="name" 
                                 return-object
                                 variant="outlined"
+                                @update:modelValue="selectedUncertaintyStyle=null"
                                 :disabled="featureRetrieved == false? true : false"
                             ></v-select>
                             
@@ -50,7 +51,7 @@
                     <v-col cols="6">
                         <v-select
                                 v-model="selectedfeatureProperties1"
-                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
+                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties1"
                                 item-props="props"
                                 hide-details
                                 label="1st variable"
@@ -92,7 +93,7 @@
                     <v-col cols="6">
                         <v-select
                                 v-model="selectedfeatureProperties2"
-                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties"
+                                :items="selectedfeature?.value=='fire_susceptibility'?FFSProperties:featureProperties2WithDisabled"
                                 item-props="props"
                                 hide-details
                                 label="2nd variable"
@@ -274,7 +275,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, computed } from 'vue'
+import { ref, defineEmits, computed, watch } from 'vue'
 import { useMenuStore } from '../stores/menu'
 import { storeToRefs } from 'pinia'
 import {getTableGeojson, getAggregatedSHAPValues} from '../services/backend.calls'
@@ -334,17 +335,32 @@ let features = ref([
     { name: 'Fire Susceptibility', value: 'fire_susceptibility'}
     
 ])
-let featureProperties = ref([
+let featureProperties1 = ref([
     { name: 'SHAP Value', value: 'shap' ,props: { disabled: false }},
     { name: 'Feature Value', value: 'value', props: { disabled: false }}, 
 ])
+
+let featureProperties2 = ref([
+    { name: 'SHAP Value', value: 'shap' ,props: { disabled: false }},
+    { name: 'Feature Value', value: 'value', props: { disabled: false }}, 
+])
+const featureProperties2WithDisabled = computed(() => {
+  return featureProperties2.value.map(item => ({
+    ...item,
+    props: {
+      disabled: selectedfeatureProperties1?.value?.value === item.value
+    }
+  }))
+})
+let selectedfeatureProperties1 = ref(null)
+let selectedfeatureProperties2 = ref(null)
+let selectedfeatureProperties3 = ref(null)
+
 let FFSProperties = ref([
     { name: 'Value', value: 'value'},
     { name: 'Uncertainty', value: 'uncertainty'}, 
 ])
-let selectedfeatureProperties1 = ref(null)
-let selectedfeatureProperties2 = ref(null)
-let selectedfeatureProperties3 = ref(null)
+
 let selectedfeature = ref(null)
 let selectedFeatureGeojson = ref(null)
 let featureRetrieved = ref(false)
@@ -379,6 +395,18 @@ const relatedUncertaintyStyles = computed(() => {
     allowedValues.includes(style.value)
   );
 });
+watch(() => selectedfeatureProperties1.value?.value,
+  (newVal) => {
+    if (newVal === 'shap') {
+      selectedfeatureProperties2.value = featureProperties2.value.find(item => item.value === 'value')
+    } else if (newVal === 'value') {
+      selectedfeatureProperties2.value = featureProperties2.value.find(item => item.value === 'shap')
+    } else {
+      selectedfeatureProperties2.value = null
+    }
+  },
+  { immediate: true } // optional: to trigger on component mount
+)
 
 const getPredictor = async() => {
    
