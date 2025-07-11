@@ -11,6 +11,7 @@
   
   <MetadataDialog> </MetadataDialog>
   <AlertUI> </AlertUI>
+  <ProgressUI> </ProgressUI>
   
 </template>
 
@@ -24,6 +25,7 @@ import LegendUI from "@/components/LegendUI.vue";
 import MenuUI from "@/components/MenuUI.vue";
 import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
+import ProgressUI from "@/components/ProgressUI.vue";
 import GeovisUI from "@/components/GeovisUI.vue";
 import AlertUI from "@/components/AlertUI.vue";
 import  FilterUI from '@/components/FilterUI.vue'
