@@ -92,7 +92,7 @@
             </div>
         </v-card-item>
           <!-- Legend for ink circle uncertainty -->
-        <v-card-item style="font-size: 0.7rem;" v-if=" uncertaintyStyle === 'ink'">
+        <v-card-item style="font-size: 0.7rem;" v-if=" uncertaintyStyle === 'ink' && activatedGeovisStyle === 'circle'">
           <div class="legend-item mr-1">
             <div class="ink-circle ink-level-very-low"></div>
             <span>Very Low</span>
@@ -118,7 +118,7 @@
           </div>
         </v-card-item>
          <!-- Legend for fuzzy circle uncertainty -->
-        <v-card-item style="font-size: 0.7rem;"  v-if="uncertaintyStyle === 'fuzzy'">
+        <v-card-item style="font-size: 0.7rem;"  v-if="uncertaintyStyle === 'fuzzy' && activatedGeovisStyle === 'circle'">
             <div class="legend-item mr-1">
                 <div class="fuzzy-circle level-very-low"></div>
                 <span>Very Low</span>
@@ -145,7 +145,7 @@
             
         </v-card-item>
         <!-- Legend for Circle position uncertainty -->
-        <v-card-item v-if="uncertaintyStyle === 'position'">
+        <v-card-item v-if="uncertaintyStyle === 'position' && activatedGeovisStyle === 'circle'">
             <div class="circle">
               <div class="point center"></div>
               <div class="label center-label">Certain</div>
@@ -229,7 +229,7 @@
             </div>
         </v-card-item>
         <!-- Legend for pattern size -->
-        <v-card-item v-if="uncertaintyStyle==='pattern_width'">
+        <v-card-item v-if="uncertaintyStyle==='pattern_width' && activatedGeovisStyle === 'square'">
           <div  v-for="(thickness, index) in stripeThicknesses"
             :key="index"
             style="font-size: 0.7rem; display: inline-block;">
@@ -247,7 +247,7 @@
           
         </v-card-item>
          <!-- Legend for pattern orientation -->
-        <v-card-item v-if="uncertaintyStyle==='pattern_orientation'">
+        <v-card-item v-if="uncertaintyStyle==='pattern_orientation' && activatedGeovisStyle === 'square'">
           <div  v-for="(angle, index) in stripeAngles"
             :key="index"
             style="font-size: 0.7rem; display: inline-block;">
