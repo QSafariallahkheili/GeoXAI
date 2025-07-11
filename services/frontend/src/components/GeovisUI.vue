@@ -699,12 +699,18 @@ const applyStyle = ()=>{
 }
 
 const getPointsGeojson= async () => {
-   
+   console.log(selectedFeatureGeojson.value, "dff")
+   if(selectedFeatureGeojson.value==null){
     const feature =  await getTableGeojson('dem')
     pointsGeojson.value = feature
+   }
+   else {
+    pointsGeojson.value=selectedFeatureGeojson.value
+   }
+    
 }
 const applyAggregatedSHAP= async ()=>{
-   
+   if (pointsGeojson.value.features[0].properties.top5Positive==undefined){
     const aggregatedSHAPData = await getAggregatedSHAPValues();
     const rawData = aggregatedSHAPData[0][0];
 
@@ -759,11 +765,13 @@ const applyAggregatedSHAP= async ()=>{
         feature.properties.bottom5Negative = [];
     }
     });
-    console.log(pointsGeojson.value);
-     emit("addAggregatedSHAPLayerToMap", 
+     
+   }
+   emit("addAggregatedSHAPLayerToMap", 
         pointsGeojson.value,
         selectedShapContributionMode.value.value,
     )
+    
     activatedGeovisStyle.value = 'accumulative'
 
 }
