@@ -281,6 +281,9 @@ import { storeToRefs } from 'pinia'
 import {getTableGeojson, getAggregatedSHAPValues} from '../services/backend.calls'
 import { useMapLegendStore } from '../stores/mapLegend'
 import * as colorbrewer from 'colorbrewer';
+import { useProgressStore } from '@/stores/progress'
+
+const progressStore = useProgressStore()
 
 let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, secondPropertiesClassIntervals} = storeToRefs(useMapLegendStore())
 const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap", "addCircleLayerWithInkUncertainty", "addCircleLayerWithInkUncertaintyOneProp", "addFuzzyLayerWithThreePropToMap", "addArrowLayerWithTwoPropToMap", "addCustomBorderLayerToMap", "addCustomMapboxGrainNoiseLayerToMap"]);
@@ -409,14 +412,24 @@ watch(() => selectedfeatureProperties1.value?.value,
 )
 
 const getPredictor = async() => {
-   
+   progressStore.setProgressBar({
+        text: `Retrieving ${selectedfeature.value.name} data`,
+        progress: true
+    })
     featureRetrieved.value = false
     const feature =  await getTableGeojson(selectedfeature.value.value)
     selectedFeatureGeojson.value = feature
     featureRetrieved.value = true
+     progressStore.setProgressBar({
+        progress: false
+    })
     
 }
 const getShapForPredictor = async() => {
+    progressStore.setProgressBar({
+        text: 'Retrieving data',
+        progress: true
+    })
     featureRetrieved.value = false
     const feature =  await getTableGeojson(selectedfeatureProperties3.value.value)
     shapClassesForArrow.value= feature.features[0].properties.shap5
@@ -428,10 +441,14 @@ const getShapForPredictor = async() => {
         //console.log(feature.properties, "feature.properties")
     const id = feature.properties.id;
     if (Object.prototype.hasOwnProperty.call(shapMap, id)) {
-    feature.properties.shap = shapMap[id];
-}
+        feature.properties.shap = shapMap[id];
+    }
     });
     featureRetrieved.value = true
+    progressStore.setProgressBar({
+        progress: false
+    })
+
 }
 const applyStyle = ()=>{
     uncertaintyStyle.value=selectedUncertaintyStyle.value?.value
@@ -699,10 +716,17 @@ const applyStyle = ()=>{
 }
 
 const getPointsGeojson= async () => {
-   console.log(selectedFeatureGeojson.value, "dff")
+
    if(selectedFeatureGeojson.value==null){
+    progressStore.setProgressBar({
+        text: 'Retrieving data for accumulative SHAP',
+        progress: true
+    })
     const feature =  await getTableGeojson('dem')
     pointsGeojson.value = feature
+    progressStore.setProgressBar({
+        progress: false
+    })
    }
    else {
     pointsGeojson.value=selectedFeatureGeojson.value
@@ -711,66 +735,74 @@ const getPointsGeojson= async () => {
 }
 const applyAggregatedSHAP= async ()=>{
    if (pointsGeojson.value.features[0].properties.top5Positive==undefined){
-    const aggregatedSHAPData = await getAggregatedSHAPValues();
-    const rawData = aggregatedSHAPData[0][0];
+        progressStore.setProgressBar({
+            text: 'Retrieving Data for accumulative SHAP',
+            progress: true
+        })
+        const aggregatedSHAPData = await getAggregatedSHAPValues();
+        const rawData = aggregatedSHAPData[0][0];
 
-    const groupedById = {};
+        const groupedById = {};
 
-    for (const { id, table_name, shap } of rawData) {
-        if (!groupedById[id]) {
-        groupedById[id] = [];
+        for (const { id, table_name, shap } of rawData) {
+            if (!groupedById[id]) {
+            groupedById[id] = [];
+            }
+            groupedById[id].push({ table_name, shap });
         }
-        groupedById[id].push({ table_name, shap });
-    }
 
-    const topBottomPerId = Object.entries(groupedById).map(([id, values]) => {
-        // Defensive copy
-        const valuesCopy = values.slice();
+        const topBottomPerId = Object.entries(groupedById).map(([id, values]) => {
+            // Defensive copy
+            const valuesCopy = values.slice();
 
-        const top5Positive = valuesCopy
-        .filter(v => v.shap > 0)
-        .sort((a, b) => b.shap - a.shap)
-        .slice(0, 5);
+            const top5Positive = valuesCopy
+            .filter(v => v.shap > 0)
+            .sort((a, b) => b.shap - a.shap)
+            .slice(0, 5);
 
-        const bottom5Negative = valuesCopy
-        .filter(v => v.shap < 0)
-        .sort((a, b) => a.shap - b.shap) // ascending sort: most negative first
-        .slice(0, 5);
+            const bottom5Negative = valuesCopy
+            .filter(v => v.shap < 0)
+            .sort((a, b) => a.shap - b.shap) // ascending sort: most negative first
+            .slice(0, 5);
 
-        return {
-        id: Number(id),
-        top5Positive,
-        bottom5Negative,
-        };
-    });
+            return {
+            id: Number(id),
+            top5Positive,
+            bottom5Negative,
+            };
+        });
 
-    // Build a lookup map by ID for faster access
-    const shapById = new Map();
-    topBottomPerId.forEach(item => {
-        shapById.set(item.id, item);
-    });
+        // Build a lookup map by ID for faster access
+        const shapById = new Map();
+        topBottomPerId.forEach(item => {
+            shapById.set(item.id, item);
+        });
 
-    pointsGeojson.value.features.forEach(feature => {
-    const id = feature.properties.id;
+        pointsGeojson.value.features.forEach(feature => {
+            const id = feature.properties.id;
 
-    if (shapById.has(id)) {
-        const { top5Positive, bottom5Negative } = shapById.get(id);
+            if (shapById.has(id)) {
+                const { top5Positive, bottom5Negative } = shapById.get(id);
 
-        // Add them as new properties
-        feature.properties.top5Positive = top5Positive;
-        feature.properties.bottom5Negative = bottom5Negative;
-    } else {
-        // assign empty if no SHAP info found
-        feature.properties.top5Positive = [];
-        feature.properties.bottom5Negative = [];
-    }
-    });
+                // Add them as new properties
+                feature.properties.top5Positive = top5Positive;
+                feature.properties.bottom5Negative = bottom5Negative;
+            } else {
+                // assign empty if no SHAP info found
+                feature.properties.top5Positive = [];
+                feature.properties.bottom5Negative = [];
+            }
+        });
+    
+        progressStore.setProgressBar({
+            progress: false
+        })
      
-   }
-   emit("addAggregatedSHAPLayerToMap", 
-        pointsGeojson.value,
-        selectedShapContributionMode.value.value,
-    )
+    }
+    emit("addAggregatedSHAPLayerToMap", 
+            pointsGeojson.value,
+            selectedShapContributionMode.value.value,
+        )
     
     activatedGeovisStyle.value = 'accumulative'
 
