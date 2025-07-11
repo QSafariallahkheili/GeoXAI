@@ -161,7 +161,7 @@
                             dark
                             block
                             style="color: white;"
-                            :disabled="selectedStyle? false : true"
+                            :disabled="selectedStyle && selectedVisualVariable1? false : true"
                             @click="applyStyle()"
                         >
                             Apply Style
