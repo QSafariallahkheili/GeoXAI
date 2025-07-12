@@ -810,20 +810,6 @@ const applyAggregatedSHAP= async ()=>{
 const assignColorPalette = (item, palette) => {
     useMapLegendStore().assignColorPalette({name: item, colors: palette});
     applyStyle()
-    /*if (selectedStyle.value.value==='circle'){
-       
-        if (selectedUncertaintyStyle.value?.value=='ink'){
-            emit("addCircleLayerWithInkUncertainty", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, 'uncertainty', selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'] )
-        }
-        else {
-             emit("addCircleLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
-
-        }
-        activatedGeovisStyle.value = 'circle'
-    }
-    else if (selectedStyle.value.value=='square'){
-        emit("addSquareLayerToMap", selectedFeatureGeojson.value, selectedfeatureProperties1.value.value, selectedfeatureProperties2.value.value, selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'])
-    }*/
    
 }
 
