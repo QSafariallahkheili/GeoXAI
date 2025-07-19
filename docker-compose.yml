@@ -102,6 +102,8 @@ services:
       - GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}
       - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
       - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
+      - JAVA_OPTS="-DALLOW_ENV_PARAMETRIZATION=true"
+      - PROXY_BASE_URL=https://tv4-geo-xai.innowest-brandenburg.de/geoserver
     env_file:
       - .env
     depends_on:
