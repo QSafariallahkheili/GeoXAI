@@ -99,11 +99,13 @@ const addLayerToMap = (layerSpecification)=>{
     };
     map.addLayer(layer)  
   }
+  else {
+    toggleLayerVisibility(layerSpecification.id)
+  }
   map.on('click', layerSpecification.id, function(e) {
-    if(layerSpecification.id!=="grid"){
+    if(layerSpecification.id!=="grid" || layerSpecification.id!=="grid-polygon"){
       addPopupToMap(map, layerSpecification.id, vectorSourceLayer, selectedFeatureId, e)
     }
-    
     
 });
 

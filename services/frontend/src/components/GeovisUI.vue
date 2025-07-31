@@ -235,6 +235,9 @@
                     </v-col>
 
                 </v-row>
+                <v-row>
+                  <v-checkbox label="Forest Fire Susceptibility Layer" v-model="ffs_layer_activated" @click="addFFSLayer"></v-checkbox>  
+                </v-row>
             
             </v-card-text>
         </div>
@@ -383,6 +386,7 @@ let visualVariables = ref([
 ]);
 let selectedVisualVariable1 = ref(null)
 let selectedVisualVariable2 = ref(null)
+let ffs_layer_activated = ref(false)
 const relatedUncertaintyStyles = computed(() => {
   const styleMap = {
     circle: ['fuzzy', 'ink', 'position'],
@@ -815,6 +819,42 @@ const assignColorPalette = (item, palette) => {
 
 const specifyLegendProperties =(payload)=>{
     console.log(payload, "payload")
+}
+
+const addFFSLayer=()=>{
+    console.log("add layer", ffs_layer_activated.value)
+
+    // Equal interval classes for FFS
+    let classes = [0, 0.016, 0.068, 0.08, 0.147, 1]
+
+    //5-class Reds from ColorBrewer
+    let colors =['#fee5d9','#fcae91','#fb6a4a','#de2d26','#a50f15']
+
+    let matchExpression = [
+        'step',
+        ['get', 'ffs'],
+        colors[0],      // ffs < 0.016
+        classes[1], colors[1], // 0.016 ≤ ffs < 0.068
+        classes[2], colors[2], // 0.068 ≤ ffs < 0.08
+        classes[3],  colors[3], // 0.08  ≤ ffs < 0.147
+        classes[4], colors[4]  // 0.147 ≤ ffs ≤ 1
+        ];
+        // Emit to set paint property
+        style.value = {
+               'fill-color': matchExpression,
+               'fill-outline-color': '#808080'
+            }
+            layerType.value = "fill"
+            let layerSpecification = {
+                layerNameInDatabase: "grid",
+                id: "grid-polygon",
+                style: style,
+                layerType: layerType
+            }
+        emit("addLayerToMap",layerSpecification)
+        
+       
+
 }
 </script>
 
