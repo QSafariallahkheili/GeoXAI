@@ -65,7 +65,15 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
   else{
     colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
   }
-  colorPalette = colorbrewer.default[colorPaletteName][5];
+
+  if(useMapLegendStore().selectedColorPalette!==null) {
+    colorPalette = useMapLegendStore().selectedColorPalette.colors;
+  }
+  else {
+    colorPalette = colorbrewer.default[colorPaletteName][5];
+  }
+  
+
   useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   let scatter
   if(bivariateColorVariable1 && bivariateColorVariable2){
@@ -207,7 +215,14 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
             return true;
           }
         },
-        getLineWidth: 20,
+        getLineWidth:()=>{
+          if (colorVariable!==undefined){
+            return 0;
+          }
+          else {
+            return 20;
+          }
+        },
         radiusScale: 1,
         pickable: true,
         autoHighlight: true,
@@ -706,7 +721,6 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
         }
       },
       pickable: true,
-     
       onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2),
   
   });
