@@ -187,12 +187,27 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
             }
           }
           else {
-              return [255, 0, 0]; // red
+              return [0, 255, 255, 0]; // red
           }
           
         },
-        getLineColor: [0, 0, 0],
-        getLineWidth: 0,
+        getLineColor: ()=>{
+          if (colorVariable!==undefined){
+            return [0, 0, 0];
+          }
+          else {
+            return [0, 255, 255];
+          }
+        },
+        stroked: ()=>{
+          if (colorVariable!==undefined){
+            return false;
+          }
+          else {
+            return true;
+          }
+        },
+        getLineWidth: 20,
         radiusScale: 1,
         pickable: true,
         autoHighlight: true,
