@@ -693,11 +693,18 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
           }
         }
         else {
-          return [255, 0, 0]; // red
+          return [255, 0, 0,0]; // red
         }
       },
-      getLineColor: [0, 0, 0],
-      getLineWidth: 0,
+      getLineColor: [0, 255, 255],
+      getLineWidth: ()=>{
+        if (colorVariable || (bivariateColorVariable1 && bivariateColorVariable2) ){
+          return 0
+        }
+        else {  
+          return 20
+        }
+      },
       pickable: true,
      
       onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2),
