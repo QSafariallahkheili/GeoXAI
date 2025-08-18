@@ -195,16 +195,16 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
             }
           }
           else {
-              return [0, 255, 255, 0]; // red
+              return [0, 255, 255, 255]; 
           }
           
         },
         getLineColor: ()=>{
           if (colorVariable!==undefined){
-            return [0, 0, 0];
+            return [0, 0, 0, 0];
           }
           else {
-            return [0, 255, 255];
+            return [0, 255, 255, 0];
           }
         },
         stroked: ()=>{
@@ -212,7 +212,7 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
             return false;
           }
           else {
-            return true;
+            return false;
           }
         },
         getLineWidth:()=>{
@@ -220,7 +220,7 @@ export function addDeckglCircleLayer (geojson, prop1, prop2 , classes, classes1,
             return 0;
           }
           else {
-            return 20;
+            return 0;
           }
         },
         radiusScale: 1,
@@ -994,7 +994,7 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
     },
 
    filled: true,
-   stroked: true,
+   stroked: false,
    getLineColor: [0, 0, 0, 0],
    getLineWidth: 0,
    lineWidthMinPixels: 1,
@@ -1045,6 +1045,15 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
       bivariateColorVariable1 = prop1;
       bivariateColorVariable2 = prop2;
     }
+    else if(visVar1=='color' && visVar2==undefined){
+      colorVariable= prop1;
+      classesForColor = classes1;
+    }
+    else if(visVar1=='size' && visVar2==undefined){
+      radiusVariable= prop1;
+      classForRadius = classes1;
+    }
+    console.log(visVar1, classes1, visVar2, classes, "visVar1, visVar2")
 
     let colorPalette = null;
     let colorPaletteName
@@ -1093,10 +1102,12 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
         }
 
       }
-
       else if(bivariateColorVariable1 && bivariateColorVariable2){
         return 1200 * (362/1200)
-      }   
+      }
+      else{
+         return 1200 * (362/1200)
+      }
           
     },
    radiusUnits: 'meters',
@@ -1159,6 +1170,9 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
         else if(category1 == "high" && category2 == "high"){
             return hexToRgb(bivariateColorpalette['high_high'])
         }
+      }
+      else {
+        return [0, 255, 255,255]; // red
       }
           
     },
