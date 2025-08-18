@@ -500,7 +500,7 @@ export function addDeckglCircleLayerOnePropWithUncertainty (geojson, prop1, clas
           }
         }
         else{
-          return [255, 0, 0]; // black
+          return [0, 255, 255]; 
         }
         
       },
@@ -822,7 +822,7 @@ export function addDeckglFuzzyLayerToMap (geojson, prop1, classes1, prop2, visVa
           }
         }
         else{
-          return [255, 0, 0]; // black
+          return [0, 255, 255]; // black
         }
         
       },
