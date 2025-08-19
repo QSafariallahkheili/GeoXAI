@@ -892,8 +892,6 @@ export function addDeckglFuzzyLayerWithThreePropToMap (geojson, prop1, prop2, pr
      
     useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   }
-      console.log(radiusVariable, "radiusVariable")
-        console.log( bivariateColorVariable1, bivariateColorVariable2,"bivar")
  let customLayerr = new MapboxLayer({
    id: 'fuzzy-layer-three-props',
    type: CustomScatterplotLayer,
@@ -1194,7 +1192,7 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
     });
     map.addLayer(customLayer);
   
-    function shiftPosition(center, uncertainty) {
+    function shiftPosition(center, uncertainty, radius) {
       const [lon, lat] = center;
     
       // Approximate meters per degree at given latitude
@@ -1202,7 +1200,6 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
       const metersPerDegreeLon = 40075000 * Math.cos(lat * Math.PI / 180) / 360;
     
       // Circle radius in meters (fixed to 360 meters in this case)
-      const radius = 360;
       const shiftDistance = uncertainty * radius; // Shift depends on uncertainty
     
       // Calculate shift in degrees
@@ -1222,9 +1219,39 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
     return features.map(feature => {
       const center = feature.geometry.coordinates;
       const uncertainty = feature.properties.uncertainty; // Assuming uncertainty is stored here
+      let radius
+      if(radiusVariable!==undefined){
+        const category = feature.properties[radiusVariable];
+        const value5 = JSON.parse(classForRadius)
+        if(category<value5[0]){
+          radius =  150 * (362/1200)
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          radius = 400 * (362/1200)
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          radius = 600 * (362/1200)
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          radius = 900 * (362/1200)
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          radius = 1200 * (362/1200)
+        }
+        else {
+          radius = 1200 * (362/1200)
+        }
+
+      }
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+        radius = 1200 * (362/1200)
+      }
+      else{
+         radius = 1200 * (362/1200)
+      }
   
       // Get the shifted position based on uncertainty
-      const shiftedPosition = shiftPosition(center, uncertainty);
+      const shiftedPosition = shiftPosition(center, uncertainty, radius);
   
       // Return the feature with the updated position
       return {
