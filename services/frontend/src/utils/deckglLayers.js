@@ -554,6 +554,7 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
     bivariateColorVariable1 = prop1;
     bivariateColorVariable2 = prop2;
   }
+
   // to support univariate mapping
   else if(visVar2==undefined){
     if(visVar1=='color'){
@@ -575,7 +576,15 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
   else{
     colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
   }
-  colorPalette = colorbrewer.default[colorPaletteName][5];
+
+  if(useMapLegendStore().selectedColorPalette!==null) {
+    colorPalette = useMapLegendStore().selectedColorPalette.colors;
+  }
+  else {
+    colorPalette = colorbrewer.default[colorPaletteName][5];
+  }
+  
+
   useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   
     function createSquarePolygonFromPoint(center, sizeInMeters) {
