@@ -708,10 +708,10 @@ export function addDeckglSquareLayerToMap (geojson, prop1,prop2, classes,classes
           }
         }
         else {
-          return [255, 0, 0,0]; // red
+          return [0, 255, 255,255]; // red
         }
       },
-      getLineColor: [0, 255, 255],
+      getLineColor: [0, 255, 255,0],
       getLineWidth: ()=>{
         if (colorVariable || (bivariateColorVariable1 && bivariateColorVariable2) ){
           return 0
@@ -2865,7 +2865,7 @@ vec2 cellular2x2(vec2 P) {
         vec2 F = cellular2x2(uv * 20.0);
         float n = smoothstep(0., v_uncertainty, F.x);  // n ∈ [0, 1]
 
-        fragColor = vec4(0.,0.,0.,1.-n); 
+        fragColor = vec4(v_color,1.-n); 
       } else {
           fragColor = vec4(v_color, 1.);
       }
