@@ -1301,12 +1301,12 @@ export function addDeckglPositionLayerToMap (geojson, prop1, prop2, prop3, class
 }
 
 export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, prop3, classes, classes1, visVar1, visVar2, map){
-    let radiusVariable
+  let radiusVariable
   let colorVariable
   let classForRadius
   let classesForColor
-
-  
+  let bivariateColorVariable1
+  let bivariateColorVariable2
   if(visVar1=='color' && visVar2=='size'){
     colorVariable= prop1;
     radiusVariable= prop2;
@@ -1321,50 +1321,93 @@ export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, pr
     classForRadius = classes1;
     classesForColor = classes;
   }
-  
- 
+  else if(visVar1=='color' && visVar2=='color'){
+    bivariateColorVariable1 = prop1;
+    bivariateColorVariable2 = prop2;
+  }
+
   let colorPalette = null;
- 
   let colorPaletteName
-  if (colorVariable== 'value'){
-    colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+
+  if (useMapLegendStore().selectedColorPalette!==null) {
+    colorPalette = useMapLegendStore().selectedColorPalette.colors;
   }
-  else{
-    colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+  else {
+    if (colorVariable== 'value'){
+      colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+      colorPalette = colorbrewer.default[colorPaletteName][5];
+    }
+    else if(colorVariable== 'shap'){
+      colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+      colorPalette = colorbrewer.default[colorPaletteName][5];
+    }
+     
+    useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   }
-  colorPalette = colorbrewer.default[colorPaletteName][5];
-  useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
     const sceneLayer = new MapboxLayer({
     id: 'arrow-layer',
     type: ScenegraphLayer,
     data: [...geojson.features],
     scenegraph: 'direction_arrow.glb', // public path
     getColor: d => {
-      const category = d.properties[colorVariable];
-      //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-      const value5 = JSON.parse(classesForColor)
-      if(category<value5[0]){
-        //return [215,25,28]; 
-        return hexToRgb(colorPalette[0]);
+      if(colorVariable!==undefined){
+        const category = d.properties[colorVariable];
+        //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+        const value5 = JSON.parse(classesForColor)
+        if(category<value5[0]){
+          //return [215,25,28]; 
+          return hexToRgb(colorPalette[0]);
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          //return [253,174,97]; 
+          return hexToRgb(colorPalette[1]);
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          // return [255,255,191]; 
+          return hexToRgb(colorPalette[2]);
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          //return [166,217,106];
+          return hexToRgb(colorPalette[3]);
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          //return [26,150,65];
+          return hexToRgb(colorPalette[4]);
+        }
+        else {
+          return [0, 0, 0]; // black
+        }
       }
-      else if(category>value5[0] && category<=value5[1]){
-        //return [253,174,97]; 
-        return hexToRgb(colorPalette[1]);
-      }
-      else if(category>value5[1] && category<=value5[2]){
-        // return [255,255,191]; 
-        return hexToRgb(colorPalette[2]);
-      }
-      else if(category>value5[2] && category<=value5[3]){
-        //return [166,217,106];
-        return hexToRgb(colorPalette[3]);
-      }
-      else if(category>value5[3] && category<=value5[4]){
-        //return [26,150,65];
-        return hexToRgb(colorPalette[4]);
-      }
-      else {
-        return [0, 0, 0]; // black
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+          const category1 = d.properties[bivariateColorVariable1+'3'];
+        const category2 = d.properties[bivariateColorVariable2+'3'];
+        if(category1 == "low" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['low_low'])
+        }
+        else if(category1 == "low" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['low_medium'])
+        }
+        else if(category1 == "low" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['low_high'])
+        }
+        else if(category1 == "medium" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['medium_low'])
+        }
+        else if(category1 == "medium" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['medium_medium'])
+        }
+        else if(category1 == "medium" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['medium_high'])
+        }
+        else if(category1 == "high" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['high_low'])
+        }
+        else if(category1 == "high" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['high_medium'])
+        }
+        else if(category1 == "high" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['high_high'])
+        }
       }
     },
     getPosition: d => d.geometry.coordinates,
@@ -1376,12 +1419,13 @@ export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, pr
     //getOrientation: [0, 90, 90],
     sizeScale: 100,
     getScale: d => {
+     if(radiusVariable!==undefined){
       const category = d.properties[radiusVariable];
       //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
       const value5 = JSON.parse(classForRadius)
       if (radiusVariable){
         if(category<value5[0]){
-        return [1, 1, 1]; 
+          return [1, 1, 1]; 
         }
         else if(category>value5[0] && category<=value5[1]){
           return [1.3, 1, 1.3]; 
@@ -1399,10 +1443,12 @@ export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, pr
           return [1, 1, 1];
         }
       }
-      else {
-        return [1, 1, 1];
-      }
-    },
+    }
+    
+    else {
+      return [1, 1, 1];
+    }
+  },
     pickable: true,
     onHover: (info)=> addDeckglPopupToMap(info, prop1, prop2,prop3)
 
@@ -1416,8 +1462,8 @@ export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2 , cla
   let colorVariable
   let classForRadius
   let classesForColor
-
-  
+  let bivariateColorVariable1
+  let bivariateColorVariable2
   if(visVar1=='color' && visVar2=='size'){
     colorVariable= prop1;
     radiusVariable= prop2;
@@ -1432,19 +1478,29 @@ export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2 , cla
     classForRadius = classes1;
     classesForColor = classes;
   }
-  
- 
+  else if(visVar1=='color' && visVar2=='color'){
+    bivariateColorVariable1 = prop1;
+    bivariateColorVariable2 = prop2;
+  }
+
   let colorPalette = null;
- 
   let colorPaletteName
-  if (colorVariable== 'value'){
-    colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+
+  if (useMapLegendStore().selectedColorPalette!==null) {
+    colorPalette = useMapLegendStore().selectedColorPalette.colors;
   }
-  else{
-    colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+  else {
+    if (colorVariable== 'value'){
+      colorPaletteName = colorbrewer.default.schemeGroups.sequential[1];
+      colorPalette = colorbrewer.default[colorPaletteName][5];
+    }
+    else if(colorVariable== 'shap'){
+      colorPaletteName = colorbrewer.default.schemeGroups.diverging[1];
+      colorPalette = colorbrewer.default[colorPaletteName][5];
+    }
+     
+    useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
   }
-  colorPalette = colorbrewer.default[colorPaletteName][5];
-  useMapLegendStore().assignColorPalette({name: colorPaletteName, colors: colorPalette});
 
   const sceneLayer = new MapboxLayer({
   id: 'arrow-layer',
@@ -1452,61 +1508,97 @@ export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2 , cla
   data: [...geojson.features],
   scenegraph: 'direction_arrow.glb', // public path
   getColor: d => {
-    const category = d.properties[colorVariable];
-    //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-    const value5 = JSON.parse(classesForColor)
-    if(category<value5[0]){
-      //return [215,25,28]; 
-      return hexToRgb(colorPalette[0]);
-    }
-    else if(category>value5[0] && category<=value5[1]){
-      //return [253,174,97]; 
-      return hexToRgb(colorPalette[1]);
-    }
-    else if(category>value5[1] && category<=value5[2]){
-      // return [255,255,191]; 
-      return hexToRgb(colorPalette[2]);
-    }
-    else if(category>value5[2] && category<=value5[3]){
-      //return [166,217,106];
-      return hexToRgb(colorPalette[3]);
-    }
-    else if(category>value5[3] && category<=value5[4]){
-      //return [26,150,65];
-      return hexToRgb(colorPalette[4]);
-    }
-    else {
-      return [0, 0, 0]; // black
-    }
+    if(colorVariable!==undefined){
+        const category = d.properties[colorVariable];
+        //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+        const value5 = JSON.parse(classesForColor)
+        if(category<value5[0]){
+          //return [215,25,28]; 
+          return hexToRgb(colorPalette[0]);
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          //return [253,174,97]; 
+          return hexToRgb(colorPalette[1]);
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          // return [255,255,191]; 
+          return hexToRgb(colorPalette[2]);
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          //return [166,217,106];
+          return hexToRgb(colorPalette[3]);
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          //return [26,150,65];
+          return hexToRgb(colorPalette[4]);
+        }
+        else {
+          return [0, 0, 0]; // black
+        }
+      }
+      else if(bivariateColorVariable1 && bivariateColorVariable2){
+          const category1 = d.properties[bivariateColorVariable1+'3'];
+        const category2 = d.properties[bivariateColorVariable2+'3'];
+        if(category1 == "low" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['low_low'])
+        }
+        else if(category1 == "low" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['low_medium'])
+        }
+        else if(category1 == "low" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['low_high'])
+        }
+        else if(category1 == "medium" && category2 == "low"){
+          return hexToRgb(bivariateColorpalette['medium_low'])
+        }
+        else if(category1 == "medium" && category2 == "medium"){
+          return hexToRgb(bivariateColorpalette['medium_medium'])
+        }
+        else if(category1 == "medium" && category2 == "high"){
+          return hexToRgb(bivariateColorpalette['medium_high'])
+        }
+        else if(category1 == "high" && category2 == "low"){
+            return hexToRgb(bivariateColorpalette['high_low'])
+        }
+        else if(category1 == "high" && category2 == "medium"){
+            return hexToRgb(bivariateColorpalette['high_medium'])
+        }
+        else if(category1 == "high" && category2 == "high"){
+            return hexToRgb(bivariateColorpalette['high_high'])
+        }
+      }
   },
   getPosition: d => d.geometry.coordinates,
   
   getOrientation: [0, 90, 90],
   sizeScale: 100,
   getScale: d => {
-    const category = d.properties[radiusVariable];
-    //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
-    const value5 = JSON.parse(classForRadius)
-    if (radiusVariable){
-      if(category<value5[0]){
-      return [1, 1, 1]; 
-      }
-      else if(category>value5[0] && category<=value5[1]){
-        return [1.3, 1, 1.3]; 
-      }
-      else if(category>value5[1] && category<=value5[2]){
-        return [1.6, 1, 1.6]; 
-      }
-      else if(category>value5[2] && category<=value5[3]){
-        return [1.9, 1, 1.9];
-      }
-      else if(category>value5[3] && category<=value5[4]){
-        return [2.2, 1, 2.2];
-      }
-      else {
-        return [1, 1, 1];
+     if(radiusVariable!==undefined){
+      const category = d.properties[radiusVariable];
+      //const value5 = JSON.parse(d.propertiesd[prop2+'5'])
+      const value5 = JSON.parse(classForRadius)
+      if (radiusVariable){
+        if(category<value5[0]){
+          return [1, 1, 1]; 
+        }
+        else if(category>value5[0] && category<=value5[1]){
+          return [1.3, 1, 1.3]; 
+        }
+        else if(category>value5[1] && category<=value5[2]){
+          return [1.6, 1, 1.6]; 
+        }
+        else if(category>value5[2] && category<=value5[3]){
+          return [1.9, 1, 1.9];
+        }
+        else if(category>value5[3] && category<=value5[4]){
+          return [2.2, 1, 2.2];
+        }
+        else {
+          return [1, 1, 1];
+        }
       }
     }
+    
     else {
       return [1, 1, 1];
     }
