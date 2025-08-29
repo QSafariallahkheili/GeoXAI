@@ -1446,7 +1446,7 @@ export function addDeckglArrowLayerWithThreePropToMap (geojson, prop1, prop2, pr
     }
     
     else {
-      return [1, 1, 1];
+      return [1.5, 1.5, 1.5];
     }
   },
     pickable: true,
@@ -1600,7 +1600,7 @@ export function addDeckglArrowLayerWithtwoPropToMap (geojson, prop1, prop2 , cla
     }
     
     else {
-      return [1, 1, 1];
+      return [1.5, 1.5, 1.5];
     }
   },
   pickable: true,
