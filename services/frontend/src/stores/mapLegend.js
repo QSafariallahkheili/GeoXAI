@@ -21,6 +21,7 @@ export const useMapLegendStore = defineStore ({
         legendVisVar1: null,
         legendVisVar2: null,
         secondPropertiesClassIntervals: null,
+        ffs_layer_activated:false
     }),
     actions: {
         assignClassificationValues(data) {

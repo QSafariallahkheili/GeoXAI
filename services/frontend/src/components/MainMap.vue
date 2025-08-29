@@ -41,7 +41,7 @@ import * as turf from "@turf/turf";
 import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
 import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
 import {addDeckglCircleLayerWithUncertainty, addDeckglCircleLayerOnePropWithUncertainty,addDeckglSquareLayerToMap, addDeckglFuzzyLayerToMap, addDeckglPositionLayerToMap, addDeckglArrowLayerWithThreePropToMap, addCustomPatternLayerToMap,addDeckglCircleLayer, addDeckglFuzzyLayerWithThreePropToMap, addCustomPatternLayerWithOrientationToMap, addDeckglArrowLayerWithtwoPropToMap, addCustomBorderLayerToMap, addCustomBorderLayerWithNoisegrainToMap, addDeckglAggregationPieLayer} from '../utils/deckglLayers';
-
+//import MinimapControl from "maplibregl-minimap";
 
 let { activeMenu } = storeToRefs(useMenuStore())
 let { drawControl } = storeToRefs(useFilterStore())
@@ -76,6 +76,28 @@ onMounted(() => {
 
     // Add the drawing control to the map
   map.addControl(drawControl, 'bottom-left');
+  
+  /*map.on("load", () => {
+    const miniMapConfig = {
+      id: "myCustomMiniMap",
+      width: "180px",
+      height: "180px",
+      zoomLevelOffset:0,
+      initialMinimized: false,
+      minimizableMinimap: true,
+      collapsedWidth: "30px",
+      collapsedHeight: "30px",
+      borderRadius: "5px",
+  };
+    map.addControl(new MinimapControl(miniMapConfig), 'top-right');
+  });*/
+
+  map.on('moveend', () => {
+    console.log(map.getCenter(), "map center");
+    console.log(map.getZoom(), "map zoom");
+    console.log(map.getBounds(), "map bbox");
+    
+  });
 })
 
 const addLayerToMap = (layerSpecification)=>{

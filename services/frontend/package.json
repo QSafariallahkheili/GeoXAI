@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@aesqe/mapboxgl-minimap": "^1.0.0",
     "@babylonjs/core": "^7.1.0",
     "@babylonjs/loaders": "^7.1.0",
     "@deck.gl/aggregation-layers": "^8.7.12",
@@ -32,6 +33,7 @@
     "d3": "^7.8.5",
     "earcut": "^2.2.4",
     "maplibre-gl": "^5.5.0",
+    "maplibregl-minimap": "^1.0.3",
     "pinia": "^2.0.36",
     "three": "^0.163.0",
     "vue": "^3.2.13",

@@ -288,7 +288,7 @@ import { useProgressStore } from '@/stores/progress'
 
 const progressStore = useProgressStore()
 
-let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, secondPropertiesClassIntervals} = storeToRefs(useMapLegendStore())
+let {activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, secondPropertiesClassIntervals, ffs_layer_activated} = storeToRefs(useMapLegendStore())
 const emit = defineEmits(["addCircleLayerToMap", "addSquareLayerToMap", "addLayerToMap", "addFuzzyLayerToMap", "addPositionLayerToMap", "addPatternLayerToMap", "addCircleLayerWithInkUncertainty", "addCircleLayerWithInkUncertaintyOneProp", "addFuzzyLayerWithThreePropToMap", "addArrowLayerWithTwoPropToMap", "addCustomBorderLayerToMap", "addCustomMapboxGrainNoiseLayerToMap"]);
 
 let activatedGeovisTab = ref()
@@ -386,7 +386,6 @@ let visualVariables = ref([
 ]);
 let selectedVisualVariable1 = ref(null)
 let selectedVisualVariable2 = ref(null)
-let ffs_layer_activated = ref(false)
 const relatedUncertaintyStyles = computed(() => {
   const styleMap = {
     circle: ['fuzzy', 'ink', 'position'],
@@ -509,13 +508,13 @@ const applyStyle = ()=>{
         else if (selectedUncertaintyStyle.value?.value=='position'){
             emit("addPositionLayerToMap", 
                 selectedFeatureGeojson.value, 
-                selectedfeatureProperties1.value.value, 
-                selectedfeatureProperties2.value.value, 
+                selectedfeatureProperties1?.value?.value, 
+                selectedfeatureProperties2?.value?.value, 
                 'uncertainty', 
-                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2.value.value+'5'], 
-                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1.value.value+'5'],
-                selectedVisualVariable1.value.value,
-                selectedVisualVariable2.value.value
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties2?.value?.value+'5'], 
+                selectedFeatureGeojson.value.features[0].properties[selectedfeatureProperties1?.value?.value+'5'],
+                selectedVisualVariable1?.value?.value,
+                selectedVisualVariable2?.value?.value
             )
             
         }
@@ -822,8 +821,6 @@ const specifyLegendProperties =(payload)=>{
 }
 
 const addFFSLayer=()=>{
-    console.log("add layer", ffs_layer_activated.value)
-
     // Equal interval classes for FFS
     let classes = [0, 0.016, 0.068, 0.08, 0.147, 1]
 
@@ -842,7 +839,7 @@ const addFFSLayer=()=>{
         // Emit to set paint property
         style.value = {
                'fill-color': matchExpression,
-               'fill-outline-color': '#808080'
+               'fill-outline-color': 'rgba(0, 0, 0, 0.2)',
             }
             layerType.value = "fill"
             let layerSpecification = {

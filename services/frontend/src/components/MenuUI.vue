@@ -103,9 +103,9 @@ function setActiveButton(button) {
     }
     else if (button==="geovis"){
         style.value = {
-                'line-width': 1,
+                'line-width': 0.5,
                 'line-color': "#808080",
-                'line-opacity': 0.3,
+                'line-opacity': 0.4,
             
             }
             layerType.value = "line"

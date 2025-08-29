@@ -240,6 +240,44 @@
             ></div>
           </div>
           <div class="legend-arrow-container mt-4">
+              <div class="legend-arrow-label" style="float: left;">Certain</div>
+              <div class="uncertainty-square-arrow"></div>
+              <div class="legend-arrow-label" style="float: right;">Uncertain</div>
+          </div>
+          
+        </v-card-item>
+         <!-- Legend for noise width -->
+        <v-card-item v-if="uncertaintyStyle==='noise_with_line_width' && (activatedGeovisStyle === 'square'||activatedGeovisStyle === 'bivariate')">
+          <div  v-for="(thickness, index) in stripeThicknesses"
+            :key="index"
+            style="font-size: 0.7rem; display: inline-block;">
+            <img
+              class="legend-item"
+              :class="index === 4 ? 'mr-0' : 'mr-6'"
+              :src="`legend_items/noise_width_${index+1}.png`"
+              style="width: 40px; height: 40px;"
+            />
+          </div>
+          <div class="legend-arrow-container mt-4">
+              <div class="legend-arrow-label" style="float: left;">Uncertain</div>
+              <div class="uncertainty-square-arrow"></div>
+              <div class="legend-arrow-label" style="float: right;">Certain</div>
+          </div>
+          
+        </v-card-item>
+        <!-- Legend for noise grain size -->
+        <v-card-item v-if="uncertaintyStyle==='noise_with_grain_size' && (activatedGeovisStyle === 'square'||activatedGeovisStyle === 'bivariate')">
+          <div  v-for="(thickness, index) in stripeThicknesses"
+            :key="index"
+            style="font-size: 0.7rem; display: inline-block;">
+            <img
+              class="legend-item"
+              :class="index === 4 ? 'mr-0' : 'mr-6'"
+              :src="`legend_items/noise_grain_${index+1}.png`"
+              style="width: 40px; height: 40px;"
+            />
+          </div>
+          <div class="legend-arrow-container mt-4">
               <div class="legend-arrow-label" style="float: left;">Uncertain</div>
               <div class="uncertainty-square-arrow"></div>
               <div class="legend-arrow-label" style="float: right;">Certain</div>
@@ -295,7 +333,7 @@
             </div>
         </v-card-item>
         <!-- Legend for Circle position uncertainty -->
-        <v-card-item v-if="uncertaintyStyle === 'orientation' && activatedGeovisStyle === 'arrow'">
+        <v-card-item v-if="uncertaintyStyle === 'orientation' && (activatedGeovisStyle === 'square'||activatedGeovisStyle === 'bivariate')">
             <div class="circle mt-4 mb-4">
                <div class="point center"></div>
               <div class="label arrow-vis-uncertainty-label">Certain</div>
@@ -332,6 +370,34 @@
             <span class="text-body-2">{{ feature }}</span>
           </v-col>
         </v-row>
+      </v-card-item>
+      <!-- Legend for vector FFS -->
+      <v-card-item v-if="ffs_layer_activated===true">
+            <div class="legend-item">
+                <div class="color-strip strip1"  :style="{ backgroundColor: ffsColors[0]}"></div>
+                <div class="legend-label">{{  ffsClasses[0] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip2" :style="{ backgroundColor:  ffsColors[1]}"></div>
+                <div class="legend-label">{{ ffsClasses[1] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip3" :style="{ backgroundColor:  ffsColors[2]}"></div>
+                <div class="legend-label">{{ ffsClasses[2] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip4" :style="{ backgroundColor:  ffsColors[3]}"></div>
+                <div class="legend-label">{{ ffsClasses[3] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip5" :style="{ backgroundColor:  ffsColors[4]}"></div>
+                <div class="legend-label">{{ ffsClasses[4] }}</div>
+                <div class="legend-label-max">{{ ffsClasses[5] }}</div>
+            </div>
+            <div class="mb-0 font-weight-bold">
+               Wildfire Susceptibility 
+            </div>
+            
       </v-card-item>
 
         
@@ -374,7 +440,7 @@ function getStripeAngleStyle(angle) {
 const arrowVisHeights = [10, 15, 20, 25, 30]; // Adjust heights as needed
 const arrowVisWidth = [5, 10, 15, 20, 25]; // Adjust heights as needed
 const metadataDialogStore = useMetadataDialogStore();
-let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2} = storeToRefs(useMapLegendStore())
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, ffs_layer_activated} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
              'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
              'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
@@ -385,7 +451,10 @@ let accumulativeFeatureColor = ref({
     'aspect':'#a6cee3', 'dem':'#1f78b4', 'ndvi':'#b2df8a', 'slope':'#33a02c', 'drought_index':'#fb9a99',
     'global_radiation':'#e31a1c', 'gndvi':'#fdbf6f', 'landcover':'#ff7f00', 'ndmi':'#cab2d6', 'precipitation':'#6a3d9a', 'lst':'#ffff99'
 })
-  console.log(accumulativeFeatureColor.value)
+let ffsClasses = [0, 0.016, 0.068, 0.08, 0.147, 1]
+
+    //5-class Reds from ColorBrewer
+    let ffsColors =['#fee5d9','#fcae91','#fb6a4a','#de2d26','#a50f15']
 const showMetadata = (featureName) =>{
     metadataDialogStore.assignMetadata(featureMetadata[featureName].metadata, featureName)
 
