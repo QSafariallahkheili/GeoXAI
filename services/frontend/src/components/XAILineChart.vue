@@ -51,7 +51,7 @@ const renderChart = () => {
   var margin = { top: 40, right: 20, bottom: 60, left: 190 };
   let width = 600 - margin.left - margin.right;
   let height = 400 - margin.top - margin.bottom;
-
+    
   svg.attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom);
 
@@ -152,7 +152,10 @@ const renderChart = () => {
           )
           .style('left', `${event.pageX +10}px`)
           .style('top', `${event.pageY - 28}px`)
-          .style('font-size', '10px');
+          .style('font-size', '10px')
+          .style('font-family', 'sans-serif')
+          .style('font-weight', 'normal')
+          .style('fill', 'black')
       })
       .on('mouseout', function () {
         d3.select(this).style("cursor", "default"); 
@@ -209,159 +212,177 @@ const renderChart = () => {
       .attr('x', d => xScale(Math.min(0, Object.values(d)[0])))
       .attr('width', d => Math.abs(xScale(Object.values(d)[0]) - xScale(0)));
 
-    // Create axes with transition
-    const xAxis = d3.axisBottom(xScale)
+    // Create axes
+const xAxis = d3.axisBottom(xScale);
+const yAxis = d3.axisLeft(yScale)
+  .tickFormat(d => {
+    const maxLabelLength = 10;
+    const fullCapsLabels = ['ndvi', 'dem', 'gndvi', 'ndmi', 'lst'];
 
-    
-    const yAxis = d3.axisLeft(yScale)
-      .tickFormat(d => {
-      const margin = 160;
-    
-      // Iterate over keys (ndmi, lst, landcover, etc.)
-      Object.keys(histogramValues).forEach(key => {
-        const histogramData = histogramValues[key];
-        const tickGroup = chartGroup.append('g')
-          .attr('class', 'tick-group')
-          .attr('transform', `translate(-${margin}, ${yScale(key)})`);
+    // Replace underscores with spaces
+    let cleanLabel = d.replace(/_/g, ' ');
 
-        const chartWidth = 50;
-        const chartHeight = yScale.bandwidth()-10;
-        const chartXScale = d3.scaleBand()
-          .domain(d3.range(histogramData.values.length))
-          .range([0, chartWidth])
-          .padding(0.8);
+    // Apply capitalization rules
+    let label;
+    if (fullCapsLabels.includes(cleanLabel.toLowerCase())) {
+      label = cleanLabel.toUpperCase();
+    } else {
+      label = cleanLabel.charAt(0).toUpperCase() + cleanLabel.slice(1).toLowerCase();
+    }
 
-        const chartYScale = d3.scaleLinear()
-          .domain([0, d3.max(histogramData.counts)])
-          .range([chartHeight, 0]);
-
-        const chartBarWidth = chartXScale.bandwidth();
-
-        tickGroup.selectAll('.chart-bar')
-          .data(histogramData.counts)
-          .enter()
-          .append('rect')
-          .attr('class', 'chart-bar')
-          .attr('x', (d, i) => chartXScale(i))
-          .attr('width', chartBarWidth)
-          .attr('y', d => chartYScale(d))
-          
-          .attr('height', d => chartHeight - chartYScale(d))
-          .attr('fill', 'grey')
-          
-
-        // Add red bar for the corresponding value
-        let indicatorValue = raster_values_at_clicked_point.value[key]; // Assuming key is the correct identifier
-
-        // Find the index of the closest value in histogramData.values
-        const indicatorIndex = findClosestIndex(histogramData.values, indicatorValue);
-
-        if (indicatorIndex !== -1) {
-          const triangleSize = 4; // Adjust the size of the triangle as needed
-          const initialPoints = `0,${chartHeight} ` +
-                        `-${triangleSize / 2},${chartHeight + triangleSize} ` +
-                        `+${triangleSize / 2},${chartHeight + triangleSize}`;
-
-          const finalPoints = `${chartXScale(indicatorIndex)},${chartHeight} ` +
-                      `${chartXScale(indicatorIndex) - triangleSize / 2},${chartHeight + triangleSize} ` +
-                      `${chartXScale(indicatorIndex) + triangleSize / 2},${chartHeight + triangleSize}`;
-
-
-          const redTriangle = tickGroup.append('polygon')
-            .attr('class', 'red-triangle')
-            .attr('points', initialPoints)
-            .attr('fill', 'rgba(255, 0, 0, 1)')
-            .attr('stroke', 'none')
-            .on('mouseover', function (event){
-              d3.select(this).style("cursor", "pointer"); 
-              
-              tooltip.transition().duration(400).style('opacity', 0.7);
-              tooltip.html(
-                `<b style="color:rgba(121, 7, 222, 1)">value: ${indicatorValue}`
-                )
-                .style('left', `${event.pageX +10}px`)
-                .style('top', `${event.pageY - 28}px`)
-                .style('font-size', '10px');
-              
-            })
-            .on('mouseout', function () {
-              d3.select(this).style("cursor", "default"); 
-                
-             
-              // Hide tooltip on mouseout
-              tooltip.transition().duration(500).style('opacity', 0);
-            })
-
-          // Apply animation with transition
-          redTriangle.transition()
-            .duration(1000)
-            .attr('points', finalPoints); 
-        }
-          
-        // Draw a curved line
-        const curveLine = d3.line()
-          .x((d, i) => chartXScale(i) + chartBarWidth / 2)
-          .y(d => chartYScale(d))
-          .curve(d3.curveBasis);
-
-        tickGroup.append('path')
-          .data([histogramData.counts])
-          .attr('class', 'curve-line')
-          .attr('d', curveLine)
-          .attr('stroke', 'black')
-          .attr('fill', 'none');
-
-        // Add X-axis labels at the start and end
-        tickGroup.append('text')
-          .attr('class', 'chart-label')
-          .attr('x', -2)
-          .attr('y', chartHeight)
-          .attr('text-anchor', 'end')
-          .style('font-size', '8px')
-          .style('font-weight', 'normal')
-          .style('fill', 'black')
-          .text(histogramData.values[0].toFixed(2));
-
-        tickGroup.append('text')
-          .attr('class', 'chart-label')
-          .attr('x', chartWidth + 2)
-          .attr('y', chartHeight)
-          .attr('text-anchor', 'start')
-          .style('font-size', '8px')
-          .style('font-weight', 'normal')
-          .style('fill', 'black')
-          .text(histogramData.values[histogramData.values.length - 1].toFixed(2));
-
-
-      });
-    
-      return `${d}`;
-    //return `${d} : ${raster_values_at_clicked_point.value[d].toFixed(3)}`;
-    
+    // Truncate if too long
+    return label.length > maxLabelLength ? label.slice(0, maxLabelLength) + "..." : label;
   });
+
+
+
+// Append the axis
+chartGroup.append('g')
+  .call(yAxis);
+
+// Draw histograms for each key AFTER axes
+const marginLeft = 160;
+Object.keys(histogramValues).forEach(key => {
+  const histogramData = histogramValues[key];
+
+  const tickGroup = chartGroup.append('g')
+    .attr('class', 'tick-group')
+    .attr('transform', `translate(-${marginLeft - 10}, ${yScale(key) +1})`); // 2px down
+
+  const chartWidth = 50;
+  const chartHeight = yScale.bandwidth() - 10;
+
+  const chartXScale = d3.scaleBand()
+    .domain(d3.range(histogramData.values.length))
+    .range([0, chartWidth])
+    .padding(0.8);
+
+  const chartYScale = d3.scaleLinear()
+    .domain([0, d3.max(histogramData.counts)])
+    .range([chartHeight, 0]);
+
+  const chartBarWidth = chartXScale.bandwidth();
+
+  // Histogram bars
+  tickGroup.selectAll('.chart-bar')
+    .data(histogramData.counts)
+    .enter()
+    .append('rect')
+    .attr('class', 'chart-bar')
+    .attr('x', (d, i) => chartXScale(i))
+    .attr('width', chartBarWidth)
+    .attr('y', d => chartYScale(d))
+    .attr('height', d => chartHeight - chartYScale(d))
+    .attr('fill', 'grey');
+
+  // Red triangle indicator
+  const indicatorValue = raster_values_at_clicked_point.value[key];
+  const indicatorIndex = findClosestIndex(histogramData.values, indicatorValue);
+
+  if (indicatorIndex !== -1) {
+    const triangleSize = 4;
+    const initialPoints = `0,${chartHeight} -${triangleSize/2},${chartHeight + triangleSize} +${triangleSize/2},${chartHeight + triangleSize}`;
+    const finalPoints = `${chartXScale(indicatorIndex)},${chartHeight} ${chartXScale(indicatorIndex) - triangleSize/2},${chartHeight + triangleSize} ${chartXScale(indicatorIndex) + triangleSize/2},${chartHeight + triangleSize}`;
+
+    tickGroup.append('polygon')
+      .attr('class', 'red-triangle')
+      .attr('points', initialPoints)
+      .attr('fill', 'rgba(255,0,0,1)')
+      .attr('stroke', 'none')
+      .on('mouseover', (event) => {
+        d3.select(this).style("cursor","pointer");
+        tooltip.transition().duration(400).style('opacity',0.7);
+        tooltip.html(`<b style="color:rgba(121,7,222,1)">value: ${indicatorValue}`)
+          .style('left', `${event.pageX + 10}px`)
+          .style('top', `${event.pageY - 28}px`)
+          .style('font-size','10px')
+          .style('font-family','sans-serif')
+          .style('font-weight','normal')
+          .style('fill','black');
+      })
+      .on('mouseout', () => {
+        tooltip.transition().duration(500).style('opacity',0);
+      })
+      .transition()
+      .duration(1000)
+      .attr('points', finalPoints);
+  }
+
+  // Curve line
+  const curveLine = d3.line()
+    .x((d, i) => chartXScale(i) + chartBarWidth / 2)
+    .y(d => chartYScale(d))
+    .curve(d3.curveBasis);
+
+  tickGroup.append('path')
+    .data([histogramData.counts])
+    .attr('class', 'curve-line')
+    .attr('d', curveLine)
+    .attr('stroke', 'black')
+    .attr('fill', 'none');
+
+  // Histogram start/end labels
+  tickGroup.append('text')
+    .attr('x', -2)
+    .attr('y', chartHeight)
+    .attr('text-anchor', 'end')
+    .style('font-size', '10px')
+    .style('font-family', 'sans-serif')
+    .style('font-weight', 'normal')
+    .style('fill', 'black')
+    .text(histogramData.values[0].toFixed(2));
+
+  tickGroup.append('text')
+    .attr('x', chartWidth + 2)
+    .attr('y', chartHeight)
+    .attr('text-anchor', 'start')
+    .style('font-size', '10px')
+    .style('font-family', 'sans-serif')
+    .style('font-weight', 'normal')
+    .style('fill', 'black')
+    .text(histogramData.values[histogramData.values.length - 1].toFixed(2));
+});
+
 
      
   chartGroup.append('g')
   .attr('transform', `translate(0, ${height})`)
   .call(xAxis)
+  .selectAll('text')
+  .style('font-size', '10px')
+  .style('font-family', 'sans-serif')
+  .style('font-weight', 'normal')
+  .style('fill', 'black')
+
   .transition()
   .duration(1000); // Set the duration of the transition
 
+
+
 chartGroup.append('g')
   .call(yAxis)
+  .selectAll('text')
+  .style('font-size', '10px')
+  .style('font-family', 'sans-serif')
+  .style('font-weight', 'normal')
+  .style('fill', 'black')
+
   .transition()
   .duration(1000); // Set the duration of the transition
 
 // Add main chart title at the top
 chartGroup.append('text')
   .attr('x', width / 2)
-  .attr('y', -margin.top + 20)
+  .attr('y', -margin.top + 25)
   .attr('text-anchor', 'middle')
+  .style('font-family', 'sans-serif')
+
   .text(`SHAP Values (wildfire probability: ${predict_proba?.value?.toFixed(3)})`);
 
 // Add SHAP values text and legend items at the bottom
 const bottomGroup = chartGroup.append('g')
-  .attr('transform', `translate(${width / 2 - 100}, ${height + margin.bottom - 10})`); // Adjust positioning as needed
+  
+  .attr('transform', `translate(${width / 2 - 100}, ${height + margin.bottom - 18})`); // Adjust positioning as needed
 
 // SHAP values text
 /*bottomGroup.append('text')
@@ -393,7 +414,11 @@ legendGroup.append('rect')
 legendGroup.append('text')
   .attr('x', 40)
     .attr('y', 12)
-    .style('font-size', '12px')
+   .style('font-size', '10px')
+    .style('font-family', 'sans-serif')
+    .style('font-weight', 'normal')
+    .style('fill', 'black')
+
     .text(d => d.label);
 
   }
@@ -410,7 +435,7 @@ watch(clickedCoordinates, async () => {
   let poly = turf.bboxPolygon(layerBBOX);
   let isInside = turf.inside(clickedCoordinates.value, poly);
 
-  if(isInside==true && activeMenu.value==="xai"){
+  if(isInside==true && (activeMenu.value==="xai" || activeMenu.value==="geovis")){
     const response =  await getLocalShapValues(clickedCoordinates.value)
     console.log(response)
     xaiStore.assignLocalShapValues(response)
