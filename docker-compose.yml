@@ -99,11 +99,13 @@ services:
     volumes:
       - geoserver_data:/opt/geoserver/data_dir
     environment:
-      - GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}
-      - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
-      - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
-      - JAVA_OPTS="-DALLOW_ENV_PARAMETRIZATION=true"
-      - PROXY_BASE_URL=https://tv4-geo-xai.innowest-brandenburg.de/geoserver
+      GEOSERVER_DATA_DIR: ${GEOSERVER_DATA_DIR}
+      GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN_USER}
+      GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_ADMIN_PASSWORD}
+      JAVA_OPTS: "-DALLOW_ENV_PARAMETRIZATION=true"
+      PROXY_BASE_URL: https://tv4-geo-xai.innowest-brandenburg.de/geoserver
+      GEOSERVER_CSRF_DISABLE: "false"
+      GEOSERVER_CSRF_WHITELIST: "tv4-geo-xai.innowest-brandenburg.de,tv4-geo-xai.innowest-brandenburg.de:8080"
     env_file:
       - .env
     depends_on:
