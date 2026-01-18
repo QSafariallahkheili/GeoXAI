@@ -27,3 +27,6 @@ class TableInstanceRequest:
 class GeojsonRequest:
     geojson: object
 
+@dataclass
+class UserBackgroundInfoRequest:
+    background_info: object

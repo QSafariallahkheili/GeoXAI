@@ -268,3 +268,58 @@ def get_aggregated_shap():
     cur.close()
     conn.close()
     return data 
+
+def get_shap_row_for_uhi(lon, lat):
+    conn = connect()
+    cur = conn.cursor()
+
+    query = """
+        SELECT 
+            *,
+            ST_AsGeoJSON(geom) AS geometry
+        FROM uhi
+        ORDER BY geom <-> ST_Transform(
+            ST_SetSRID(ST_Point(%s, %s), 4326),
+            3857
+        )
+        LIMIT 1;
+    """
+    cur.execute(query, (lon, lat))
+
+    row = cur.fetchone()     # one row
+    colnames = [desc[0] for desc in cur.description]
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return None
+
+    # Convert to dict
+    return dict(zip(colnames, row))
+
+def post_user_background_info(background_info):
+    conn = connect()
+    cur = conn.cursor()
+  
+    try:
+        # 1. Add 'RETURNING session_id' to your SQL string
+        cur.execute("""
+            INSERT INTO interview_sessions (background_info)
+            VALUES (%s)
+            RETURNING session_id
+        """, (json.dumps(background_info),))
+
+        new_session_id = cur.fetchone()[0]
+
+        conn.commit()
+        return new_session_id
+        
+    except Exception as e:
+        print(f"Error saving background info: {e}")
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
+    

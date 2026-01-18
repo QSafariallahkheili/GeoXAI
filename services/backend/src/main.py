@@ -6,7 +6,7 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest
 from .database import (
     get_home_data,
     get_indicator_list,
@@ -17,7 +17,9 @@ from .database import (
     get_shap_per_table_for_municipality,
     get_shap_per_table_for_buffer,
     get_table_geojson,
-    get_aggregated_shap
+    get_aggregated_shap,
+    get_shap_row_for_uhi,
+    post_user_background_info
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -292,3 +294,56 @@ def get_aggregated_shap_values():
     data = json.dumps(aggregated_shap)
     gzipped_data = gzip.compress(data.encode('utf-8'))
     return Response(content=gzipped_data, headers={"Content-Encoding": "gzip", "Content-Type": "application/json"})
+
+def format_uhi_response(row: dict):
+
+    shap_values = {}
+    raster_values = {}
+    predicted_probability = row.get("prediction")   # change if needed
+
+    for key, value in row.items():
+
+        # SHAP values
+
+        if key.endswith("_shap"):
+            clean_key = key.replace("_shap", "")   # remove suffix
+            shap_values[clean_key] = -value
+
+        # Raw raster predictor values
+        elif key in [
+            "average_building_height", "building_density", "isa", "ndvi",
+            "poi_density", "population_density", "road_density",
+            "surface_albedo", "svf", "tcd", "dem", "aspect", "slope", "water"
+        ]:
+            raster_values[key] = value
+    shap_values = [{key: value} for key, value in shap_values.items()]
+    return {
+        "shap_values": shap_values,
+        "raster_values_at_clicked_point": raster_values,
+        "predicted_probability": predicted_probability
+    }
+
+@app.post("/api/local_shap_uhi")
+def get_local_shap_for_uhi(
+    request: Request,
+    coordinates_request: CoordinatesRequest
+):
+    lon, lat = coordinates_request.coordinates
+
+    row_data = get_shap_row_for_uhi(lon, lat)
+
+    if row_data is None:
+        return {"message": "No geometry found"}
+    formatted = format_uhi_response(row_data)
+    return formatted
+
+
+@app.post("/api/questionnaire_user_background_info")
+def post_user_background_info_to_db(
+    request: Request,
+    info: UserBackgroundInfoRequest
+):
+    print("Received background info:", info.background_info)
+    session_id = post_user_background_info(info.background_info)
+    
+    return {"session_id": str(session_id)}
