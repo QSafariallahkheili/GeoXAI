@@ -143,3 +143,24 @@ export async function getAggregatedSHAPValues () {
     const response = await HTTP.get("/api/get_aggregated_shap")
     return response.data;
 }
+
+export async function getLocalShapValuesForUHI(coordinates) {
+    const response = await HTTP.post(
+        "/api/local_shap_uhi",
+        {
+            "coordinates": coordinates
+        }
+    );
+    console.log(response.data)
+    return response.data;
+}
+
+export async function questionnaireUserBackgroundInfo(background_info) {
+    const response = await HTTP.post(
+        "/api/questionnaire_user_background_info",
+        {
+            "background_info": background_info
+        }
+    );
+    return response.data;
+}
