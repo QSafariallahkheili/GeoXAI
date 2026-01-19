@@ -7,6 +7,7 @@ export const useQuestionnaireStore = defineStore ({
     id: 'questionnaire',
     state: () => ({
         currentStep: 0,
+        session_id: null,
     }),
     actions: {
        setProgressBar(data) {
