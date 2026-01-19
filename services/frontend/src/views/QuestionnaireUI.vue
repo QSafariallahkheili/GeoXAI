@@ -1,5 +1,8 @@
 <template>
   <div class="questionnaire" v-if="currentStep !== null">
+      <ConsentForm 
+        v-if="currentStep === -1" 
+      />
       <WelcomeNote 
         v-if="currentStep === 0" 
       />
@@ -20,7 +23,7 @@
 
 <script setup>
   import { storeToRefs } from 'pinia'
-
+  import ConsentForm from '@/components/questionnaire/ConsentForm.vue'
   import WelcomeNote from '@/components/questionnaire/WelcomeNote.vue'
   import TutorialNote from '@/components/questionnaire/TutorialNote.vue'
   import BackgroundUI from '@/components/questionnaire/BackgroundUI.vue'
