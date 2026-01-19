@@ -6,7 +6,7 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest, UserTaskInfoRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest, UserTaskInfoRequest, UserConsentRequest
 from .database import (
     get_home_data,
     get_indicator_list,
@@ -20,7 +20,8 @@ from .database import (
     get_aggregated_shap,
     get_shap_row_for_uhi,
     post_user_background_info,
-    append_task_responses
+    append_task_responses,
+    post_user_consent_info
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -345,9 +346,9 @@ def post_user_background_info_to_db(
     info: UserBackgroundInfoRequest
 ):
     print("Received background info:", info.background_info)
-    session_id = post_user_background_info(info.background_info)
+    post_user_background_info(info.background_info, info.session_id)
     
-    return {"session_id": str(session_id)}
+    return {"status": "success"}
 
 @app.post("/api/questionnaire_task")
 def post_user_responses_task_one_to_db(
@@ -356,3 +357,13 @@ def post_user_responses_task_one_to_db(
 ):
     append_task_responses(info.task_responses, info.session_id)
     return {"status": "success"}
+
+@app.post("/api/questionnaire_consent")
+def post_user_consent_to_db(
+    request: Request,
+    info: UserConsentRequest
+):
+    print("Received consent:", info.consent_given)
+    session_id = post_user_consent_info(info.consent_given)
+    
+    return {"session_id": str(session_id)}

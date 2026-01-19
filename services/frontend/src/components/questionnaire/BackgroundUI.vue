@@ -117,9 +117,8 @@ const valid = ref(false)
 
 const postuserBackgroundInfo = async ()=>{
     console.log("Posting background info:", background_info)
-    const response = await questionnaireUserBackgroundInfo(background_info)
-    session_id.value = response.session_id
-    console.log("Received session ID:", session_id.value)
+    const response = await questionnaireUserBackgroundInfo(background_info, session_id.value)
+    console.log(response, "Background info saved response")
 }
 </script>
 

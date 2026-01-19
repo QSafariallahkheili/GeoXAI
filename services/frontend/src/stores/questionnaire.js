@@ -6,7 +6,7 @@ import { defineStore } from 'pinia'
 export const useQuestionnaireStore = defineStore ({
     id: 'questionnaire',
     state: () => ({
-        currentStep: 0,
+        currentStep: -1,
         session_id: null,
     }),
     actions: {

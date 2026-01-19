@@ -536,6 +536,7 @@ const nextSubStep = async() => {
   if (subStep.value === subtasks.length) {
     console.log('TASK COMPLETE → SEND TO BACKEND', taskResponses.value)
     // send taskResponses.value to API
+    console.log("Session ID at final stage:", session_id.value)
     await questionnaireTaskOne(taskResponses.value, session_id.value)
   } else {
     subStep.value++

@@ -155,11 +155,12 @@ export async function getLocalShapValuesForUHI(coordinates) {
     return response.data;
 }
 
-export async function questionnaireUserBackgroundInfo(background_info) {
+export async function questionnaireUserBackgroundInfo(background_info, session_id) {
     const response = await HTTP.post(
         "/api/questionnaire_user_background_info",
         {
-            "background_info": background_info
+            "background_info": background_info,
+            "session_id": session_id
         }
     );
     return response.data;
@@ -170,6 +171,16 @@ export async function questionnaireTaskOne(task_responses, session_id) {
         {
             "task_responses": task_responses,
             "session_id": session_id
+        }
+    );
+    return response.data;
+}
+
+export async function saveConsentToDatabase(consent_given){
+    const response = await HTTP.post(
+        "/api/questionnaire_consent",
+        {
+            "consent_given": consent_given
         }
     );
     return response.data;

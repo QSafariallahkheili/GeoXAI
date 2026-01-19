@@ -30,8 +30,14 @@ class GeojsonRequest:
 @dataclass
 class UserBackgroundInfoRequest:
     background_info: object
+    session_id: str
 
 @dataclass
 class UserTaskInfoRequest:
     task_responses: object
     session_id: str
+        
+
+@dataclass
+class UserConsentRequest:
+    consent_given: bool

@@ -298,22 +298,22 @@ def get_shap_row_for_uhi(lon, lat):
     # Convert to dict
     return dict(zip(colnames, row))
 
-def post_user_background_info(background_info):
+def post_user_background_info(background_info, session_id):
+    """
+    Updates the existing row with background_info after consent is given.
+    """
     conn = connect()
     cur = conn.cursor()
   
     try:
-        # 1. Add 'RETURNING session_id' to your SQL string
         cur.execute("""
-            INSERT INTO interview_sessions (background_info)
-            VALUES (%s)
-            RETURNING session_id
-        """, (json.dumps(background_info),))
-
-        new_session_id = cur.fetchone()[0]
+            UPDATE interview_sessions
+            SET background_info = %s
+            WHERE session_id = %s
+        """, (json.dumps(background_info), session_id))
 
         conn.commit()
-        return new_session_id
+        return session_id
         
     except Exception as e:
         print(f"Error saving background info: {e}")
@@ -353,6 +353,32 @@ def append_task_responses(task_responses, session_id):
         cur.close()
         conn.close()
 
+
+def post_user_consent_info(consent_given):
+    """
+    Inserts a new row with consent info and returns the session_id.
+    """
+    conn = connect()
+    cur = conn.cursor()
+  
+    try:
+        cur.execute("""
+            INSERT INTO interview_sessions (consent_given)
+            VALUES (%s)
+            RETURNING session_id
+        """, (consent_given,))
+
+        new_session_id = cur.fetchone()[0]
+        conn.commit()
+        return new_session_id
+        
+    except Exception as e:
+        print(f"Error saving consent info: {e}")
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
 
    
         
