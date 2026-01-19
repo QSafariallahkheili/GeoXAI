@@ -323,3 +323,37 @@ def post_user_background_info(background_info):
         cur.close()
         conn.close()
     
+
+def append_task_responses(task_responses, session_id):
+    conn = connect()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+            UPDATE interview_sessions
+            SET
+                task_responses = task_responses || %s::jsonb,
+                updated_at = NOW()
+            WHERE session_id = %s
+        """, (
+            json.dumps(task_responses),
+            session_id
+        ))
+
+        if cur.rowcount != 1:
+            raise RuntimeError("Session not found")
+
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cur.close()
+        conn.close()
+
+
+   
+        
+    

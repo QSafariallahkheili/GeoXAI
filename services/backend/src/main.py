@@ -6,7 +6,7 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest, UserTaskInfoRequest
 from .database import (
     get_home_data,
     get_indicator_list,
@@ -19,7 +19,8 @@ from .database import (
     get_table_geojson,
     get_aggregated_shap,
     get_shap_row_for_uhi,
-    post_user_background_info
+    post_user_background_info,
+    append_task_responses
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -347,3 +348,11 @@ def post_user_background_info_to_db(
     session_id = post_user_background_info(info.background_info)
     
     return {"session_id": str(session_id)}
+
+@app.post("/api/questionnaire_task")
+def post_user_responses_task_one_to_db(
+    request: Request,
+    info: UserTaskInfoRequest
+):
+    append_task_responses(info.task_responses, info.session_id)
+    return {"status": "success"}
