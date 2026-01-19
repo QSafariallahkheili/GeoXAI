@@ -102,6 +102,10 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useQuestionnaireStore } from '../../stores/questionnaire'
+let {currentStep, session_id} = storeToRefs(useQuestionnaireStore());
 import {questionnaireUserBackgroundInfo} from '@/services/backend.calls.js'
 const background_info = reactive({
   datavis: null,
@@ -114,8 +118,8 @@ const valid = ref(false)
 const postuserBackgroundInfo = async ()=>{
     console.log("Posting background info:", background_info)
     const response = await questionnaireUserBackgroundInfo(background_info)
-    let session_id = response.session_id
-    console.log("Received session ID:", session_id)
+    session_id.value = response.session_id
+    console.log("Received session ID:", session_id.value)
 }
 </script>
 

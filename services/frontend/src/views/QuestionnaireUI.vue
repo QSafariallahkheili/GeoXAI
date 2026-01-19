@@ -11,6 +11,9 @@
       <BackgroundUI 
         v-if="currentStep === 2" 
       />
+      <FirstTask 
+        v-if="currentStep === 3"
+      />
     
   </div>
 </template>
@@ -21,6 +24,7 @@
   import WelcomeNote from '@/components/questionnaire/WelcomeNote.vue'
   import TutorialNote from '@/components/questionnaire/TutorialNote.vue'
   import BackgroundUI from '@/components/questionnaire/BackgroundUI.vue'
+  import FirstTask from '@/components/questionnaire/FirstTask.vue'
   import { useQuestionnaireStore } from '../stores/questionnaire'
   let {currentStep} = storeToRefs(useQuestionnaireStore());
 
