@@ -164,3 +164,13 @@ export async function questionnaireUserBackgroundInfo(background_info) {
     );
     return response.data;
 }
+export async function questionnaireTaskOne(task_responses, session_id) {
+    const response = await HTTP.post(
+        "/api/questionnaire_task",
+        {
+            "task_responses": task_responses,
+            "session_id": session_id
+        }
+    );
+    return response.data;
+}
