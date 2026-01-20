@@ -6,12 +6,12 @@
             <h1 class="text-h5 font-weight-bold mb-4">Task Type 2</h1>
             <p class="mb-4">
 
-                Identify regions that simultaneously exhibit high Land Surface Temperature (LST) values and a strong negative SHAP contribution.
+                This task involves interpreting bivariate maps that show the relationship between two variables.
 
             </p>
             <p class="mb-4">
 
-                This indicates areas where the model strongly decreases predictions despite high temperatures.
+                The variables represented are <strong>feature</strong> and its <strong>SHAP value</strong> (feature impact on prediction).
 
             </p>
             
@@ -48,7 +48,7 @@
 import { ref, computed } from 'vue'
 
 const subStep = ref(0)
-const isLastSubStep = computed(() => subStep.value === 6)
+const isLastSubStep = computed(() => subStep.value === 4)
 
 </script>
 
