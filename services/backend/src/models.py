@@ -41,3 +41,9 @@ class UserTaskInfoRequest:
 @dataclass
 class UserConsentRequest:
     consent_given: bool
+
+@dataclass
+class UserTaskCompleteRequest:
+    task_completed: bool
+    session_id: str
+

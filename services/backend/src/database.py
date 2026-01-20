@@ -380,6 +380,29 @@ def post_user_consent_info(consent_given):
         cur.close()
         conn.close()
 
+def post_user_task_complete_info(task_completed, session_id):
+    """
+    Inserts a new row with task completion info and returns the session_id.
+    """
+    conn = connect()
+    cur = conn.cursor()
+  
+    try:
+        cur.execute("""
+            UPDATE interview_sessions 
+            SET is_completed = %s
+            WHERE session_id = %s
+        """, (task_completed, session_id))
+
+        conn.commit()
+
+    except Exception as e:
+        print(f"Error saving task completion info: {e}")
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
    
         
     

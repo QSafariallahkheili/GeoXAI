@@ -6,7 +6,7 @@ import pandas as pd
 import joblib
 import shap
 import numpy as np
-from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest, UserTaskInfoRequest, UserConsentRequest
+from .models import CoordinatesRequest, IndicatorRequest, TableRequest, PredictorRequest, TableInstanceRequest,GeojsonRequest, UserBackgroundInfoRequest, UserTaskInfoRequest, UserConsentRequest, UserTaskCompleteRequest
 from .database import (
     get_home_data,
     get_indicator_list,
@@ -21,7 +21,8 @@ from .database import (
     get_shap_row_for_uhi,
     post_user_background_info,
     append_task_responses,
-    post_user_consent_info
+    post_user_consent_info,
+    post_user_task_complete_info
 )
 import matplotlib.pyplot as plt
 import rioxarray
@@ -367,3 +368,12 @@ def post_user_consent_to_db(
     session_id = post_user_consent_info(info.consent_given)
     
     return {"session_id": str(session_id)}
+
+@app.post("/api/questionnaire_complete_task")
+def post_user_task_complete_to_db(
+    request: Request,
+    info: UserTaskCompleteRequest
+):
+    post_user_task_complete_info(info.task_completed, info.session_id)
+
+    return {"status": "task completion recorded"}
