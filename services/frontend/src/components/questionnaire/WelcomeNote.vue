@@ -86,9 +86,9 @@
     padding-bottom: 24px;
   }
 }
-  .nav {
+.nav {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 15px;
+  right: 15px;
 }
 </style>

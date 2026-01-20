@@ -185,3 +185,13 @@ export async function saveConsentToDatabase(consent_given){
     );
     return response.data;
 }
+export async function completeTask(task_completed, session_id) {
+    const response = await HTTP.post(
+        "/api/questionnaire_complete_task",
+        {
+            "task_completed": task_completed,
+            "session_id": session_id
+        }
+    );
+    return response.data;
+}

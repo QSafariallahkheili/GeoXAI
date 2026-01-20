@@ -444,7 +444,7 @@ import { storeToRefs } from 'pinia'
 import {questionnaireTaskOne} from '@/services/backend.calls.js'
 import { useQuestionnaireStore } from '../../stores/questionnaire'
 
-let {session_id, currentStep} = storeToRefs(useQuestionnaireStore());
+let {session_id, currentStep, progress} = storeToRefs(useQuestionnaireStore());
 
 const subStep = ref(0)
 const subtaskStartTime = ref(performance.now())
@@ -538,9 +538,11 @@ const nextSubStep = async() => {
     // send taskResponses.value to API
     console.log("Session ID at final stage:", session_id.value)
     await questionnaireTaskOne(taskResponses.value, session_id.value)
+    progress.value++
     currentStep.value++
   } else {
     subStep.value++
+    progress.value++
     resetAnswers()
   }
 }

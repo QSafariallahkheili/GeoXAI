@@ -149,7 +149,7 @@ const postuserBackgroundInfo = async ()=>{
 }
 .nav {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 15px;
+  right: 15px;
 }
 </style>

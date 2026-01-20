@@ -23,6 +23,278 @@
             </p>
 
         </div>
+         <!-- SUBTASK 1: GRID ONLY -->
+        <div v-if="subStep === 1">
+        
+            <p>
+               Task 2.1.Highlight the area with: Highest feature value (LST) and Lowest SHAP contribution
+            </p>
+
+            <div class="map-grid-wrapper">
+                <!-- MAP IMAGE -->
+                <img
+                    src='task_images/bivariate_choropleth.png'
+                    class="map-image"
+                />
+
+                <!-- GRID OVERLAY -->
+                <div class="grid-overlay">
+                    <div
+                        v-for="(cell, index) in 100"
+                        :key="index"
+                        class="grid-cell"
+                        :class="{ selected: selectedIndex === index }"
+                        @click="handleCellClick(index)"
+                    ></div>
+                </div>
+            </div>
+            <p class="mb-2 mt-2">
+                How confusing was it to identify the area (rating 1-7)?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.confusion"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.confusion }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            <p class="mb-2 mt-2">
+                How visually appealing do you find this map?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.appeal"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.appeal }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            
+
+        </div>
+         <!-- SUBTASK 2: GRID ONLY -->
+        <div v-if="subStep === 2">
+        
+            <p>
+               Task 2.1.Highlight the area with: Highest feature value (LST) and Lowest SHAP contribution
+            </p>
+
+            <div class="map-grid-wrapper">
+                <!-- MAP IMAGE -->
+                <img
+                    src='task_images/bivariate_proportional.png'
+                    class="map-image"
+                />
+
+                <!-- GRID OVERLAY -->
+                <div class="grid-overlay">
+                    <div
+                        v-for="(cell, index) in 100"
+                        :key="index"
+                        class="grid-cell"
+                        :class="{ selected: selectedIndex === index }"
+                        @click="handleCellClick(index)"
+                    ></div>
+                </div>
+            </div>
+            <p class="mb-2 mt-2">
+                How confusing was it to identify the area (rating 1-7)?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.confusion"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.confusion }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            <p class="mb-2 mt-2">
+                How visually appealing do you find this map?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.appeal"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.appeal }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            
+
+        </div>
+         <!-- SUBTASK 3: GRID ONLY -->
+        <div v-if="subStep === 3">
+        
+            <p>
+               Task 2.1.Highlight the area with: Lowest feature value (NDVI) and Lowest SHAP contribution
+            </p>
+
+            <div class="map-grid-wrapper">
+                <!-- MAP IMAGE -->
+                <img
+                    src='task_images/bivariate_choropleth2.png'
+                    class="map-image"
+                />
+
+                <!-- GRID OVERLAY -->
+                <div class="grid-overlay">
+                    <div
+                        v-for="(cell, index) in 100"
+                        :key="index"
+                        class="grid-cell"
+                        :class="{ selected: selectedIndex === index }"
+                        @click="handleCellClick(index)"
+                    ></div>
+                </div>
+            </div>
+            <p class="mb-2 mt-2">
+                How confusing was it to identify the area (rating 1-7)?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.confusion"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.confusion }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            <p class="mb-2 mt-2">
+                How visually appealing do you find this map?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.appeal"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.appeal }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            
+
+        </div>
+         <!-- SUBTASK 3: GRID ONLY -->
+        <div v-if="subStep === 4">
+        
+            <p>
+               Task 2.1.Highlight the area with: Lowest feature value (NDVI) and Lowest SHAP contribution
+            </p>
+
+            <div class="map-grid-wrapper">
+                <!-- MAP IMAGE -->
+                <img
+                    src='task_images/bivariate_choropleth_uncertainty.png'
+                    class="map-image"
+                />
+
+                <!-- GRID OVERLAY -->
+                <div class="grid-overlay">
+                    <div
+                        v-for="(cell, index) in 100"
+                        :key="index"
+                        class="grid-cell"
+                        :class="{ selected: selectedIndex === index }"
+                        @click="handleCellClick(index)"
+                    ></div>
+                </div>
+            </div>
+            <p class="mb-2 mt-2">
+                How confusing was it to identify the area (rating 1-7)?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.confusion"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.confusion }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            <p class="mb-2 mt-2">
+                How visually appealing do you find this map?
+            </p>
+            <div>
+                <v-slider
+                    v-model="answers.appeal"
+                    min="1"
+                    max="7"
+                    step="1"
+                    tick-size="4"
+                    show-ticks="always"
+                    hide-details
+                >
+                    <template #append>
+                        <span class="ml-3 font-weight-medium">
+                            {{ answers.appeal }}
+                        </span>
+                    </template>
+                </v-slider>
+            </div>
+            
+
+        </div>
 
     
 
@@ -36,7 +308,7 @@
         size="large"
         variant="elevated"
         append-icon="mdi-arrow-right"
-    
+        @click="nextSubStep"
       >
       {{ isLastSubStep ? 'Finish Task' : 'Next' }}
       </v-btn>
@@ -45,10 +317,105 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useQuestionnaireStore } from '../../stores/questionnaire'
+import {questionnaireTaskOne, completeTask} from '@/services/backend.calls.js'
+
 
 const subStep = ref(0)
+const selectedIndex = ref(null)
+const taskResponses = ref([])
+const subtaskStartTime = ref(performance.now())
+let {session_id, currentStep, progress} = storeToRefs(useQuestionnaireStore());
+
+
 const isLastSubStep = computed(() => subStep.value === 4)
+const answers = reactive({
+    region: null,
+    confusion: 4,
+    appeal: 4,
+    time_ms: null,
+})
+const subtasks = [
+  {
+    id: 'task_2_1',
+    map: 'bivariate_choropleth',
+    correctRegions: [23],
+  },
+  {
+    id: 'task_2_2',
+    map: 'bivariate_proportional',
+   correctRegions: [61],
+  },
+  {
+    id: 'task_2_3',
+    map: 'bivariate_choropleth2',
+    correctRegions: [64, 65, 96],
+  },
+  {
+    id: 'task_2_4',
+    map: 'bivariate_choropleth_uncertainty',
+    correctRegions: [53,54,63,64,73,75, 83,85,94,95],
+  }
+]
+const resetAnswers = () => {
+  answers.region = null
+  answers.confusion = 4
+  answers.appeal = 4
+  answers.time_ms = null
+  selectedIndex.value = null
+}
+const nextSubStep = async() => {
+  const duration = performance.now() - subtaskStartTime.value
+
+  // Only save payload for real subtasks
+  if (subStep.value > 0) {
+    const subtask = subtasks[subStep.value - 1]
+
+    const payload = {
+      task_id: 'task_2',
+      subtask_id: subtask.id,
+      map_id: subtask.map,
+
+      response: {
+        region_index: answers.region,
+        confusion: answers.confusion,
+        appeal: answers.appeal,
+      },
+
+      correct_region_index: subtask.correctRegions,
+      is_correct: subtask.correctRegions.includes(answers.region),
+
+      time_ms: Math.round(duration),
+      timestamp: new Date().toISOString(),
+    }
+
+    taskResponses.value.push(payload)
+    console.log(taskResponses.value, "final taskResponses.value")
+  }
+
+  if (subStep.value === subtasks.length) {
+    console.log('TASK COMPLETE → SEND TO BACKEND', taskResponses.value)
+    // send taskResponses.value to API
+    console.log("Session ID at final stage:", session_id.value)
+    await questionnaireTaskOne(taskResponses.value, session_id.value)
+    await completeTask(true, session_id.value)
+    currentStep.value++
+  } else {
+    if(subStep.value > 0){
+       progress.value++
+    }
+    subStep.value++
+    
+   
+    resetAnswers()
+  }
+}
+const handleCellClick = (index) => {
+    selectedIndex.value = index
+    answers.region = index
+}
 
 </script>
 

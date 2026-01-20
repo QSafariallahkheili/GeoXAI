@@ -20,7 +20,14 @@
       <SecondTask 
         v-if="currentStep === 4"
       />
-    
+      <ThankYou 
+        v-if="currentStep === 5"
+      />
+   
+      <ProgressTask 
+       v-if="currentStep === 3 || currentStep === 4"
+      />
+     
   </div>
 </template>
 
@@ -32,6 +39,9 @@
   import BackgroundUI from '@/components/questionnaire/BackgroundUI.vue'
   import FirstTask from '@/components/questionnaire/FirstTask.vue'
   import SecondTask from '@/components/questionnaire/SecondTask.vue'
+  import ThankYou from '@/components/questionnaire/ThankYou.vue'
+  import ProgressTask from '@/components/questionnaire/ProgressTask.vue'
+
   import { useQuestionnaireStore } from '../stores/questionnaire'
   let {currentStep} = storeToRefs(useQuestionnaireStore());
 
@@ -39,19 +49,6 @@
 </script>
 <style scoped>
 
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.35s ease;
-}
 
-.slide-fade-enter-from {
-  opacity: 0;
-  transform: translateX(24px);
-}
-
-.slide-fade-leave-to {
-  opacity: 0;
-  transform: translateX(-24px);
-}
 
 </style>
