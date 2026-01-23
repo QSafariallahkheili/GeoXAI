@@ -317,7 +317,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useQuestionnaireStore } from '../../stores/questionnaire'
 import {questionnaireTaskOne, completeTask} from '@/services/backend.calls.js'
@@ -359,6 +359,10 @@ const subtasks = [
     correctRegions: [53,54,63,64,73,75, 83,85,94,95],
   }
 ]
+
+watch(subStep, () => {
+  subtaskStartTime.value = performance.now()
+})
 const resetAnswers = () => {
   answers.region = null
   answers.confusion = 4
