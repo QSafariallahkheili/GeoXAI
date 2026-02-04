@@ -2,5 +2,28 @@
     "message": {
       "hello": "Hello World!",
       "welcome": "Welcome to my app"
+    },
+     "consent": {
+      "header": "Declaration of Consent",
+      "header-subtitle": "Please read carefully before continuing",
+      "invitation": "You are invited to participate in a research study conducted as part of a doctoral dissertation entitled:",
+      "title": "\"Towards Transparent Geospatial AI: Investigating Strategies and Techniques for Explainability and Trustworthiness in AI-Driven Geospatial Decision-Making.\"",
+      "acknowledgement": "By participating in this study, you acknowledge that:",
+      "point1": "Your participation is voluntary and you may withdraw at any time.",
+      "point2": "Your responses will be used exclusively for scientific research.",
+      "point3": "All collected data will be processed and published in anonymized form.",
+      "point4": "No personally identifiable information will be collected.",
+      "point5": "The content of your responses will not be altered or falsified.",
+      "agree": "By providing your consent, you agree to participate in this study.",
+      "consent-checkmark": "I consent to participate in this study.",
+      "continue-button": "Continue"
+    },
+    "welcome":{
+      "title": "Welcome and Thank You",
+      "subtitle": "Thank you for participating in this study.",
+      "description1": "In this session, you will explore a set of interactive maps related to wildfire susceptibility and answer questions about what you see.",
+      "description2": "The study focuses on how different map designs support understanding of machine learning model explanations and uncertainty.",
+      "description3": "There are no right or wrong visualization styles — we are interested in how people interpret them.",
+      "time-declaration": "The session will take approximately 15–20 minutes."
     }
 }

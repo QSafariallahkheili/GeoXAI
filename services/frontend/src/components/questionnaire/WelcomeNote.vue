@@ -10,31 +10,26 @@
       elevation="2"
     >
       <v-card-title class="text-h5 text-md-h4 font-weight-bold mb-4 mb-md-6">
-        Welcome and Thank You
+        {{ $t("welcome.title") }}
       </v-card-title>
 
       <v-card-text class="text-body-2 text-md-body-1">
         <p class="mb-4">
-          Thank you for participating in this study.
+          {{ $t("welcome.subtitle") }}
         </p>
 
         <p class="mb-4">
-          In this session, you will explore a set of interactive maps related to
-          <strong>wildfire susceptibility</strong> and answer questions about what
-          you see.
+          {{ $t("welcome.description1") }}
         </p>
 
         <p class="mb-4">
-          The study focuses on how different map designs support understanding of
-          <strong>machine learning model explanations</strong> and
-          <strong>uncertainty</strong>.
+          {{ $t("welcome.description2") }}
         </p>
 
         <v-divider class="my-6" />
 
         <p class="text-medium-emphasis">
-          There are no right or wrong visualization styles —
-          we are interested in how people interpret them.
+          {{ $t("welcome.description3") }}
         </p>
 
         <v-alert
@@ -43,7 +38,7 @@
           density="comfortable"
           class="mt-6 text-body-2 text-md-body-1"
         >
-          The session will take approximately <strong>15–20 minutes</strong>.
+          {{ $t("welcome.time-declaration") }}
         </v-alert>
       </v-card-text>
     </v-sheet>

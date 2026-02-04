@@ -54,10 +54,10 @@
           mdi-shield-check
         </v-icon>
         <h1 class="text-h5 font-weight-bold">
-          Informed Consent
+          {{ $t("consent.header") }}
         </h1>
         <p class="text-body-2 text-medium-emphasis mt-1">
-          Please read carefully before continuing
+          {{ $t("consent.header-subtitle") }}
         </p>
       </div>
 
@@ -68,33 +68,31 @@
         class="pa-4 pa-md-6 mb-6"
       >
         <p class="mb-4">
-          You are invited to participate in a research study conducted as part of a
-          doctoral dissertation entitled:
+          {{ $t("consent.invitation") }}
         </p>
 
         <p class="font-italic text-medium-emphasis mb-4">
-          “Towards Transparent Geospatial AI: Investigating Strategies and Techniques
-          for Explainability and Trustworthiness in AI-Driven Geospatial Decision-Making.”
+           {{ $t("consent.title") }}
         </p>
 
         <v-divider class="my-4" />
 
         <p class="mb-3 font-weight-medium">
-          By participating in this study, you acknowledge that:
+          {{ $t("consent.acknowledgement") }}
         </p>
 
         <ul class="consent-list">
-          <li>Your participation is voluntary and you may withdraw at any time.</li>
-          <li>Your responses will be used exclusively for scientific research.</li>
-          <li>All collected data will be processed and published in anonymized form.</li>
-          <li>No personally identifiable information will be collected.</li>
-          <li>The content of your responses will not be altered or falsified.</li>
+          <li>{{ $t("consent.point1") }}</li>
+          <li>{{ $t("consent.point2") }}</li>
+          <li>{{ $t("consent.point3") }}</li>
+          <li>{{ $t("consent.point4") }}</li>
+          <li>{{ $t("consent.point5") }}</li>
         </ul>
 
         <v-divider class="my-4" />
 
         <p class="text-body-2 text-medium-emphasis">
-          By providing your consent, you agree to participate in this study.
+          {{ $t("consent.agree") }}
         </p>
       </v-card>
 
@@ -112,7 +110,7 @@
         >
           <template #label>
             <span class="font-weight-medium">
-              I consent to participate in this study
+              {{ $t("consent.consent-checkmark") }}
             </span>
           </template>
         </v-checkbox>
@@ -124,7 +122,7 @@
           :disabled="!consentGiven"
           @click=" applyConsent()"
         >
-          Continue
+          {{ $t("consent.continue-button") }}
           <v-icon end>mdi-arrow-right</v-icon>
         </v-btn>
       </v-card>

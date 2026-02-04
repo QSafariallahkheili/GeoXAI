@@ -1,6 +1,29 @@
 {
     "message": {
-      "hello": "Hallo Welt!",
-      "welcome": "Willkommen in meiner App"
+      "hello": "Hello World!",
+      "welcome": "Welcome to my app"
+    },
+     "consent": {
+      "header": "Einverständniserklärung",
+      "header-subtitle": "Bitte lesen Sie dies sorgfältig durch, bevor Sie fortfahren",
+      "invitation": "Sie sind eingeladen, an einer Forschungsstudie teilzunehmen, die im Rahmen einer Doktorarbeit mit dem Titel durchgeführt wird:",
+      "title": "\"Towards Transparent Geospatial AI: Investigating Strategies and Techniques for Explainability and Trustworthiness in AI-Driven Geospatial Decision-Making.\"",
+      "acknowledgement": "Durch Ihre Teilnahme an dieser Studie bestätigen Sie Folgendes:",
+      "point1": "Ihre Teilnahme ist freiwillig und Sie können jederzeit zurücktreten.",
+      "point2": "Ihre Antworten werden ausschließlich für wissenschaftliche Forschungszwecke verwendet.",
+      "point3": "Alle gesammelten Daten werden anonymisiert verarbeitet und veröffentlicht.",
+      "point4": "Es werden keine personenbezogenen Daten erfasst.",
+      "point5": "Der Inhalt Ihrer Antworten wird nicht verändert oder verfälscht.",
+      "agree": "Indem Sie Ihr Einverständnis geben, erklären Sie sich mit der Teilnahme an dieser Studie einverstanden.",
+      "consent-checkmark": "Ich stimme der Teilnahme an dieser Studie zu.",
+      "continue-button": "Fortfahren"
+    },
+    "welcome":{
+      "title": "Willkommen und vielen Dank",
+      "subtitle": "Vielen Dank für Ihre Teilnahme an dieser Studie.",
+      "description1": "In dieser Sitzung werden Sie eine Reihe interaktiver Karten zum Thema Waldbrandanfälligkeit erkunden und Fragen zu dem beantworten, was Sie sehen.",
+      "description2": "Die Studie konzentriert sich darauf, wie verschiedene Kartendesigns das Verständnis von Erklärungen und Unsicherheiten von maschinellen Lernmodellen unterstützen.",
+      "description3": "Es gibt keine richtigen oder falschen Visualisierungsstile – wir sind daran interessiert, wie Menschen sie interpretieren.",
+      "time-declaration": "Die Sitzung wird voraussichtlich 15 bis 20 Minuten dauern."
     }
 }
