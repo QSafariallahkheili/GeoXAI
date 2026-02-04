@@ -1,10 +1,9 @@
 <template>
   <div class="thank-you-container">
     <div class="content">
-      <h2>Thank you for participating!</h2>
+      <h2>{{ $t("thanks.title") }}</h2>
       <p>
-        Your participation is greatly appreciated.
-        The study is now complete.
+        {{ $t("thanks.subtitle") }}
       </p>
     </div>
   </div>

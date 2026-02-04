@@ -3,23 +3,23 @@
     <v-sheet max-width="1000" rounded="xl" elevation="2" class="pa-6">
       <!-- SUBTASK 0: INTRO -->
         <div v-if="subStep === 0">
-            <h1 class="text-h5 font-weight-bold mb-4">Task Type 2</h1>
+            <h1 class="text-h5 font-weight-bold mb-4">{{ $t("task2.title") }}</h1>
             <p class="mb-4">
 
-                This task involves interpreting bivariate maps that show the relationship between two variables.
+                {{ $t("task2.instruction1") }}
 
             </p>
             <p class="mb-4">
 
-                The variables represented are <strong>feature</strong> and its <strong>SHAP value</strong> (feature impact on prediction).
+                {{ $t("task2.instruction2") }}
 
             </p>
             
             <p class="mb-4">
-                For each map, you will answer one or more questions.
+                 {{ $t("task2.instruction3") }}
             </p>
             <p class="mb-4">
-                Please answer as <strong>accurately</strong> and as <strong>quickly</strong> as possible.
+                 {{ $t("task2.instruction4") }}
             </p>
 
         </div>
@@ -27,7 +27,7 @@
         <div v-if="subStep === 1">
         
             <p>
-               Task 2.1.Highlight the area with: Highest feature value (LST) and Lowest SHAP contribution
+               {{ $t("task2.task2-title1") }}
             </p>
 
             <div class="map-grid-wrapper">
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <p class="mb-2 mt-2">
-                How confusing was it to identify the area (rating 1-7)?
+                {{ $t("task2.task2-confusing-title") }}
             </p>
             <div>
                 <v-slider
@@ -69,7 +69,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task2.task2-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -95,7 +95,7 @@
         <div v-if="subStep === 2">
         
             <p>
-               Task 2.1.Highlight the area with: Highest feature value (LST) and Lowest SHAP contribution
+               {{ $t("task2.task2-title2") }}
             </p>
 
             <div class="map-grid-wrapper">
@@ -117,7 +117,7 @@
                 </div>
             </div>
             <p class="mb-2 mt-2">
-                How confusing was it to identify the area (rating 1-7)?
+                {{ $t("task2.task2-confusing-title") }}
             </p>
             <div>
                 <v-slider
@@ -137,7 +137,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task2.task2-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -163,7 +163,7 @@
         <div v-if="subStep === 3">
         
             <p>
-               Task 2.1.Highlight the area with: Lowest feature value (NDVI) and Lowest SHAP contribution
+               {{ $t("task2.task2-title3") }}
             </p>
 
             <div class="map-grid-wrapper">
@@ -185,7 +185,7 @@
                 </div>
             </div>
             <p class="mb-2 mt-2">
-                How confusing was it to identify the area (rating 1-7)?
+                {{ $t("task2.task2-confusing-title") }}
             </p>
             <div>
                 <v-slider
@@ -205,7 +205,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task2.task2-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -231,7 +231,7 @@
         <div v-if="subStep === 4">
         
             <p>
-               Task 2.1.Highlight the area with: Lowest feature value (NDVI) and Lowest SHAP contribution
+               {{ $t("task2.task2-title4") }}
             </p>
 
             <div class="map-grid-wrapper">
@@ -253,7 +253,7 @@
                 </div>
             </div>
             <p class="mb-2 mt-2">
-                How confusing was it to identify the area (rating 1-7)?
+                {{ $t("task2.task2-confusing-title") }}
             </p>
             <div>
                 <v-slider
@@ -273,7 +273,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+               {{ $t("task2.task2-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -310,7 +310,7 @@
         append-icon="mdi-arrow-right"
         @click="nextSubStep"
       >
-      {{ isLastSubStep ? 'Finish Task' : 'Next' }}
+      {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
       </v-btn>
     </div>
   </v-container>

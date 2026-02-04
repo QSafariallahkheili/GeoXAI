@@ -94,7 +94,7 @@
         append-icon="mdi-arrow-right"
         @click="currentStep++; postuserBackgroundInfo()"
       >
-        Next
+        {{ $t("buttons.next") }}
       </v-btn>
     </div>
   </v-container>

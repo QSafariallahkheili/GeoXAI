@@ -66,5 +66,49 @@
       "b3-subtitle": "Haben Sie zuvor Karten zur Risikobewertung oder für umweltbezogene Entscheidungsfindungen verwendet?",
       "b3-option1": "Ja",
       "b3-option2": "Nein"
+    },
+    "task1":{
+      "title": "Ihre Aufgaben",
+      "instruction1": "Es gibt zwei Arten von Aufgaben, jede enthält Unteraufgaben und eine Karte mit Fragen.",
+      "instruction2": "Für jede Karte beantworten Sie eine oder mehrere Fragen.",
+      "instruction3": "Bitte antworten Sie so genau und schnell wie möglich.",
+      "task1-title": "Aufgabentyp 1: Identifizierung von Unsicherheiten",
+      "task1-subtitle": "Bitte klicken Sie auf den Bereich der Karte, von dem Sie glauben, dass er die größte Unsicherheit zeigt.",
+
+      "task1-title1": "Aufgaben 1.1. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
+      "task1-title2": "Aufgaben 1.2. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
+      "task1-title3": "Aufgaben 1.3. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
+      "task1-title4": "Aufgaben 1.4. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
+      "task1-title5": "Aufgaben 1.5. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
+      "task1-title6": "Aufgaben 1.6. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
+      "task1-confusing-title": "Wie verwirrend war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task1-appealing-title": "Wie ansprechend finden Sie diese Karte (Bewertung 1-7)?"
+    },
+    "task2":{
+      "title": "Aufgabentyp 2",
+      "instruction1": "Diese Aufgabe beinhaltet die Interpretation bivariater Karten, die die Beziehung zwischen zwei Variablen zeigen.",
+      "instruction2": "Die dargestellten Variablen sind das Merkmal und sein SHAP-Wert (Einfluss des Merkmals auf die Vorhersage).",
+      "instruction3": "ür jede Karte beantworten Sie eine oder mehrere Fragen.",
+      "instruction4": "Bitte antworten Sie so genau und so schnell wie möglich.",
+
+      "task2-title1": "Aufgaben 2.1. Markieren Sie den Bereich mit: Höchster Merkmalswert (LST) und niedrigster SHAP-Beitrag",
+      "task2-title2": "Aufgaben 2.2. Markieren Sie den Bereich mit: Höchster Merkmalswert (LST) und niedrigster SHAP-Beitrag",
+      "task2-title3": "Aufgaben 2.3. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (NDVI) und niedrigster SHAP-Beitrag",
+      "task2-title4": "Aufgaben 2.4. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (NDVI) und niedrigster SHAP-Beitrag",
+
+      "task2-confusing-title": "Wie verwirrend war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task2-appealing-title": "Wie ansprechend finden Sie diese Karte (Bewertung 1-7)?"
+    },
+    "thanks":{
+      "title": "Vielen Dank für Ihre Teilnahme",
+      "subtitle": "Wir bedanken uns herzlich für Ihre Teilnahme. Die Studie ist nun abgeschlossen."
+      
+    },
+    "buttons":{
+      "next": "Weiter",
+      "finish": "Fertigstellen"
+    },
+    "progress": {
+      "msg": "Fortschritt"
     }
 }

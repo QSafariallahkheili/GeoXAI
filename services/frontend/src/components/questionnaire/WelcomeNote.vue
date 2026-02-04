@@ -50,7 +50,7 @@
         append-icon="mdi-arrow-right"
         @click="currentStep++"
       >
-        Next
+        {{ $t("buttons.next") }}
       </v-btn>
     </div>
   </v-container>

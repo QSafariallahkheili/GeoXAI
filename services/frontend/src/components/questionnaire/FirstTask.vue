@@ -3,23 +3,22 @@
     <v-sheet max-width="1000" rounded="xl" elevation="2" class="pa-6">
       <!-- SUBTASK 0: INTRO -->
         <div v-if="subStep === 0">
-            <h1 class="text-h5 font-weight-bold mb-4">Your Tasks</h1>
+            <h1 class="text-h5 font-weight-bold mb-4">{{ $t("task1.title") }}</h1>
             <p class="mb-4">
-                There are two type of tasks, each contains sub-tasks and a map with questions.
-                
+                {{ $t("task1.instruction1") }}
             </p>
             <p class="mb-4">
-                For each map, you will answer one or more questions.
+                {{ $t("task1.instruction2") }}
             </p>
             <p class="mb-4">
-                Please answer as <strong>accurately</strong> and as <strong>quickly</strong> as possible.
+                {{ $t("task1.instruction3") }}
             </p>
 
             <h2 class="text-h6 font-weight-medium">
-            Task Type 1: Uncertainty Identification
+            {{ $t("task1.task1-title") }}
             </h2>
             <p class="mb-4">
-                Please <strong>click</strong> on the area of the map that you believe shows the highest uncertainty
+                {{ $t("task1.task1-subtitle") }}
             </p>
         </div>
 
@@ -27,7 +26,7 @@
         <div v-if="subStep === 1">
         
             <p>
-               <strong>Task 1.1.</strong> Which region shows the <strong>highest uncertainty</strong>? Please select.
+               {{ $t("task1.task1-title1") }}
             </p>
 
             <div class="map-grid-wrapper">
@@ -49,7 +48,7 @@
                 </div>
             </div>
             <p class="mb-2 mt-2">
-                How confusing was it to identify the area (rating 1-7)?
+                {{ $t("task1.task1-confusing-title") }}
             </p>
             <div>
                 <v-slider
@@ -69,7 +68,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task1.task1-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -96,7 +95,7 @@
         <div v-if="subStep === 2">
             
             <p>
-               <strong>Task 1.2.</strong> Which region shows the <strong>highest uncertainty</strong>? Please select.
+               {{ $t("task1.task1-title2") }} 
             </p>
 
             <div class="map-grid-wrapper">
@@ -118,7 +117,7 @@
                 </div>
             </div>
                 <p class="mb-2 mt-2">
-                    How confusing was it to identify the area (rating 1-7)?
+                    {{ $t("task1.task1-confusing-title") }}
                 </p>
             <div>
                 <v-slider
@@ -138,7 +137,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task1.task1-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -162,7 +161,7 @@
         <!-- SUBTASK 3: QUESTION -->
         <div v-if="subStep === 3">
             <p>
-               <strong>Task 1.3.</strong> Which region shows the <strong>highest uncertainty</strong>? Please select.
+               {{ $t("task1.task1-title3") }} 
             </p>
 
             <div class="map-grid-wrapper">
@@ -184,7 +183,7 @@
                 </div>
             </div>
                 <p class="mb-2 mt-2">
-                    How confusing was it to identify the area (rating 1-7)?
+                    {{ $t("task1.task1-confusing-title") }}
                 </p>
             <div>
                 <v-slider
@@ -204,7 +203,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task1.task1-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -227,7 +226,7 @@
         <!-- SUBTASK 4: QUESTION -->
         <div v-if="subStep === 4">
             <p>
-               <strong>Task 1.4.</strong> Which region shows the <strong>highest uncertainty</strong>? Please select.
+               {{ $t("task1.task1-title4") }} 
             </p>
 
             <div class="map-grid-wrapper">
@@ -249,7 +248,7 @@
                 </div>
             </div>
                 <p class="mb-2 mt-2">
-                    How confusing was it to identify the area (rating 1-7)?
+                   {{ $t("task1.task1-confusing-title") }}
                 </p>
             <div>
                 <v-slider
@@ -269,7 +268,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+               {{ $t("task1.task1-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -292,7 +291,7 @@
         <!-- SUBTASK 5: QUESTION -->
         <div v-if="subStep === 5">
             <p>
-               <strong>Task 1.5.</strong> Which region shows the <strong>highest uncertainty</strong>? Please select.
+               {{ $t("task1.task1-title5") }} 
             </p>
 
             <div class="map-grid-wrapper">
@@ -314,7 +313,7 @@
                 </div>
             </div>
                 <p class="mb-2 mt-2">
-                    How confusing was it to identify the area (rating 1-7)?
+                    {{ $t("task1.task1-confusing-title") }}
                 </p>
             <div>
                 <v-slider
@@ -334,7 +333,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task1.task1-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -357,7 +356,7 @@
         <!-- SUBTASK 6: QUESTION -->
         <div v-if="subStep === 6">
             <p>
-               <strong>Task 1.6.</strong> Which region shows the <strong>highest uncertainty</strong>? Please select.
+               {{ $t("task1.task1-title6") }}
             </p>
 
             <div class="map-grid-wrapper">
@@ -379,7 +378,7 @@
                 </div>
             </div>
                 <p class="mb-2 mt-2">
-                    How confusing was it to identify the area (rating 1-7)?
+                    {{ $t("task1.task1-confusing-title") }}
                 </p>
             <div>
                 <v-slider
@@ -399,7 +398,7 @@
                 </v-slider>
             </div>
             <p class="mb-2 mt-2">
-                How visually appealing do you find this map?
+                {{ $t("task1.task1-appealing-title") }}
             </p>
             <div>
                 <v-slider
@@ -432,7 +431,7 @@
         append-icon="mdi-arrow-right"
         @click="nextSubStep"
       >
-        {{ isLastSubStep ? 'Finish Task' : 'Next' }}
+        {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
       </v-btn>
     </div>
   </v-container>
