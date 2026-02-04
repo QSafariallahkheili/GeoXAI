@@ -6,6 +6,48 @@
       elevation="2"
       class="pa-6 pa-md-8"
     >
+    <div style="position: absolute; top: 16px; left: 16px;">
+
+    
+      <v-menu offset-y
+                       >
+        <template v-slot:activator="{ props }">
+            <v-btn
+                v-bind="props"
+                density="compact"
+                variant="text"
+                icon
+                class="mr-2 "
+            >
+            {{ locale=='de'?'de':'en'}}
+                
+            </v-btn>
+        </template>
+
+            <v-list style="border-radius:8px;  border: 1px solid rgba(0, 0, 0, 0.2); ">
+                        
+              <v-list-item
+              @click="toggleLanguage('en')"
+              
+              >
+                  <template  v-slot:prepend>
+                    
+                      <v-list-item-title class="ml-3">English</v-list-item-title>
+                  </template>
+                
+              </v-list-item>
+              <v-list-item
+                  @click="toggleLanguage('de')"
+              >
+                  <template v-slot:prepend>
+                    
+                      <v-list-item-title class="ml-3">Deutsch</v-list-item-title>
+                  </template>
+              </v-list-item>
+            
+            </v-list>
+        </v-menu>
+      </div>
       <!-- HEADER -->
       <div class="text-center mb-6">
         <v-icon size="36" color="primary" class="mb-2">
@@ -96,10 +138,15 @@ import { storeToRefs } from 'pinia'
 
 import { useQuestionnaireStore } from '../../stores/questionnaire'
 import { saveConsentToDatabase } from '@/services/backend.calls.js'
+import { useI18n } from 'vue-i18n';
+const { locale } = useI18n();
 let {currentStep} = storeToRefs(useQuestionnaireStore());
 let {session_id} = storeToRefs(useQuestionnaireStore());
 
 const consentGiven = ref(false)
+const toggleLanguage =(lang) => {
+    locale.value = lang;
+}
 const applyConsent = async () => {
   if (consentGiven.value) {
     const response = await saveConsentToDatabase(consentGiven.value)
