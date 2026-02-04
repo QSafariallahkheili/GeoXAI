@@ -25,5 +25,27 @@
       "description2": "Die Studie konzentriert sich darauf, wie verschiedene Kartendesigns das Verständnis von Erklärungen und Unsicherheiten von maschinellen Lernmodellen unterstützen.",
       "description3": "Es gibt keine richtigen oder falschen Visualisierungsstile – wir sind daran interessiert, wie Menschen sie interpretieren.",
       "time-declaration": "Die Sitzung wird voraussichtlich 15 bis 20 Minuten dauern."
+    },
+    "tutorial":{
+      "title": "Was Sie sehen werden",
+      "subtitle": "Sie werden mit Karten interagieren, die Prädiktoren für die Anfälligkeit von Waldbränden in verschiedenen Regionen zeigen.",
+      "predictor-title": "1. Prädiktorwerte (Merkmale)",
+      "predictor-subtitle": "Umweltfaktoren, die mit der Anfälligkeit für Waldbrände zusammenhängen:",
+      "predictor-item1": "Vegetationsbedingungen",
+      "predictor-item2": "Dürre",
+      "predictor-item3": "Oberflächentemperatur",
+      "predictor-footer": "Werte werden durch visuelle Größe, Farbe oder Muster dargestellt.",
+      "shap-title": "2. Modellbeschreibung (SHAP)",
+      "shap-subtitle": "Einige Karten zeigen, wie stark ein Prädiktor zur Anfälligkeit für Waldbrände beiträgt.",
+      "shap-item1": "Positiv: erhöht die Anfälligkeit",
+      "shap-item2": "Negativ: verringert die Anfälligkeit",
+      "shap-footer": "Es sind keine Vorkenntnisse über SHAP erforderlich.",
+      "uncertainty-title": "3. Unsicherheit",
+      "uncertainty-subtitle": "Unsicherheit zeigt, wie zuverlässig die Modellerklärung an jedem Standort ist.",
+      "uncertainty-item1": "Höher: geringere Zuversicht",
+      "uncertainty-item2": "Niedriger: höhere Zuversicht",
+      "uncertainty-footer": "Wird durch Unschärfe, Rauschen, Muster oder Textur dargestellt."
+     
+
     }
 }

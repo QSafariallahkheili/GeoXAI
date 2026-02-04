@@ -25,5 +25,27 @@
       "description2": "The study focuses on how different map designs support understanding of machine learning model explanations and uncertainty.",
       "description3": "There are no right or wrong visualization styles — we are interested in how people interpret them.",
       "time-declaration": "The session will take approximately 15–20 minutes."
+    },
+    "tutorial":{
+      "title": "What You Will See",
+      "subtitle": "You will interact with maps showing wildfire susceptibility predictors for different regions.",
+      "predictor-title": "1. Predictor Values (Features)",
+      "predictor-subtitle": "Environmental factors related to wildfire susceptibility:",
+      "predictor-item1": "Vegetation conditions",
+      "predictor-item2": "Drought",
+      "predictor-item3": "Land Surface Temperature",
+      "predictor-footer": "Values are shown using visual size, color, or patterns.",
+      "shap-title": "2. Model Explanation (SHAP)",
+      "shap-subtitle": "Some maps show how strongly a predictor contributes to wildfire susceptibility.",
+      "shap-item1": "Positive: increases susceptibility",
+      "shap-item2": "Negative: decreases susceptibility",
+      "shap-footer": "No prior knowledge of SHAP is required.",
+      "uncertainty-title": "3. Uncertainty",
+      "uncertainty-subtitle": "Uncertainty shows how reliable the model explanation is at each location.",
+      "uncertainty-item1": "Higher: lower confidence",
+      "uncertainty-item2": "Lower: higher confidence",
+      "uncertainty-footer": "Shown using blur, noise, patterns, or texture."
+
+
     }
 }

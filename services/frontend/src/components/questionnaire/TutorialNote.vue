@@ -13,13 +13,11 @@
 
         <!-- Title -->
         <h1 class="text-h5 text-md-h4 font-weight-bold mb-4 mb-md-6">
-          What You Will See
+          {{ $t('tutorial.title') }}
         </h1>
 
         <p class="text-body-2 text-md-body-1 mb-6 mb-md-8">
-          You will interact with maps showing
-          <strong>wildfire susceptibility predictors</strong>
-          for different regions.
+         {{ $t('tutorial.subtitle') }}
         </p>
 
         <!-- Sections -->
@@ -29,21 +27,21 @@
           <v-col cols="12" md="4">
             <v-card variant="tonal" class="pa-4 fill-height">
               <h2 class="text-h6 font-weight-medium mb-3">
-                1. Predictor Values (Features)
+                {{ $t('tutorial.predictor-title') }}
               </h2>
 
               <p class="mb-2">
-                Environmental factors related to wildfire susceptibility:
+                {{ $t('tutorial.predictor-subtitle') }}
               </p>
 
               <ul class="mb-3">
-                <li>Vegetation conditions</li>
-                <li>Drought</li>
-                <li>Land Surface Temperature</li>
+                <li>{{ $t('tutorial.predictor-item1') }}</li>
+                <li>{{ $t('tutorial.predictor-item2') }}</li>
+                <li>{{ $t('tutorial.predictor-item3') }}</li>
               </ul>
 
               <p class="text-medium-emphasis">
-                Values are shown using visual size, color, or patterns.
+                {{ $t('tutorial.predictor-footer') }}
               </p>
             </v-card>
           </v-col>
@@ -52,17 +50,16 @@
           <v-col cols="12" md="4">
             <v-card variant="tonal" class="pa-4 fill-height">
               <h2 class="text-h6 font-weight-medium mb-3">
-                2. Model Explanation (SHAP)
+                {{ $t('tutorial.shap-title') }}
               </h2>
 
               <p class="mb-3">
-                Some maps show how strongly a predictor contributes to wildfire
-                susceptibility.
+                {{ $t('tutorial.shap-subtitle') }}
               </p>
 
               <ul class="mb-3">
-                <li><strong>Positive</strong>: increases susceptibility</li>
-                <li><strong>Negative</strong>: decreases susceptibility</li>
+                <li>{{ $t('tutorial.shap-item1') }}</li>
+                <li>{{ $t('tutorial.shap-item2') }}</li>
               </ul>
 
               <v-alert
@@ -71,7 +68,7 @@
                 density="comfortable"
                 class="text-body-2 text-md-body-1"
               >
-                No prior knowledge of SHAP is required.
+                {{ $t('tutorial.shap-footer') }}
               </v-alert>
             </v-card>
           </v-col>
@@ -80,20 +77,20 @@
           <v-col cols="12" md="4">
             <v-card variant="tonal" class="pa-4 fill-height">
               <h2 class="text-h6 font-weight-medium mb-3">
-                3. Uncertainty
+                {{ $t('tutorial.uncertainty-title') }}
               </h2>
 
               <p class="mb-3">
-                Uncertainty shows how reliable the model explanation is at each location.
+                {{ $t('tutorial.uncertainty-subtitle') }}
               </p>
 
               <ul class="mb-3">
-                <li><strong>Higher</strong>: lower confidence</li>
-                <li><strong>Lower</strong>: higher confidence</li>
+                <li>{{ $t('tutorial.uncertainty-item1') }}</li>
+                <li>{{ $t('tutorial.uncertainty-item2') }}</li>
               </ul>
 
               <p class="text-medium-emphasis">
-                Shown using blur, noise, patterns, or texture.
+                {{ $t('tutorial.uncertainty-footer') }}
               </p>
             </v-card>
           </v-col>
