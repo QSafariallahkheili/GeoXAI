@@ -45,7 +45,26 @@
       "uncertainty-item1": "Higher: lower confidence",
       "uncertainty-item2": "Lower: higher confidence",
       "uncertainty-footer": "Shown using blur, noise, patterns, or texture."
-
-
+    },
+    "background": {
+      "title": "Background",
+      "b1-title": "B1. Map / Data Visualisation",
+      "b1-subtitle": "How would you describe your experience with map and data visualisation?",
+      "b1-option1": "None",
+      "b1-option2": "Basic",
+      "b1-option3": "Intermediate",
+      "b1-option4": "Advanced",
+      "b1-option5": "Expert",
+      "b2-title": "B2. Familiarity with Machine Learning",
+      "b2-subtitle": "How familiar are you with machine learning methods?",
+      "b2-option1": "Not at all",
+      "b2-option2": "Slightly familiar",
+      "b2-option3": "Moderately familiar",
+      "b2-option4": "Very familiar",
+      "b2-option5": "Expert",
+      "b3-title": "B3. Decision-Making Context",
+      "b3-subtitle": "Have you previously used maps for risk assessment or environmental decision-making?",
+      "b3-option1": "Yes",
+      "b3-option2": "No"
     }
 }

@@ -12,7 +12,7 @@
       <div class="content">
 
         <h1 class="text-h5 text-md-h4 font-weight-bold mb-6">
-          Background
+          {{ $t("background.title") }}
         </h1>
 
         <v-form ref="form" v-model="valid" lazy-validation>
@@ -20,10 +20,10 @@
           <!-- B1. GIS / Cartography Experience -->
           <v-card variant="tonal" class="pa-4 mb-4">
                 <h2 class="text-h6 font-weight-medium mb-2">
-                B1. Map / Data Visualisation
+                {{ $t("background.b1-title") }}
                 </h2>
                 <p class="mb-2">
-                How would you describe your experience with map and data visualisation?
+                {{ $t("background.b1-subtitle") }}
                 </p>
 
                 <v-radio-group
@@ -32,21 +32,21 @@
                 class="radio-group"
                 column
                 >
-                <v-radio label="None" value="None" />
-                <v-radio label="Basic" value="Basic" />
-                <v-radio label="Intermediate" value="Intermediate" />
-                <v-radio label="Advanced" value="Advanced" />
-                <v-radio label="Expert" value="Expert" />
+                <v-radio :label="$t('background.b1-option1')" value="None" />
+                <v-radio :label="$t('background.b1-option2')" value="Basic" />
+                <v-radio :label="$t('background.b1-option3')" value="Intermediate" />
+                <v-radio :label="$t('background.b1-option4')" value="Advanced" />
+                <v-radio :label="$t('background.b1-option5')" value="Expert" />
                 </v-radio-group>
             </v-card>
 
             <!-- B2. ML -->
             <v-card variant="tonal" class="pa-4 mb-4">
                 <h2 class="text-h6 font-weight-medium mb-2">
-                B2. Familiarity with Machine Learning
+                {{ $t("background.b2-title") }}
                 </h2>
                 <p class="mb-2">
-                How familiar are you with machine learning methods?
+                {{ $t("background.b2-subtitle") }}
                 </p>
 
                 <v-radio-group
@@ -55,21 +55,21 @@
                 class="radio-group"
                 column
                 >
-                <v-radio label="Not at all" value="Not at all" />
-                <v-radio label="Slightly familiar" value="Slightly familiar" />
-                <v-radio label="Moderately familiar" value="Moderately familiar" />
-                <v-radio label="Very familiar" value="Very familiar" />
-                <v-radio label="Expert" value="Expert" />
+                <v-radio :label="$t('background.b2-option1')" value="Not at all" />
+                <v-radio :label="$t('background.b2-option2')" value="Slightly familiar" />
+                <v-radio :label="$t('background.b2-option3')" value="Moderately familiar" />
+                <v-radio :label="$t('background.b2-option4')" value="Very familiar" />
+                <v-radio :label="$t('background.b2-option5')" value="Expert" />
                 </v-radio-group>
             </v-card>
 
             <!-- B3. Decision-Making -->
             <v-card variant="tonal" class="pa-4 mb-4" >
                 <h2 class="text-h6 font-weight-medium mb-2">
-                B3. Decision-Making Context
+                {{ $t("background.b3-title") }}
                 </h2>
                 <p class="mb-2">
-                Have you previously used maps for risk assessment or environmental decision-making?
+                {{ $t("background.b3-subtitle") }}
                 </p>
 
                 <v-radio-group
@@ -77,8 +77,8 @@
                 inline
                 class="radio-group"
                 >
-                <v-radio label="Yes" value="Yes" />
-                <v-radio label="No" value="No" />
+                <v-radio :label="$t('background.b3-option1')" value="Yes" />
+                <v-radio :label="$t('background.b3-option2')" value="No" />
                 </v-radio-group>
             </v-card>
 

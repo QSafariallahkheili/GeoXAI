@@ -45,7 +45,26 @@
       "uncertainty-item1": "Höher: geringere Zuversicht",
       "uncertainty-item2": "Niedriger: höhere Zuversicht",
       "uncertainty-footer": "Wird durch Unschärfe, Rauschen, Muster oder Textur dargestellt."
-     
-
+    },
+    "background": {
+      "title": "Hintergrund",
+      "b1-title": "B1. Karten- / Datenvisualisierung",
+      "b1-subtitle": "Wie würden Sie Ihre Erfahrung mit Karten- und Datenvisualisierung beschreiben?",
+      "b1-option1": "Keine",
+      "b1-option2": "Grundkenntnisse",
+      "b1-option3": "Fortgeschrittene Kenntnisse",
+      "b1-option4": "Fortgeschritten",
+      "b1-option5": "Experte",
+      "b2-title": "B2. Vertrautheit mit maschinellem Lernen",
+      "b2-subtitle": "Wie vertraut sind Sie mit Methoden des maschinellen Lernens?",
+      "b2-option1": "Überhaupt nicht",
+      "b2-option2": "Ein wenig vertraut",
+      "b2-option3": "Mäßig vertraut",
+      "b2-option4": "Sehr vertraut",
+      "b2-option5": "Experte",
+      "b3-title": "B3. Entscheidungsfindungskontext",
+      "b3-subtitle": "Haben Sie zuvor Karten zur Risikobewertung oder für umweltbezogene Entscheidungsfindungen verwendet?",
+      "b3-option1": "Ja",
+      "b3-option2": "Nein"
     }
 }
