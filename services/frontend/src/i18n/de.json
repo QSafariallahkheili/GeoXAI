@@ -6,12 +6,12 @@
      "consent": {
       "header": "Einverständniserklärung",
       "header-subtitle": "Bitte lesen Sie dies sorgfältig durch, bevor Sie fortfahren",
-      "invitation": "Sie sind eingeladen, an einer Forschungsstudie teilzunehmen, die im Rahmen einer Doktorarbeit mit dem Titel durchgeführt wird:",
+      "invitation": "Sie sind eingeladen, an einer Forschungsstudie teilzunehmen, die im Rahmen einer Doktorarbeit mit dem folgenden Titel durchgeführt wird:",
       "title": "\"Towards Transparent Geospatial AI: Investigating Strategies and Techniques for Explainability and Trustworthiness in AI-Driven Geospatial Decision-Making.\"",
       "acknowledgement": "Durch Ihre Teilnahme an dieser Studie bestätigen Sie Folgendes:",
-      "point1": "Ihre Teilnahme ist freiwillig und Sie können jederzeit zurücktreten.",
+      "point1": "Ihre Teilnahme ist freiwillig und Sie können jederzeit zurücktreten. Da wir keine personenbezogenen Daten erheben, können Daten nicht im nachhinein gelöscht werden.",
       "point2": "Ihre Antworten werden ausschließlich für wissenschaftliche Forschungszwecke verwendet.",
-      "point3": "Alle gesammelten Daten werden anonymisiert verarbeitet und veröffentlicht.",
+      "point3": "Alle gesammelten Daten werden anonymisiert verarbeitet.",
       "point4": "Es werden keine personenbezogenen Daten erfasst.",
       "point5": "Der Inhalt Ihrer Antworten wird nicht verändert oder verfälscht.",
       "agree": "Indem Sie Ihr Einverständnis geben, erklären Sie sich mit der Teilnahme an dieser Studie einverstanden.",
@@ -21,13 +21,13 @@
     "welcome":{
       "title": "Willkommen und vielen Dank",
       "subtitle": "Vielen Dank für Ihre Teilnahme an dieser Studie.",
-      "description1": "In dieser Sitzung werden Sie eine Reihe interaktiver Karten zum Thema Waldbrandanfälligkeit erkunden und Fragen zu dem beantworten, was Sie sehen.",
-      "description2": "Die Studie konzentriert sich darauf, wie verschiedene Kartendesigns das Verständnis von Erklärungen und Unsicherheiten von maschinellen Lernmodellen unterstützen.",
-      "description3": "Es gibt keine richtigen oder falschen Visualisierungsstile – wir sind daran interessiert, wie Menschen sie interpretieren.",
-      "time-declaration": "Die Sitzung wird voraussichtlich 15 bis 20 Minuten dauern."
+      "description1": "In dieser Sitzung werden Sie eine Reihe interaktiver Karten zum Thema Waldbrandgefahren sehen und Fragen zu diesen beantworten. Sie benötigen hierfür keinerlei Vorwissen in diesem Bereich.",
+      "description2": "Benutzen Sie nicht die Vor- und Zurücktaste in ihrem Browser und laden sie die Seite nicht neu. Benutzen Sie bitte nur die Buttons auf dieser Seite zur Navigation.",
+      "description3": "",
+      "time-declaration": "Die Befragung wird voraussichtlich 15 bis 20 Minuten dauern."
     },
     "tutorial":{
-      "title": "Was Sie sehen werden",
+      "title": "DELETE THIS WHOLE SECTION",
       "subtitle": "Sie werden mit Karten interagieren, die Prädiktoren für die Anfälligkeit von Waldbränden in verschiedenen Regionen zeigen.",
       "predictor-title": "1. Prädiktorwerte (Merkmale)",
       "predictor-subtitle": "Umweltfaktoren, die mit der Anfälligkeit für Waldbrände zusammenhängen:",
@@ -49,28 +49,28 @@
     "background": {
       "title": "Hintergrund",
       "b1-title": "B1. Karten- / Datenvisualisierung",
-      "b1-subtitle": "Wie würden Sie Ihre Erfahrung mit Karten- und Datenvisualisierung beschreiben?",
+      "b1-subtitle": "Wie würden Sie Ihre Erfahrung mit Karten und Datenvisualisierung beschreiben?",
       "b1-option1": "Keine",
       "b1-option2": "Grundkenntnisse",
       "b1-option3": "Fortgeschrittene Kenntnisse",
       "b1-option4": "Fortgeschritten",
       "b1-option5": "Experte",
-      "b2-title": "B2. Vertrautheit mit maschinellem Lernen",
+      "b2-title": "DELETE THIS QUESTION",
       "b2-subtitle": "Wie vertraut sind Sie mit Methoden des maschinellen Lernens?",
       "b2-option1": "Überhaupt nicht",
       "b2-option2": "Ein wenig vertraut",
       "b2-option3": "Mäßig vertraut",
       "b2-option4": "Sehr vertraut",
       "b2-option5": "Experte",
-      "b3-title": "B3. Entscheidungsfindungskontext",
+      "b3-title": "DELETE THIS QUESTION",
       "b3-subtitle": "Haben Sie zuvor Karten zur Risikobewertung oder für umweltbezogene Entscheidungsfindungen verwendet?",
       "b3-option1": "Ja",
       "b3-option2": "Nein"
     },
     "task1":{
-      "title": "Ihre Aufgaben",
-      "instruction1": "Es gibt zwei Arten von Aufgaben, jede enthält Unteraufgaben und eine Karte mit Fragen.",
-      "instruction2": "Für jede Karte beantworten Sie eine oder mehrere Fragen.",
+      "title": "Unsicherheitsvisualisierung",
+      "instruction1": "Beim Berechnen von Waldbrandgefahren entstehen so geannte \"Unsicherheiten\", diese beschreiben, wie sicher sich der Algorithmus bei der Vorhersage ist.",
+      "instruction2": "Auf den folgenden Bildern sehen sie Visualisierungen solcher Unsicherheiten.",
       "instruction3": "Bitte antworten Sie so genau und schnell wie möglich.",
       "task1-title": "Aufgabentyp 1: Identifizierung von Unsicherheiten",
       "task1-subtitle": "Bitte klicken Sie auf den Bereich der Karte, von dem Sie glauben, dass er die größte Unsicherheit zeigt.",
@@ -86,9 +86,9 @@
     },
     "task2":{
       "title": "Aufgabentyp 2",
-      "instruction1": "Diese Aufgabe beinhaltet die Interpretation bivariater Karten, die die Beziehung zwischen zwei Variablen zeigen.",
-      "instruction2": "Die dargestellten Variablen sind das Merkmal und sein SHAP-Wert (Einfluss des Merkmals auf die Vorhersage).",
-      "instruction3": "ür jede Karte beantworten Sie eine oder mehrere Fragen.",
+      "instruction1": "Diese Aufgabe beinhaltet die Interpretation von Karten die zwei Werte gleichzeitig visualisieren.",
+      "instruction2": "Die dargestellten Werte sind das Merkmal und sein SHAP-Wert (Einfluss des Merkmals auf die Vorhersage).",
+      "instruction3": "",
       "instruction4": "Bitte antworten Sie so genau und so schnell wie möglich.",
 
       "task2-title1": "Aufgaben 2.1. Markieren Sie den Bereich mit: Höchster Merkmalswert (LST) und niedrigster SHAP-Beitrag",
@@ -96,8 +96,8 @@
       "task2-title3": "Aufgaben 2.3. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (NDVI) und niedrigster SHAP-Beitrag",
       "task2-title4": "Aufgaben 2.4. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (NDVI) und niedrigster SHAP-Beitrag",
 
-      "task2-confusing-title": "Wie verwirrend war es, den Bereich zu identifizieren (Bewertung 1-7)?",
-      "task2-appealing-title": "Wie ansprechend finden Sie diese Karte (Bewertung 1-7)?"
+      "task2-confusing-title": "Wie einfach war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?"
     },
     "thanks":{
       "title": "Vielen Dank für Ihre Teilnahme",
