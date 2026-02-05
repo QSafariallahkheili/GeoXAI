@@ -91,10 +91,10 @@
       "instruction3": "",
       "instruction4": "Bitte antworten Sie so genau und so schnell wie möglich.",
 
-      "task2-title1": "Aufgaben 2.1. Markieren Sie den Bereich mit: Höchster Merkmalswert (LST) und niedrigster SHAP-Beitrag",
-      "task2-title2": "Aufgaben 2.2. Markieren Sie den Bereich mit: Höchster Merkmalswert (LST) und niedrigster SHAP-Beitrag",
-      "task2-title3": "Aufgaben 2.3. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (NDVI) und niedrigster SHAP-Beitrag",
-      "task2-title4": "Aufgaben 2.4. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (NDVI) und niedrigster SHAP-Beitrag",
+      "task2-title1": "Aufgaben 2.1. Markieren Sie den Bereich mit: Höchster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
+      "task2-title2": "Aufgaben 2.2. Markieren Sie den Bereich mit: Höchster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
+      "task2-title3": "Aufgaben 2.3. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
+      "task2-title4": "Aufgaben 2.4. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
 
       "task2-confusing-title": "Wie einfach war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?"

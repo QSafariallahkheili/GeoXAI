@@ -91,10 +91,10 @@
       "instruction3": "For each map, you will answer one or more questions.",
       "instruction4": "Please answer as accurately and as quickly as possible.",
 
-      "task2-title1": "Task 2.1. Highlight the area with: Highest feature value (LST) and Lowest SHAP contribution",
-      "task2-title2": "Task 2.2. Highlight the area with: Highest feature value (LST) and Lowest SHAP contribution",
-      "task2-title3": "Task 2.3. Highlight the area with: Lowest feature value (NDVI) and Lowest SHAP contribution",
-      "task2-title4": "Task 2.4. Highlight the area with: Lowest feature value (NDVI) and Lowest SHAP contribution",
+      "task2-title1": "Task 2.1. Highlight the area with: Highest feature value and Lowest SHAP contribution",
+      "task2-title2": "Task 2.2. Highlight the area with: Highest feature value and Lowest SHAP contribution",
+      "task2-title3": "Task 2.3. Highlight the area with: Lowest feature value and Lowest SHAP contribution",
+      "task2-title4": "Task 2.4. Highlight the area with: Lowest feature value and Lowest SHAP contribution",
      
       "task2-confusing-title": "How confusing was it to identify the area (rating 1-7)?",
       "task2-appealing-title": "How visually appealing do you find this map (rating 1-7)?"
