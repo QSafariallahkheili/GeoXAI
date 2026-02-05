@@ -7,25 +7,25 @@
         v-if="currentStep === 0" 
       />
 
-      <TutorialNote 
+      <!--<TutorialNote 
         v-if="currentStep === 1" 
-      />
+      />-->
 
       <BackgroundUI 
-        v-if="currentStep === 2" 
+        v-if="currentStep === 1" 
       />
       <FirstTask 
-        v-if="currentStep === 3"
+        v-if="currentStep === 2"
       />
       <SecondTask 
-        v-if="currentStep === 4"
+        v-if="currentStep === 3"
       />
       <ThankYou 
-        v-if="currentStep === 5"
+        v-if="currentStep === 4"
       />
    
       <ProgressTask 
-       v-if="currentStep === 3 || currentStep === 4"
+       v-if="currentStep === 2 || currentStep === 3"
       />
      
   </div>
@@ -35,7 +35,7 @@
   import { storeToRefs } from 'pinia'
   import ConsentForm from '@/components/questionnaire/ConsentForm.vue'
   import WelcomeNote from '@/components/questionnaire/WelcomeNote.vue'
-  import TutorialNote from '@/components/questionnaire/TutorialNote.vue'
+  //import TutorialNote from '@/components/questionnaire/TutorialNote.vue'
   import BackgroundUI from '@/components/questionnaire/BackgroundUI.vue'
   import FirstTask from '@/components/questionnaire/FirstTask.vue'
   import SecondTask from '@/components/questionnaire/SecondTask.vue'
