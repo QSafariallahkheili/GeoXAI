@@ -17,8 +17,8 @@
 
         <v-form ref="form" v-model="valid" lazy-validation>
 
-          <!-- B1. GIS / Cartography Experience -->
-          <v-card variant="tonal" class="pa-4 mb-4">
+            <!-- B1. GIS / Cartography Experience -->
+            <v-card variant="tonal" class="pa-4 mb-4">
                 <h2 class="text-h6 font-weight-medium mb-2">
                 {{ $t("background.b1-title") }}
                 </h2>
@@ -39,8 +39,9 @@
                 <v-radio :label="$t('background.b1-option5')" value="Expert" />
                 </v-radio-group>
             </v-card>
-
+            
             <!-- B2. ML -->
+             <!--
             <v-card variant="tonal" class="pa-4 mb-4">
                 <h2 class="text-h6 font-weight-medium mb-2">
                 {{ $t("background.b2-title") }}
@@ -62,8 +63,9 @@
                 <v-radio :label="$t('background.b2-option5')" value="Expert" />
                 </v-radio-group>
             </v-card>
-
+            -->
             <!-- B3. Decision-Making -->
+             <!--
             <v-card variant="tonal" class="pa-4 mb-4" >
                 <h2 class="text-h6 font-weight-medium mb-2">
                 {{ $t("background.b3-title") }}
@@ -81,7 +83,8 @@
                 <v-radio :label="$t('background.b3-option2')" value="No" />
                 </v-radio-group>
             </v-card>
-
+            -->
+            
         </v-form>
 
       </div>
