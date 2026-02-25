@@ -21,7 +21,7 @@
     "welcome":{
       "title": "Welcome and Thank You",
       "subtitle": "Thank you for participating in this study.",
-      "description1": "In this session, you will explore a set of interactive maps related to wildfire susceptibility and answer questions about what you see.",
+      "description1": "In this session, you will explore a set of maps related to wildfire susceptibility and answer questions about what you see.",
       "description2": "The study focuses on how different map designs support understanding of machine learning model explanations and uncertainty.",
       "description3": "There are no right or wrong visualization styles — we are interested in how people interpret them.",
       "time-declaration": "The session will take approximately 15–20 minutes."
