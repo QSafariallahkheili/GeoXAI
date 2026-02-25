@@ -91,7 +91,7 @@
     "task2":{
       "title": "Aufgabentyp 2",
       "instruction1": "Diese Aufgabe beinhaltet die Interpretation von Karten die zwei Werte gleichzeitig visualisieren.",
-      "instruction2": "Die dargestellten Werte sind das Merkmal und sein SHAP-Wert (Einfluss des Merkmals auf die Vorhersage).",
+      "instruction2": "In diesem Beispiel ist das Merkmal die Vegetation, und die zweite Variable stellt ihren Einfluss auf die Modellvorhersage dar (gemessen mithilfe von SHAP-Werten).",
       "instruction3": "",
       "instruction4": "Bitte antworten Sie so genau und so schnell wie möglich.",
 
