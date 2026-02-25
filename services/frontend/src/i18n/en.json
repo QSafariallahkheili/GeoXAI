@@ -82,7 +82,11 @@
       "task1-title5": "Task 1.5. Which region shows the highest uncertainty? Please select.",
       "task1-title6": "Task 1.6. Which region shows the highest uncertainty? Please select.",
       "task1-confusing-title": "How difficult was it to identify the area (rating 1-7)?",
-      "task1-appealing-title": "How visually appealing do you find this map (rating 1-7)?"
+      "task1-confusing-low": "Very easy",
+      "task1-confusing-high": "Very difficult",
+      "task1-appealing-title": "How visually appealing do you find this map (rating 1-7)?",
+      "task1-appealing-low": "Very unappealing",
+      "task1-appealing-high": "Very appealing"
     },
     "task2":{
       "title": "Task Type 2",
@@ -97,7 +101,11 @@
       "task2-title4": "Task 2.4. Highlight the area with: Lowest feature value and Lowest SHAP contribution",
      
       "task2-confusing-title": "How difficult was it to identify the area (rating 1-7)?",
-      "task2-appealing-title": "How visually appealing do you find this map (rating 1-7)?"
+      "task2-confusing-low": "Very easy",
+      "task2-confusing-high": "Very difficult",
+      "task2-appealing-title": "How visually appealing do you find this map (rating 1-7)?",
+      "task2-appealing-low": "Very unappealing",
+      "task2-appealing-high": "Very appealing"
     },
     "thanks":{
       "title": "Thank you for participating!",

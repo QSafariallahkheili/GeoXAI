@@ -60,9 +60,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.confusion }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -80,9 +88,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.appeal }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                        {{ $t("task1.task1-appealing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -129,9 +145,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.confusion }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -149,9 +173,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.appeal }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                        {{ $t("task1.task1-appealing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -195,9 +227,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.confusion }}
+                     <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -215,9 +255,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.appeal }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                        {{ $t("task1.task1-appealing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -260,9 +308,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.confusion }}
+                   <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -280,9 +336,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.appeal }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -325,9 +389,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.confusion }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -345,9 +417,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.appeal }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -390,9 +470,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.confusion }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-confusing-high") }}
                         </span>
                     </template>
                 </v-slider>
@@ -410,9 +498,17 @@
                     show-ticks="always"
                     hide-details
                 >
-                    <template #append>
-                        <span class="ml-3 font-weight-medium">
-                            {{ answers.appeal }}
+                    <!-- Left label -->
+                    <template #prepend>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-low") }}
+                        </span>
+                        </template>
+
+                        <!-- Right label -->
+                        <template #append>
+                        <span class="text-caption font-weight-medium">
+                            {{ $t("task1.task1-appealing-high") }}
                         </span>
                     </template>
                 </v-slider>
