@@ -81,7 +81,7 @@
       "task1-title4": "Aufgaben 1.4. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
       "task1-title5": "Aufgaben 1.5. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
       "task1-title6": "Aufgaben 1.6. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
-      "task1-confusing-title": "Wie verwirrend war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task1-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task1-appealing-title": "Wie ansprechend finden Sie diese Karte (Bewertung 1-7)?"
     },
     "task2":{
@@ -96,7 +96,7 @@
       "task2-title3": "Aufgaben 2.3. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
       "task2-title4": "Aufgaben 2.4. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
 
-      "task2-confusing-title": "Wie einfach war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task2-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?"
     },
     "thanks":{
