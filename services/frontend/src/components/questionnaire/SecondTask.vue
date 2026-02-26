@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="task-container d-flex align-center justify-center">
-    <v-sheet max-width="1000" rounded="xl" elevation="2" class="pa-6">
+    <v-sheet max-width="1000" rounded="xl" elevation="2" class="pa-3">
       <!-- SUBTASK 0: INTRO -->
         <div v-if="subStep === 0">
             <h1 class="text-h5 font-weight-bold mb-4">{{ $t("task2.title") }}</h1>
@@ -359,10 +359,6 @@
             
 
         </div>
-
-    
-
-
     </v-sheet>
 
     <!-- NAVIGATION -->
