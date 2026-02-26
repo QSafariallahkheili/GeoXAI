@@ -26,33 +26,48 @@
          <!-- SUBTASK 1: GRID ONLY -->
         <div v-if="subStep === 1">
         
-            <p>
-               {{ $t("task2.task2-title1") }}
-            </p>
+            <p>{{ $t("task2.task2-title1") }}</p>
 
-            <div class="map-grid-wrapper">
-                <!-- MAP IMAGE -->
-                <img
-                    src='task_images/bivariate_choropleth.png'
-                    class="map-image"
-                />
-
-                <!-- GRID OVERLAY -->
-                <div class="grid-overlay">
-                    <div
+           
+            <!-- Map + Legend -->
+            <div class="map-legend-container">
+                <!-- Map -->
+                <div class="map-wrapper">
+                    <img
+                        src="task_images/bivariate_choropleth1.png"
+                        class="map-image"
+                    />
+                    <div class="grid-overlay">
+                        <div
                         v-for="(cell, index) in 100"
                         :key="index"
                         class="grid-cell"
                         :class="{ selected: selectedIndex === index }"
                         @click="handleCellClick(index)"
-                    ></div>
+                        ></div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="legend-wrapper">
+                <img
+                    src="task_images/bivariate_choropleth_legend.png"
+                    class="legend-image"
+                    alt="Legend"
+                />
                 </div>
             </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-confusing-title") }}
-            </p>
-            <div>
-                <v-slider
+            <div class="slider-wrapper">
+                <!-- Confusion slider -->
+                <div class="slider-container">
+                    <!-- Top row: title left, right label top-right -->
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    </div>
+
+                    <!-- Slider itself -->
+                    <v-slider
                     v-model="answers.confusion"
                     min="1"
                     max="7"
@@ -60,27 +75,22 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
-            </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-appealing-title") }}
-            </p>
-            <div>
-                <v-slider
+                    <!-- Bottom row: left label -->
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    </div>
+                </div>
+
+                <!-- Appeal slider -->
+                <div class="slider-container">
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
+                    </div>
+
+                    <v-slider
                     v-model="answers.appeal"
                     min="1"
                     max="7"
@@ -88,21 +98,12 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
+                    </div>
+                </div>
             </div>
             
 
@@ -114,29 +115,45 @@
                {{ $t("task2.task2-title2") }}
             </p>
 
-            <div class="map-grid-wrapper">
-                <!-- MAP IMAGE -->
-                <img
-                    src='task_images/bivariate_proportional.png'
-                    class="map-image"
-                />
-
-                <!-- GRID OVERLAY -->
-                <div class="grid-overlay">
-                    <div
+            <!-- Map + Legend -->
+            <div class="map-legend-container">
+                <!-- Map -->
+                <div class="map-wrapper">
+                    <img
+                        src="task_images/bivariate_proportional1.png"
+                        class="map-image"
+                    />
+                    <div class="grid-overlay">
+                        <div
                         v-for="(cell, index) in 100"
                         :key="index"
                         class="grid-cell"
                         :class="{ selected: selectedIndex === index }"
                         @click="handleCellClick(index)"
-                    ></div>
+                        ></div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="legend-wrapper">
+                <img
+                    src="task_images/bivariate_proportional_legend.png"
+                    class="legend-image"
+                    alt="Legend"
+                />
                 </div>
             </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-confusing-title") }}
-            </p>
-            <div>
-                <v-slider
+            <div class="slider-wrapper">
+                <!-- Confusion slider -->
+                <div class="slider-container">
+                    <!-- Top row: title left, right label top-right -->
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    </div>
+
+                    <!-- Slider itself -->
+                    <v-slider
                     v-model="answers.confusion"
                     min="1"
                     max="7"
@@ -144,27 +161,22 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
-            </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-appealing-title") }}
-            </p>
-            <div>
-                <v-slider
+                    <!-- Bottom row: left label -->
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    </div>
+                </div>
+
+                <!-- Appeal slider -->
+                <div class="slider-container">
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
+                    </div>
+
+                    <v-slider
                     v-model="answers.appeal"
                     min="1"
                     max="7"
@@ -172,21 +184,12 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
+                    </div>
+                </div>
             </div>
             
 
@@ -198,29 +201,45 @@
                {{ $t("task2.task2-title3") }}
             </p>
 
-            <div class="map-grid-wrapper">
-                <!-- MAP IMAGE -->
-                <img
-                    src='task_images/bivariate_choropleth2.png'
-                    class="map-image"
-                />
-
-                <!-- GRID OVERLAY -->
-                <div class="grid-overlay">
-                    <div
+            <!-- Map + Legend -->
+            <div class="map-legend-container">
+                <!-- Map -->
+                <div class="map-wrapper">
+                    <img
+                        src="task_images/bivariate_choropleth2.png"
+                        class="map-image"
+                    />
+                    <div class="grid-overlay">
+                        <div
                         v-for="(cell, index) in 100"
                         :key="index"
                         class="grid-cell"
                         :class="{ selected: selectedIndex === index }"
                         @click="handleCellClick(index)"
-                    ></div>
+                        ></div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="legend-wrapper">
+                <img
+                    src="task_images/bivariate_choropleth_legend.png"
+                    class="legend-image"
+                    alt="Legend"
+                />
                 </div>
             </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-confusing-title") }}
-            </p>
-            <div>
-                <v-slider
+            <div class="slider-wrapper">
+                <!-- Confusion slider -->
+                <div class="slider-container">
+                    <!-- Top row: title left, right label top-right -->
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    </div>
+
+                    <!-- Slider itself -->
+                    <v-slider
                     v-model="answers.confusion"
                     min="1"
                     max="7"
@@ -228,27 +247,22 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
-            </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-appealing-title") }}
-            </p>
-            <div>
-                <v-slider
+                    <!-- Bottom row: left label -->
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    </div>
+                </div>
+
+                <!-- Appeal slider -->
+                <div class="slider-container">
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
+                    </div>
+
+                    <v-slider
                     v-model="answers.appeal"
                     min="1"
                     max="7"
@@ -256,21 +270,12 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
+                    </div>
+                </div>
             </div>
             
 
@@ -282,29 +287,45 @@
                {{ $t("task2.task2-title4") }}
             </p>
 
-            <div class="map-grid-wrapper">
-                <!-- MAP IMAGE -->
-                <img
-                    src='task_images/bivariate_choropleth_uncertainty.png'
-                    class="map-image"
-                />
-
-                <!-- GRID OVERLAY -->
-                <div class="grid-overlay">
-                    <div
+            <!-- Map + Legend -->
+            <div class="map-legend-container">
+                <!-- Map -->
+                <div class="map-wrapper">
+                    <img
+                        src="task_images/bivariate_choropleth_uncertainty1.png"
+                        class="map-image"
+                    />
+                    <div class="grid-overlay">
+                        <div
                         v-for="(cell, index) in 100"
                         :key="index"
                         class="grid-cell"
                         :class="{ selected: selectedIndex === index }"
                         @click="handleCellClick(index)"
-                    ></div>
+                        ></div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="legend-wrapper">
+                <img
+                    src="task_images/bivariate_choropleth_uncertainty_legend.png"
+                    class="legend-image"
+                    alt="Legend"
+                />
                 </div>
             </div>
-            <p class="mb-2 mt-2">
-                {{ $t("task2.task2-confusing-title") }}
-            </p>
-            <div>
-                <v-slider
+            <div class="slider-wrapper">
+                <!-- Confusion slider -->
+                <div class="slider-container">
+                    <!-- Top row: title left, right label top-right -->
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    </div>
+
+                    <!-- Slider itself -->
+                    <v-slider
                     v-model="answers.confusion"
                     min="1"
                     max="7"
@@ -312,27 +333,22 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                    <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-confusing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
-            </div>
-            <p class="mb-2 mt-2">
-               {{ $t("task2.task2-appealing-title") }}
-            </p>
-            <div>
-                <v-slider
+                    <!-- Bottom row: left label -->
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    </div>
+                </div>
+
+                <!-- Appeal slider -->
+                <div class="slider-container">
+                    <div class="slider-top-row">
+                    <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
+                    </div>
+
+                    <v-slider
                     v-model="answers.appeal"
                     min="1"
                     max="7"
@@ -340,21 +356,12 @@
                     tick-size="4"
                     show-ticks="always"
                     hide-details
-                >
-                   <!-- Left label -->
-                    <template #prepend>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-low") }}
-                        </span>
-                        </template>
+                    ></v-slider>
 
-                        <!-- Right label -->
-                        <template #append>
-                        <span class="text-caption font-weight-medium">
-                            {{ $t("task2.task2-appealing-high") }}
-                        </span>
-                    </template>
-                </v-slider>
+                    <div class="slider-bottom-row">
+                    <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
+                    </div>
+                </div>
             </div>
             
 
@@ -401,22 +408,22 @@ const subtasks = [
   {
     id: 'task_2_1',
     map: 'bivariate_choropleth',
-    correctRegions: [23],
+    correctRegions: [34],
   },
   {
     id: 'task_2_2',
     map: 'bivariate_proportional',
-   correctRegions: [61],
+   correctRegions: [78],
   },
   {
     id: 'task_2_3',
     map: 'bivariate_choropleth2',
-    correctRegions: [64, 65, 96],
+    correctRegions: [83],
   },
   {
     id: 'task_2_4',
     map: 'bivariate_choropleth_uncertainty',
-    correctRegions: [53,54,63,64,73,75, 83,85,94,95],
+    correctRegions: [15,16,26,36],
   }
 ]
 
@@ -531,6 +538,85 @@ const handleCellClick = (index) => {
 .grid-cell.selected {
   border: 2px solid #1976d2; /* visible grid line */
   background: rgba(25, 118, 210, 0.15);
+}
+/* Map + Legend Container */
+.map-legend-container {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-end; /* align legend to bottom of map */
+  margin: 16px 0;
+}
+
+/* Map wrapper */
+.map-wrapper {
+  position: relative;
+  flex: 1 1 250px; /* map takes available space */
+  max-width: 460px; /* smaller than before to fit one page */
+  max-height: 460px; /* responsive height, fits in viewport */
+  aspect-ratio: 1 / 1; /* keeps map square */
+}
+
+.legend-wrapper {
+  flex: 0 0 230px;   /* wider */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 0;
+}
+
+.legend-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 300px;  /* bigger than 200px */
+}
+/* Slider wrapper */
+.slider-wrapper {
+  max-width: 800px;
+  width: 90%;
+  margin: 16px auto;
+}
+
+/* Slider container */
+.slider-container {
+  position: relative;
+  margin-bottom: 10px; /* reduce vertical spacing */
+}
+
+/* Top row: title + right label */
+.slider-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+/* Bottom row: left label */
+.slider-bottom-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 2px;
+  font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .map-legend-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .map-wrapper {
+    max-width: 90vw;
+    max-height: 90vw;
+  }
+
+  .legend-wrapper {
+    width: 70%;
+    margin-top: 12px;
+    justify-content: flex-start;
+  }
 }
 
 
