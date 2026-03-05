@@ -20,8 +20,11 @@
       <SecondTask 
         v-if="currentStep === 3"
       />
-      <ThankYou 
+      <ThirdTask
         v-if="currentStep === 4"
+      />
+      <ThankYou 
+        v-if="currentStep === 5"
       />
    
       <ProgressTask 
@@ -39,6 +42,7 @@
   import BackgroundUI from '@/components/questionnaire/BackgroundUI.vue'
   import FirstTask from '@/components/questionnaire/FirstTask.vue'
   import SecondTask from '@/components/questionnaire/SecondTask.vue'
+  import ThirdTask from '@/components/questionnaire/ThirdTask.vue'
   import ThankYou from '@/components/questionnaire/ThankYou.vue'
   import ProgressTask from '@/components/questionnaire/ProgressTask.vue'
 
