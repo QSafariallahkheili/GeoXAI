@@ -111,9 +111,7 @@ import { useQuestionnaireStore } from '../../stores/questionnaire'
 let {currentStep, session_id} = storeToRefs(useQuestionnaireStore());
 import {questionnaireUserBackgroundInfo} from '@/services/backend.calls.js'
 const background_info = reactive({
-  datavis: null,
-  ml: null,
-  decision: null,
+  datavis: null
 })
 
 const valid = ref(false)
