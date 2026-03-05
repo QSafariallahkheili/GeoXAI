@@ -568,7 +568,7 @@ const handleCellClick = (index) => {
   width: 100%;
   height: auto;
   display: block;
-  max-height: 300px;  /* bigger than 200px */
+  max-height: 400px;  /* bigger than 200px */
 }
 /* Slider wrapper */
 .slider-wrapper {
