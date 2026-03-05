@@ -387,7 +387,7 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useQuestionnaireStore } from '../../stores/questionnaire'
-import {questionnaireTaskOne, completeTask} from '@/services/backend.calls.js'
+import {questionnaireTaskOne} from '@/services/backend.calls.js'
 
 
 const subStep = ref(0)
@@ -471,7 +471,6 @@ const nextSubStep = async() => {
     // send taskResponses.value to API
     console.log("Session ID at final stage:", session_id.value)
     await questionnaireTaskOne(taskResponses.value, session_id.value)
-    await completeTask(true, session_id.value)
     currentStep.value++
   } else {
     if(subStep.value > 0){
