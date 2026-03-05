@@ -103,6 +103,22 @@
       "task2-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?"
     },
+    "task3":{
+      "title": "Aufgabentyp 3",
+      "instruction1": "Diese Aufgabe beinhaltet den Vergleich von 4 Karten, die die räumliche Verteilung verschiedener Umweltmerkmale darstellen.",
+      "instruction2": "Jede Karte repräsentiert ein anderes Merkmal und verwendet Farben, um zu zeigen, wie stark dieses Merkmal die Vorhersage des Modells beeinflusst (SHAP-Werte).",
+      "instruction3": "Ihr Ziel ist es, die Karte zu identifizieren, die das Merkmal mit dem größten Einfluss auf die Ausgabe des Modells zeigt.",
+      "instruction4": "Bitte antworten Sie so genau und so schnell wie möglich.",
+
+      "title1": "Welche Karte zeigt das Merkmal mit dem größten Einfluss auf die Ausgabe des Modells? Bitte auswählen.",
+
+      "task2-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task2-confusing-low": "Sehr einfach",
+      "task2-confusing-high": "Sehr schwierig",
+      "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?",
+      "task2-appealing-low": "Sehr unattraktiv",
+      "task2-appealing-high": "Sehr attraktiv"
+    },
     "thanks":{
       "title": "Vielen Dank für Ihre Teilnahme",
       "subtitle": "Wir bedanken uns herzlich für Ihre Teilnahme. Die Studie ist nun abgeschlossen."

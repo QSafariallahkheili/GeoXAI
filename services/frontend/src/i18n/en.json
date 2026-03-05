@@ -107,6 +107,23 @@
       "task2-appealing-low": "Very unappealing",
       "task2-appealing-high": "Very appealing"
     },
+    "task3":{
+      "title": "Task Type 3",
+      "instruction1": "This task involves comparing 4 maps that display the spatial distribution of different environmental features.",
+      "instruction2": "Each map represents a different feature and uses color to show how strongly that feature influences the model's prediction (SHAP values).",
+      "instruction3": "Your goal is to identify which map shows the feature with the greatest overall influence on the model's output.",
+      "instruction4": "Please answer as accurately and as quickly as possible.",
+
+      "title1": "Which map shows the feature with the greatest overall influence on the model's output? Please select.",
+      
+     
+      "task2-confusing-title": "How difficult was it to identify the area (rating 1-7)?",
+      "task2-confusing-low": "Very easy",
+      "task2-confusing-high": "Very difficult",
+      "task2-appealing-title": "How visually appealing do you find this map (rating 1-7)?",
+      "task2-appealing-low": "Very unappealing",
+      "task2-appealing-high": "Very appealing"
+    },
     "thanks":{
       "title": "Thank you for participating!",
       "subtitle": "Your participation is greatly appreciated. The study is now complete."
