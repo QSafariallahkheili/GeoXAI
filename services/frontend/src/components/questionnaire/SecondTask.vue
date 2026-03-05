@@ -596,7 +596,6 @@ const handleCellClick = (index) => {
   display: flex;
   justify-content: flex-start;
   margin-top: 2px;
-  font-size: 0.75rem;
 }
 
 /* Responsive */
