@@ -593,8 +593,8 @@ const subtasks = [
 
 const answers = reactive({
     region: null,
-    confusion: 4,
-    appeal: 4,
+    confusion: 0,
+    appeal: 0,
     time_ms: null,
 })
 const taskResponses = ref([])
@@ -608,8 +608,8 @@ watch(subStep, () => {
 const isLastSubStep = computed(() => subStep.value === 6)
 const resetAnswers = () => {
   answers.region = null
-  answers.confusion = 4
-  answers.appeal = 4
+  answers.confusion = 0
+  answers.appeal = 0
   answers.time_ms = null
   selectedIndex.value = null
 }

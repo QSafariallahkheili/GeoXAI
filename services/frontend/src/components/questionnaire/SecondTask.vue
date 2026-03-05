@@ -401,8 +401,8 @@ let {session_id, currentStep, progress} = storeToRefs(useQuestionnaireStore());
 const isLastSubStep = computed(() => subStep.value === 4)
 const answers = reactive({
     region: null,
-    confusion: 4,
-    appeal: 4,
+    confusion: 0,
+    appeal: 0,
     time_ms: null,
 })
 const subtasks = [
@@ -433,8 +433,8 @@ watch(subStep, () => {
 })
 const resetAnswers = () => {
   answers.region = null
-  answers.confusion = 4
-  answers.appeal = 4
+  answers.confusion = 0
+  answers.appeal = 0
   answers.time_ms = null
   selectedIndex.value = null
 }
