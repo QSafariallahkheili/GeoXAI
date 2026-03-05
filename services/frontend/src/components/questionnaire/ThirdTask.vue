@@ -119,6 +119,7 @@
         variant="elevated"
         append-icon="mdi-arrow-right"
         @click="nextSubStep"
+        :disabled="subStep > 0 && selectedMap === null"
       >
       {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
       </v-btn>
