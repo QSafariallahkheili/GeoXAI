@@ -115,8 +115,12 @@
       "instruction4": "Please answer as accurately and as quickly as possible.",
 
       "title1": "Which map shows the feature with the greatest overall influence on the model's output? Please select.",
-      
-     
+      "task3-title2": "Task 3.2. Looking at the map and corresponding bar chart for the highlighted cell, Which predictor is increasing wildfire risk the most in this cell? Please select at the provided options below the chart.",
+      "task3-title3": "Task 3.3. Look at the map and the bar chart below. For the highlighted cell, each predictor shows a distribution plot with a red marker indicating where this cell's value falls. Which of the following statements is correctly describing the influence of a predictor on wildfire risk? Select one option below.",
+      "shap-option1": "High drought index increases the fire risk.",
+      "shap-option2": "Low NDMI increases the fire risk.",
+      "shap-option3": "High LST reduces the fire risk.",
+      "shap-option4": "Low Sun Radiation increases the fire risk.",
       "task2-confusing-title": "How difficult was it to identify the area (rating 1-7)?",
       "task2-confusing-low": "Very easy",
       "task2-confusing-high": "Very difficult",

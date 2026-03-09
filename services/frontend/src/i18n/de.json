@@ -111,7 +111,12 @@
       "instruction4": "Bitte antworten Sie so genau und so schnell wie möglich.",
 
       "title1": "Welche Karte zeigt das Merkmal mit dem größten Einfluss auf die Ausgabe des Modells? Bitte auswählen.",
-
+      "task3-title2": "Aufgabe 3.2. Betrachten Sie die Karte und das zugehörige Balkendiagramm für die hervorgehobene Zelle. Welcher Prädiktor erhöht in dieser Zelle das Waldbrandrisiko am stärksten? Bitte wählen Sie eine der unten unter dem Diagramm angegebenen Optionen aus.",
+      "task3-title3": "Task 3.3.Betrachten Sie die Karte und das untenstehende Balkendiagramm. Für die hervorgehobene Zelle zeigt jeder Prädiktor ein Verteilungsdiagramm mit einer roten Markierung, die anzeigt, wo der Wert dieser Zelle innerhalb der Verteilung liegt. Welche der folgenden Aussagen beschreibt korrekt den Einfluss eines Prädiktors auf das Waldbrandrisiko? Bitte wählen Sie eine Option aus den untenstehenden Antworten aus.",
+      "shap-option1": "Ein hoher Drought Index erhöht das Waldbrandrisiko.",
+      "shap-option2": "Ein niedriger NDMI erhöht das Waldbrandrisiko.",
+      "shap-option3": "Ein hoher LST reduziert das Waldbrandrisiko.",
+      "shap-option4": "Eine Sun Radiation erhöht das Waldbrandrisiko.",
       "task2-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task2-confusing-low": "Sehr einfach",
       "task2-confusing-high": "Sehr schwierig",
