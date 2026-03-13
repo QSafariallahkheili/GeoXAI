@@ -108,154 +108,59 @@
             </div>
 
         </div>
-        <div v-if="subStep === 2"> 
-            <p>
-               {{ $t("task3.task3-title2") }}
-            </p>
+         <div v-if="subStep === 2">
 
-            <!-- Map + Legend -->
-            <div class="map-legend-container">
-                <!-- Map -->
-                <div class="map-wrapper-single">
-                    <img
-                        src="task_images/wildfire.png"
-                        class="map-image-1"
-                    />
-                    <div class="grid-overlay">
-                    <div
-                        v-for="(cell, index) in 100"
-                        :key="index"
-                        class="grid-cell"
-                    ></div>
+            <p>{{ $t("task3.title1") }}</p>
+
+            <!-- 2x2 Map Grid -->
+            <div class="maps-grid">
+                <div
+                  v-for="map in maps"
+                  :key="map.key"
+                  class="map-card"
+                  :class="{ 'map-card--selected': selectedMap === map.key }"
+                  @click="selectedMap = map.key"
+                >
+                    <!-- Radio button + label row -->
+                    <div class="map-card-header">
+                        <v-radio-group v-model="selectedMap" hide-details inline>
+                            <v-radio
+                              :value="map.key"
+                              :label="$t(map.key)"
+                              color="primary"
+                             
+                            />
+                        </v-radio-group>
+                    </div>
+
+                    <!-- Map image -->
+                    <div class="map-wrapper">
+                        <img
+                            :src="'task_images/' + map.file1"
+                            class="map-image"
+                            :alt="map.key"
+                        />
                     </div>
                 </div>
-                
-
-                
             </div>
-            <div >
+
+            <!-- Shared Legend -->
+            <div class="legend-wrapper">
                 <img
-                    src="task_images/shap_chart.png"
-                    class="shap-chart"
-                    />
+                    src="task_images/shap_legend.png"
+                    class="legend-image"
+                    alt="SHAP Legend"
+                />
             </div>
-            <div class="quiz-section">
-        
 
-    
-        </div>
+            <!-- Sliders -->
             <div class="slider-wrapper">
-                <!-- Q1: Most increasing -->
-            <p class="quiz-question">Please choose one option below:</p>
-            <div class="mb-2">
-                <v-radio-group v-model="selectedMap" inline >
-                    <v-radio label="Drought Index" value="Drought Index"></v-radio>
-                    <v-radio label="NDVI" value="NDVI"></v-radio>
-                    <v-radio label="Sun Radiation" value="Sun Radiation"></v-radio>
-                    <v-radio label="Aspect" value="Aspect"></v-radio>
-                </v-radio-group>
-            </div>
-            
                 <!-- Confusion slider -->
                 <div class="slider-container">
-                    <!-- Top row: title left, right label top-right -->
                     <div class="slider-top-row">
-                    <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                        <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
-
-                    <!-- Slider itself -->
-                    <v-slider
-                    v-model="answers.confusion"
-                    min="1"
-                    max="7"
-                    step="1"
-                    tick-size="4"
-                    show-ticks="always"
-                    hide-details
-                    ></v-slider>
-
-                    <!-- Bottom row: left label -->
-                    <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
-                    </div>
-                </div>
-
-                <!-- Appeal slider -->
-                <div class="slider-container">
-                    <div class="slider-top-row">
-                    <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
-                    </div>
-
-                    <v-slider
-                    v-model="answers.appeal"
-                    min="1"
-                    max="7"
-                    step="1"
-                    tick-size="4"
-                    show-ticks="always"
-                    hide-details
-                    ></v-slider>
-
-                    <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div v-if="subStep === 3"> 
-            <p>
-               {{ $t("task3.task3-title3") }}
-            </p>
-
-            <!-- Map + Legend -->
-            <div class="map-legend-container">
-                <!-- Map -->
-                <div class="map-wrapper-single">
-                    <img
-                        src="task_images/wildfire1.png"
-                        class="map-image-1"
-                    />
-                    <div class="grid-overlay">
-                    <div
-                        v-for="(cell, index) in 100"
-                        :key="index"
-                        class="grid-cell"
-                    ></div>
-                    </div>
-                </div>
-                
-
-                
-            </div>
-            <div >
-                <img
-                    src="task_images/shap_chart1.png"
-                    class="shap-chart"
-                    />
-            </div>
-            
-            <div class="slider-wrapper">
-                <div class="quiz-section mb-4">
-                <p class="quiz-question">Which of the following statements is correct?</p>
-                    <div class="radio-col">
-                    <label v-for="(q, index) in shapQuestions" :key="index" class="radio-option">
-                        <input type="radio" name="shapQuestion" :value="index" v-model="selectedMap" />
-                        {{ q.text }}
-                    </label>
-                </div>
-                
-                </div>
-                <!-- Confusion slider -->
-                <div class="slider-container">
-                    <!-- Top row: title left, right label top-right -->
-                    <div class="slider-top-row">
-                    <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
-                    </div>
-
-                    <!-- Slider itself -->
                     <v-slider
                         v-model="answers.confusion"
                         min="1"
@@ -265,36 +170,123 @@
                         show-ticks="always"
                         hide-details
                     ></v-slider>
-
-                    <!-- Bottom row: left label -->
                     <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                        <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
                 </div>
 
                 <!-- Appeal slider -->
                 <div class="slider-container">
                     <div class="slider-top-row">
-                    <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
+                        <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
                     </div>
-
                     <v-slider
-                    v-model="answers.appeal"
-                    min="1"
-                    max="7"
-                    step="1"
-                    tick-size="4"
-                    show-ticks="always"
-                    hide-details
+                        v-model="answers.appeal"
+                        min="1"
+                        max="7"
+                        step="1"
+                        tick-size="4"
+                        show-ticks="always"
+                        hide-details
                     ></v-slider>
-
                     <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
+                        <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
                     </div>
                 </div>
             </div>
+
         </div>
+         <div v-if="subStep === 3">
+
+            <p>{{ $t("task3.title1") }}</p>
+
+            <!-- 2x2 Map Grid -->
+            <div class="maps-grid">
+                <div
+                  v-for="map in maps"
+                  :key="map.key"
+                  class="map-card"
+                  :class="{ 'map-card--selected': selectedMap === map.key }"
+                  @click="selectedMap = map.key"
+                >
+                    <!-- Radio button + label row -->
+                    <div class="map-card-header">
+                        <v-radio-group v-model="selectedMap" hide-details inline>
+                            <v-radio
+                              :value="map.key"
+                              :label="$t(map.key)"
+                              color="primary"
+                             
+                            />
+                        </v-radio-group>
+                    </div>
+
+                    <!-- Map image -->
+                    <div class="map-wrapper">
+                        <img
+                            :src="'task_images/' + map.file2"
+                            class="map-image"
+                            :alt="map.key"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shared Legend -->
+            <div class="legend-wrapper">
+                <img
+                    src="task_images/shap_legend.png"
+                    class="legend-image"
+                    alt="SHAP Legend"
+                />
+            </div>
+
+            <!-- Sliders -->
+            <div class="slider-wrapper">
+                <!-- Confusion slider -->
+                <div class="slider-container">
+                    <div class="slider-top-row">
+                        <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    </div>
+                    <v-slider
+                        v-model="answers.confusion"
+                        min="1"
+                        max="7"
+                        step="1"
+                        tick-size="4"
+                        show-ticks="always"
+                        hide-details
+                    ></v-slider>
+                    <div class="slider-bottom-row">
+                        <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    </div>
+                </div>
+
+                <!-- Appeal slider -->
+                <div class="slider-container">
+                    <div class="slider-top-row">
+                        <span class="slider-title">{{ $t("task1.task1-appealing-title") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-appealing-high") }}</span>
+                    </div>
+                    <v-slider
+                        v-model="answers.appeal"
+                        min="1"
+                        max="7"
+                        step="1"
+                        tick-size="4"
+                        show-ticks="always"
+                        hide-details
+                    ></v-slider>
+                    <div class="slider-bottom-row">
+                        <span class="slider-label-left">{{ $t("task1.task1-appealing-low") }}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+      
 
     </v-sheet>
 
@@ -307,6 +299,7 @@
         append-icon="mdi-arrow-right"
         @click="nextSubStep"
         :disabled="subStep > 0 && selectedMap === null"
+        
       >
       {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
       </v-btn>
@@ -320,7 +313,6 @@ import { storeToRefs } from 'pinia'
 
 import { useQuestionnaireStore } from '../../stores/questionnaire'
 import { completeTask, questionnaireTaskOne } from '@/services/backend.calls.js'
-import { useI18n } from 'vue-i18n'
 
 let {session_id, currentStep} = storeToRefs(useQuestionnaireStore());
 
@@ -331,21 +323,16 @@ const answers = ref({ confusion: null, appeal: null })
 const subtaskStartTime = ref(performance.now())
 const taskResponses = ref([])
 //let selectedAnswer=ref(null)
-const { t } = useI18n()
-let shapQuestions = [
-    { text: t("task3.shap-option1") },
-    { text: t("task3.shap-option2") },
-    { text: t("task3.shap-option3") },
-    { text: t("task3.shap-option4") },
-]
+
+
 watch(subStep, () => {
   subtaskStartTime.value = performance.now()
 })
 const maps = [
-  { key: 'Drought Index', file: 'shap_drought_index.png' },
-  { key: 'Digital Elevation Model', file: 'shap_dem.png'},
-  { key: 'Land Surface Temperature', file: 'shap_lst.png'},
-  { key: 'Vegetation Index',file: 'shap_ndvi.png'},
+  { key: 'Drought Index', file: 'shap_drought_index.png',file1: 'shap_drought_index1.png', file2: 'shap_drought_index2.png' },
+  { key: 'Digital Elevation Model', file: 'shap_dem.png',file1: 'shap_dem1.png', file2: 'shap_dem2.png' },
+  { key: 'Land Surface Temperature', file: 'shap_lst.png',file1: 'shap_lst1.png', file2: 'shap_lst2.png' },
+  { key: 'Vegetation Index',file: 'shap_ndvi.png',file1: 'shap_ndvi1.png', file2: 'shap_ndvi2.png' },
 ]
 
 const nextSubStep = async() =>  {
@@ -361,74 +348,70 @@ const nextSubStep = async() =>  {
   }
   if (subStep.value == 2){
     const payload = {
-        task_id: 'task_3',
-        subtask_id: 'task_3_1',
-        response: {
-            region_index: selectedMap.value,
-            confusion: answers.value.confusion,
-            appeal: answers.value.appeal,
-        },
+      task_id: 'task_3',
+      subtask_id: 'task_3_1',
+      response: {
+          region_index: selectedMap.value,
+          confusion: answers.value.confusion,
+          appeal: answers.value.appeal,
+      },
 
-        correct_region_index: "Vegetation Index",
-        is_correct: "Vegetation Index" === selectedMap.value,
+      correct_region_index: "Vegetation Index",
+      is_correct: "Vegetation Index" === selectedMap.value,
 
-        time_ms: Math.round(duration),
-        timestamp: new Date().toISOString(),
+      time_ms: Math.round(duration),
+      timestamp: new Date().toISOString(),
     }
 
     taskResponses.value.push(payload)
-    console.log("Task 3 payload:", taskResponses.value)
+
   }
   if (subStep.value == 3) {
-    console.log(duration, "time spent")
-    console.log("Selected map:", selectedMap.value)
     const payload = {
-        task_id: 'task_3',
-        subtask_id: 'task_3_2',
-        response: {
-        region_index: selectedMap.value,
-        confusion: answers.value.confusion,
-        appeal: answers.value.appeal,
-        },
+      task_id: 'task_3',
+      subtask_id: 'task_3_1',
+      response: {
+          region_index: selectedMap.value,
+          confusion: answers.value.confusion,
+          appeal: answers.value.appeal,
+      },
 
-        correct_region_index: "NDVI",
-        is_correct: "NDVI" === selectedMap.value,
+      correct_region_index: "Land Surface Temperature",
+      is_correct: "Land Surface Temperature" === selectedMap.value,
 
-        time_ms: Math.round(duration),
-        timestamp: new Date().toISOString(),
+      time_ms: Math.round(duration),
+      timestamp: new Date().toISOString(),
     }
 
-        taskResponses.value.push(payload)
-        console.log("Task 3 payload:", taskResponses.value)
+    taskResponses.value.push(payload)
     
     
   }
   if (subStep.value == 4) {
 
-    console.log("Selected map:", selectedMap.value)
     const payload = {
-        task_id: 'task_3',
-        subtask_id: 'task_3_3',
-        response: {
-        region_index: selectedMap.value,
-        confusion: answers.value.confusion,
-        appeal: answers.value.appeal,
-        },
+      task_id: 'task_3',
+      subtask_id: 'task_3_1',
+      response: {
+          region_index: selectedMap.value,
+          confusion: answers.value.confusion,
+          appeal: answers.value.appeal,
+      },
 
-        correct_region_index: 1,
-        is_correct: 1 === selectedMap.value,
+      correct_region_index: "Drought Index",
+      is_correct: "Drought Index" === selectedMap.value,
 
-        time_ms: Math.round(duration),
-        timestamp: new Date().toISOString(),
+      time_ms: Math.round(duration),
+      timestamp: new Date().toISOString(),
     }
 
-        taskResponses.value.push(payload)
-        console.log("Task 3 payload:", taskResponses.value)
-        currentStep.value++
-    
-        await questionnaireTaskOne(taskResponses.value, session_id.value)
+    taskResponses.value.push(payload)
+    console.log("Task 3 payload:", taskResponses.value)
+    currentStep.value++
 
-        await completeTask(true, session_id.value)
+    await questionnaireTaskOne(taskResponses.value, session_id.value)
+
+    await completeTask(true, session_id.value)
   }
 
   
