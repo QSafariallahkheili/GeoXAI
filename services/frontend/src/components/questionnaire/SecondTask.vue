@@ -51,7 +51,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/bivariate_choropleth_legend.png"
+                    src="task_images/bivariate_choropleth_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -137,7 +137,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/bivariate_proportional_legend.png"
+                    src="task_images/bivariate_proportional_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -223,7 +223,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/bivariate_choropleth_legend.png"
+                    src="task_images/bivariate_choropleth_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -309,7 +309,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/bivariate_choropleth_uncertainty_legend.png"
+                    src="task_images/bivariate_choropleth_uncertainty_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />

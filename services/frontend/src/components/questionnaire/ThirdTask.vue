@@ -58,7 +58,7 @@
             <!-- Shared Legend -->
             <div class="legend-wrapper">
                 <img
-                    src="task_images/shap_legend.png"
+                    src="task_images/shap_legend_german.png"
                     class="legend-image"
                     alt="SHAP Legend"
                 />
@@ -147,7 +147,7 @@
             <!-- Shared Legend -->
             <div class="legend-wrapper">
                 <img
-                    src="task_images/shap_legend.png"
+                    src="task_images/shap_legend_german.png"
                     class="legend-image"
                     alt="SHAP Legend"
                 />
@@ -236,7 +236,7 @@
             <!-- Shared Legend -->
             <div class="legend-wrapper">
                 <img
-                    src="task_images/shap_legend.png"
+                    src="task_images/shap_legend_german.png"
                     class="legend-image"
                     alt="SHAP Legend"
                 />

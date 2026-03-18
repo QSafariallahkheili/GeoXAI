@@ -48,7 +48,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/uncertainty_fuzzy_legend.png"
+                    src="task_images/uncertainty_fuzzy_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -132,7 +132,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/uncertainty_ink_legend.png"
+                    src="task_images/uncertainty_ink_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -217,7 +217,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/uncertainty_pattern_width_legend.png"
+                    src="task_images/uncertainty_pattern_width_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -301,7 +301,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/uncertainty_pattern_orientation_legend.png"
+                    src="task_images/uncertainty_pattern_orientation_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -385,7 +385,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/uncertainty_noise_width_legend.png"
+                    src="task_images/uncertainty_noise_width_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
@@ -469,7 +469,7 @@
                 <!-- Legend -->
                 <div class="legend-wrapper">
                 <img
-                    src="task_images/uncertainty_noise_frequency_legend.png"
+                    src="task_images/uncertainty_noise_frequency_legend_german.png"
                     class="legend-image"
                     alt="Legend"
                 />
