@@ -63,7 +63,7 @@
                     <!-- Top row: title left, right label top-right -->
                     <div class="slider-top-row">
                     <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
 
                     <!-- Slider itself -->
@@ -79,7 +79,7 @@
 
                     <!-- Bottom row: left label -->
                     <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 
@@ -149,7 +149,7 @@
                     <!-- Top row: title left, right label top-right -->
                     <div class="slider-top-row">
                     <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
 
                     <!-- Slider itself -->
@@ -165,7 +165,7 @@
 
                     <!-- Bottom row: left label -->
                     <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 
@@ -235,7 +235,7 @@
                     <!-- Top row: title left, right label top-right -->
                     <div class="slider-top-row">
                     <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
 
                     <!-- Slider itself -->
@@ -251,7 +251,7 @@
 
                     <!-- Bottom row: left label -->
                     <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 
@@ -321,7 +321,7 @@
                     <!-- Top row: title left, right label top-right -->
                     <div class="slider-top-row">
                     <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                    <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                    <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
 
                     <!-- Slider itself -->
@@ -337,7 +337,7 @@
 
                     <!-- Bottom row: left label -->
                     <div class="slider-bottom-row">
-                    <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                    <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 

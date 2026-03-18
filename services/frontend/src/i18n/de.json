@@ -81,7 +81,7 @@
       "task1-title4": "Aufgaben 1.4. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
       "task1-title5": "Aufgaben 1.5. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
       "task1-title6": "Aufgaben 1.6. Welche Region zeigt die größte Unsicherheit? Bitte auswählen.",
-      "task1-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task1-confusing-title": "Wie einfach war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task1-confusing-low": "Sehr einfach",
       "task1-confusing-high": "Sehr schwierig",
       "task1-appealing-title": "Wie ansprechend finden Sie diese Karte (Bewertung 1-7)?",
@@ -100,7 +100,7 @@
       "task2-title3": "Aufgaben 2.3. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
       "task2-title4": "Aufgaben 2.4. Markieren Sie den Bereich mit: Niedrigster Merkmalswert (Feature value) und niedrigster SHAP-Beitrag",
 
-      "task2-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task2-confusing-title": "Wie einfach war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?"
     },
     "task3":{
@@ -117,7 +117,7 @@
       "shap-option2": "Ein niedriger NDMI erhöht das Waldbrandrisiko.",
       "shap-option3": "Ein hoher LST reduziert das Waldbrandrisiko.",
       "shap-option4": "Eine Sun Radiation erhöht das Waldbrandrisiko.",
-      "task2-confusing-title": "Wie schwierig war es, den Bereich zu identifizieren (Bewertung 1-7)?",
+      "task2-confusing-title": "Wie einfach war es, den Bereich zu identifizieren (Bewertung 1-7)?",
       "task2-confusing-low": "Sehr einfach",
       "task2-confusing-high": "Sehr schwierig",
       "task2-appealing-title": "Wie visuell ansprechend finden Sie diese Karte (Bewertung 1-7)?",

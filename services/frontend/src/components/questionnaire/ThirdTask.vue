@@ -70,7 +70,7 @@
                 <div class="slider-container">
                     <div class="slider-top-row">
                         <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                        <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
                     <v-slider
                         v-model="answers.confusion"
@@ -82,7 +82,7 @@
                         hide-details
                     ></v-slider>
                     <div class="slider-bottom-row">
-                        <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                        <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 
@@ -159,7 +159,7 @@
                 <div class="slider-container">
                     <div class="slider-top-row">
                         <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                        <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
                     <v-slider
                         v-model="answers.confusion"
@@ -171,7 +171,7 @@
                         hide-details
                     ></v-slider>
                     <div class="slider-bottom-row">
-                        <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                        <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 
@@ -248,7 +248,7 @@
                 <div class="slider-container">
                     <div class="slider-top-row">
                         <span class="slider-title">{{ $t("task1.task1-confusing-title") }}</span>
-                        <span class="slider-label-right">{{ $t("task1.task1-confusing-high") }}</span>
+                        <span class="slider-label-right">{{ $t("task1.task1-confusing-low") }}</span>
                     </div>
                     <v-slider
                         v-model="answers.confusion"
@@ -260,7 +260,7 @@
                         hide-details
                     ></v-slider>
                     <div class="slider-bottom-row">
-                        <span class="slider-label-left">{{ $t("task1.task1-confusing-low") }}</span>
+                        <span class="slider-label-left">{{ $t("task1.task1-confusing-high") }}</span>
                     </div>
                 </div>
 
