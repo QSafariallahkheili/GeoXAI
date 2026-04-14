@@ -292,17 +292,27 @@
 
     <!-- NAVIGATION -->
     <div class="nav">
-      <v-btn
-        color="primary"
-        size="large"
-        variant="elevated"
-        append-icon="mdi-arrow-right"
-        @click="nextSubStep"
-        :disabled="subStep > 0 && selectedMap === null"
-        
+      <v-tooltip
+            location="top"
+            :disabled="!(subStep > 0 && selectedMap === null)"
       >
-      {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
-      </v-btn>
+        <template v-slot:activator="{ props }">
+          <div v-bind="props" class="d-inline-block">
+            <v-btn
+              color="primary"
+              size="large"
+              variant="elevated"
+              append-icon="mdi-arrow-right"
+              @click="nextSubStep"
+              :disabled="subStep > 0 && selectedMap === null"
+              
+            >
+            {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
+            </v-btn>
+          </div>
+        </template>
+        <span>{{ $t("buttons.tooltip2") }}</span>
+      </v-tooltip>
     </div>
   </v-container>
 </template>

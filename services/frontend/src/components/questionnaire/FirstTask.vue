@@ -533,16 +533,27 @@
 
     <!-- NAVIGATION -->
     <div class="nav">
-      <v-btn
-        color="primary"
-        size="large"
-        variant="elevated"
-        append-icon="mdi-arrow-right"
-        @click="nextSubStep"
-        :disabled="subStep > 0 && answers.region === null"
-      >
-        {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
-      </v-btn>
+        <v-tooltip
+            location="top"
+            :disabled="!(subStep > 0 && answers.region === null)"
+        >
+            <template v-slot:activator="{ props }">
+                <div v-bind="props" class="d-inline-block">
+                <v-btn
+                    color="primary"
+                    size="large"
+                    variant="elevated"
+                    append-icon="mdi-arrow-right"
+                    @click="nextSubStep"
+                    :disabled="subStep > 0 && answers.region === null"
+                >
+                    {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
+                </v-btn>
+                </div>
+            </template>
+
+            <span>{{ $t("buttons.tooltip") }}</span>
+        </v-tooltip>
     </div>
   </v-container>
 </template>
