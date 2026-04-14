@@ -131,7 +131,9 @@
     },
     "buttons":{
       "next": "Weiter",
-      "finish": "Fertigstellen"
+      "finish": "Fertigstellen",
+      "tooltip": "Bitte wählen Sie einen Bereich auf der bereitgestellten Karte aus, um fortzufahren",
+      "tooltip2": "Bitte wählen Sie eine Karte aus, um fortzufahren"
     },
     "progress": {
       "msg": "Fortschritt"

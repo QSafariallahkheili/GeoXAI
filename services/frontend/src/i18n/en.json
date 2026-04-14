@@ -135,7 +135,9 @@
     },
     "buttons":{
       "next": "Next",
-      "finish": "Finish"
+      "finish": "Finish",
+      "tooltip": "Please select an area on the provided map to proceed",
+      "tooltip2": "Please select a map to proceed"
     },
     "progress": {
       "msg": "Progress"
