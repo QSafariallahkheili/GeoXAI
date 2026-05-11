@@ -28,7 +28,7 @@
       />
    
       <ProgressTask 
-       v-if="currentStep === 2 || currentStep === 3"
+       v-if="currentStep === 2 || currentStep === 3 || currentStep === 4"
       />
      
   </div>

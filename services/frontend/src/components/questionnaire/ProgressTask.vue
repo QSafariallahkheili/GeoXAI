@@ -1,7 +1,7 @@
 <template>
   <div class="progress-container">
 
-      <h2 v-if="progress >= 1">{{$t("progress.msg")}}: {{(progress - 1) / 10 * 100}}%</h2>
+      <h2 v-if="progress >= 1">{{$t("progress.msg")}}: {{((progress - 1) / 13 * 100).toFixed(0)}}%</h2>
     </div>
 </template>
 <script setup>
