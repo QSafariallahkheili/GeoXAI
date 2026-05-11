@@ -39,6 +39,7 @@
                               :value="map.key"
                               :label="$t(map.key)"
                               color="primary"
+                              v-model="selectedMap"
                              
                             />
                         </v-radio-group>
@@ -304,7 +305,7 @@
               variant="elevated"
               append-icon="mdi-arrow-right"
               @click="nextSubStep"
-              :disabled="subStep > 0 && selectedMap === null"
+              
               
             >
             {{ isLastSubStep ? $t("buttons.finish") : $t("buttons.next") }}
@@ -324,11 +325,11 @@ import { storeToRefs } from 'pinia'
 import { useQuestionnaireStore } from '../../stores/questionnaire'
 import { completeTask, questionnaireTaskOne } from '@/services/backend.calls.js'
 
-let {session_id, currentStep} = storeToRefs(useQuestionnaireStore());
+let {session_id, currentStep, progress} = storeToRefs(useQuestionnaireStore());
 
 
 const subStep = ref(0)
-const selectedMap = ref(null)
+let selectedMap = ref(null)
 const answers = ref({ confusion: null, appeal: null })
 const subtaskStartTime = ref(performance.now())
 const taskResponses = ref([])
@@ -345,86 +346,98 @@ const maps = [
   { key: 'Vegetation Index',file: 'shap_ndvi.png',file1: 'shap_ndvi1.png', file2: 'shap_ndvi2.png' },
 ]
 
-const nextSubStep = async() =>  {
-  // Only save payload for real subtasks
+const nextSubStep = async () => {
   const duration = performance.now() - subtaskStartTime.value
-    selectedMap.value = null
-    answers.value.confusion = 0
-    answers.value.appeal = 0
-    
-  if (subStep.value >= 0) {
-    subStep.value++
-    
-  }
-  if (subStep.value == 2){
+
+  // STORE CURRENT VALUES BEFORE RESETTING
+  const currentSelection = selectedMap.value
+  const currentConfusion = answers.value.confusion
+  const currentAppeal = answers.value.appeal
+
+  // FIRST SUBTASK
+  if (subStep.value === 1) {
     const payload = {
       task_id: 'task_3',
       subtask_id: 'task_3_1',
+
       response: {
-          region_index: selectedMap.value,
-          confusion: answers.value.confusion,
-          appeal: answers.value.appeal,
+        region_index: currentSelection,
+        confusion: currentConfusion,
+        appeal: currentAppeal,
       },
 
       correct_region_index: "Vegetation Index",
-      is_correct: "Vegetation Index" === selectedMap.value,
+      is_correct: currentSelection === "Vegetation Index",
 
       time_ms: Math.round(duration),
       timestamp: new Date().toISOString(),
     }
 
     taskResponses.value.push(payload)
-
+    progress.value++
   }
-  if (subStep.value == 3) {
+
+  // SECOND SUBTASK
+  if (subStep.value === 2) {
     const payload = {
       task_id: 'task_3',
-      subtask_id: 'task_3_1',
+      subtask_id: 'task_3_2',
+
       response: {
-          region_index: selectedMap.value,
-          confusion: answers.value.confusion,
-          appeal: answers.value.appeal,
+        region_index: currentSelection,
+        confusion: currentConfusion,
+        appeal: currentAppeal,
       },
 
       correct_region_index: "Land Surface Temperature",
-      is_correct: "Land Surface Temperature" === selectedMap.value,
+      is_correct: currentSelection === "Land Surface Temperature",
 
       time_ms: Math.round(duration),
       timestamp: new Date().toISOString(),
     }
 
     taskResponses.value.push(payload)
-    
-    
+    progress.value++
   }
-  if (subStep.value == 4) {
 
+  // THIRD SUBTASK
+  if (subStep.value === 3) {
     const payload = {
       task_id: 'task_3',
-      subtask_id: 'task_3_1',
+      subtask_id: 'task_3_3',
+
       response: {
-          region_index: selectedMap.value,
-          confusion: answers.value.confusion,
-          appeal: answers.value.appeal,
+        region_index: currentSelection,
+        confusion: currentConfusion,
+        appeal: currentAppeal,
       },
 
       correct_region_index: "Drought Index",
-      is_correct: "Drought Index" === selectedMap.value,
+      is_correct: currentSelection === "Drought Index",
 
       time_ms: Math.round(duration),
       timestamp: new Date().toISOString(),
     }
 
     taskResponses.value.push(payload)
+
     console.log("Task 3 payload:", taskResponses.value)
+
     currentStep.value++
+    progress.value++
 
     await questionnaireTaskOne(taskResponses.value, session_id.value)
 
     await completeTask(true, session_id.value)
   }
 
-  
+  // RESET ONLY AFTER SAVING
+  selectedMap.value = null
+  answers.value.confusion = 0
+  answers.value.appeal = 0
+
+  // MOVE TO NEXT STEP
+  subStep.value++
 }
 </script>
 
