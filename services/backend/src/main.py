@@ -310,7 +310,7 @@ def format_uhi_response(row: dict):
 
         if key.endswith("_shap"):
             clean_key = key.replace("_shap", "")   # remove suffix
-            shap_values[clean_key] = -value
+            shap_values[clean_key] = value
 
         # Raw raster predictor values
         elif key in [
