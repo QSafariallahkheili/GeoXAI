@@ -8,7 +8,7 @@
           class="text-subtitle-1 text-center"
           cols="12"
         >
-        <span style="color: white;">{{ text }}</span>
+        <span style="color: blue; font-weight: bold;">{{ text }}</span>
         </v-col>
         <v-col cols="4">
           <v-progress-linear
