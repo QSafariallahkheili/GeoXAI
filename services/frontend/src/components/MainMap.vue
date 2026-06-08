@@ -3,10 +3,12 @@
     
     <LayerUI @addLayerToMap="addLayerToMap" @toggleLayerVisibility="toggleLayerVisibility" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility"> </LayerUI>
     <LegendUI></LegendUI>
-    <MenuUI @removeLayerFromMap="removeLayerFromMap" @addLayerToMap="addLayerToMap"></MenuUI>
+    <MenuUI @removeLayerFromMap="removeLayerFromMap" @addLayerToMap="addLayerToMap" ></MenuUI>
     <FilterUI v-if="activeMenu=='filter'" @activateBufferTool="activateBufferTool" @addGeojsonLayer="addGeojsonLayer" @fitBoundsToBBOX="fitBoundsToBBOX" @removeLayerFromMap="removeLayerFromMap" @removeDrawControl="removeDrawControl" @activatePolygonTool="activatePolygonTool"> </FilterUI>
-    <XAI v-if="activeMenu=='xai' || activeMenu=='filter'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
+    <XAI v-if="activeMenu=='xai' || activeMenu=='filter' || activeMenu=='uhi'" @addCoverageLayerToMap="addCoverageLayerToMap" @toggleCoverageLayerVisibility="toggleCoverageLayerVisibility" @getClickedCoordinate="getClickedCoordinate" @removeLayerFromMap="removeLayerFromMap" @toggleCoverageLayerVisibilityWithValue="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addPulseLayerToMap"></XAI>
     <GeovisUI v-show="activeMenu=='geovis'" @addCircleLayerToMap="addCircleLayerToMap" @addSquareLayerToMap="addSquareLayerToMap" @addLayerToMap="addLayerToMap" @addFuzzyLayerToMap="addFuzzyLayerToMap" @addPositionLayerToMap="addPositionLayerToMap" @addArrowLayerWithThreePropToMap="addArrowLayerWithThreePropToMap" @addCircleLayerWithInkUncertainty="addCircleLayerWithInkUncertainty" @addPatternLayerToMap="addPatternLayerToMap" @addCircleLayerWithInkUncertaintyOneProp="addCircleLayerWithInkUncertaintyOneProp" @addFuzzyLayerWithThreePropToMap="addFuzzyLayerWithThreePropToMap" @addPatternLayerWithOrientationToMap="addPatternLayerWithOrientationToMap" @addArrowLayerWithTwoPropToMap="addArrowLayerWithTwoPropToMap" @addCustomMapboxBorderLayerToMap="addCustomMapboxBorderLayerToMap" @addCustomMapboxGrainNoiseLayerToMap="addCustomMapboxGrainNoiseLayerToMap" @addAggregatedSHAPLayerToMap="addAggregatedSHAPLayerToMap"></GeovisUI>
+    <UHI v-if="activeMenu=='uhi'" @addDynamicTernaryGridToMap="addDynamicTernaryGridToMap" @removeLayerFromMap="removeLayerFromMap" @highlightMapHex="highlightMapHex" @addDynamicUncertaintyOverlay="addDynamicUncertaintyOverlay" @removeCustomLayerFromMap="removeCustomLayerFromMap" @addMoranFeatureToMap="addMoranFeatureToMap" @addDynamicMoranUncertaintyOverlay="addDynamicMoranUncertaintyOverlay" @setLayerPaintProperty="setLayerPaintProperty" @addDynamicFeatureGridToMap="addDynamicFeatureGridToMap" @addDynamicShapGridToMap="addDynamicShapGridToMap" @addDynamicBivariateGridToMap="addDynamicBivariateGridToMap"></UHI>
+
   </div>
   
   <MetadataDialog> </MetadataDialog>
@@ -23,6 +25,8 @@ import { useMapStore } from '../stores/map'
 import LayerUI from "@/components/LayerUI.vue";
 import LegendUI from "@/components/LegendUI.vue";
 import MenuUI from "@/components/MenuUI.vue";
+import UHI from "@/components/UHI.vue";
+
 import MetadataDialog from "@/components/MetadataDialog.vue";
 import XAI from "@/components/XAI.vue";
 import ProgressUI from "@/components/ProgressUI.vue";
@@ -35,19 +39,25 @@ import { addPulseLayer } from '../utils/pulseLayer';
 import { useMenuStore } from '../stores/menu'
 import { useXAIStore } from '../stores/xai'
 import { useFilterStore } from '../stores/filter'
+import { useUhiStore } from '../stores/uhi'
+import { useProgressStore } from '@/stores/progress'
+import { useMapLegendStore } from '../stores/mapLegend'
 
 import * as turf from "@turf/turf";
 
 import { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw';
 import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
-import {addDeckglCircleLayerWithUncertainty, addDeckglCircleLayerOnePropWithUncertainty,addDeckglSquareLayerToMap, addDeckglFuzzyLayerToMap, addDeckglPositionLayerToMap, addDeckglArrowLayerWithThreePropToMap, addCustomPatternLayerToMap,addDeckglCircleLayer, addDeckglFuzzyLayerWithThreePropToMap, addCustomPatternLayerWithOrientationToMap, addDeckglArrowLayerWithtwoPropToMap, addCustomBorderLayerToMap, addCustomBorderLayerWithNoisegrainToMap, addDeckglAggregationPieLayer} from '../utils/deckglLayers';
+import {addDeckglCircleLayerWithUncertainty, addDeckglCircleLayerOnePropWithUncertainty,addDeckglSquareLayerToMap, addDeckglFuzzyLayerToMap, addDeckglPositionLayerToMap, addDeckglArrowLayerWithThreePropToMap, addCustomPatternLayerToMap,addDeckglCircleLayer, addDeckglFuzzyLayerWithThreePropToMap, addCustomPatternLayerWithOrientationToMap, addDeckglArrowLayerWithtwoPropToMap, addCustomBorderLayerToMap, addCustomBorderLayerWithNoisegrainToMap, addDeckglAggregationPieLayer, addNoiseMapWithGrainSizeToMap, addNoiseMapWithGrainSizeForMoranPValueToMap} from '../utils/deckglLayers';
 //import MinimapControl from "maplibregl-minimap";
 
 let { activeMenu } = storeToRefs(useMenuStore())
 let { drawControl } = storeToRefs(useFilterStore())
 const filterStore = useFilterStore()
+const progressStore = useProgressStore()
+let { uhi_activated_tab} = storeToRefs(useMapLegendStore())
 
 const XAIStore = useXAIStore();
+const uhiStore = useUhiStore()
 
 
 
@@ -76,7 +86,46 @@ onMounted(() => {
 
     // Add the drawing control to the map
   map.addControl(drawControl, 'bottom-left');
-  
+  map.on("load", ()=>{
+    //map.setPaintProperty('place_suburb', 'text-halo-width', 0);
+    //map.setPaintProperty('place_suburb', 'text-halo-blur', 0);
+    map.setLayoutProperty('place_suburb', 'text-font', [
+      'Open Sans Bold',
+      'Arial Unicode MS Bold'
+    ]);
+    map.setPaintProperty('place_suburb', 'text-color', '#1f1f1f');
+    map.setPaintProperty('place_suburb', 'text-halo-color', '#ffffff');
+
+
+    map.setPaintProperty('place_state', 'text-halo-width', 0);
+    map.setPaintProperty('place_state', 'text-halo-blur', 0);
+    map.setLayoutProperty('place_state', 'text-font', [
+      'Open Sans Bold',
+      'Arial Unicode MS Bold'
+    ]);
+    map.setPaintProperty('place_state', 'text-color', '#1f1f1f');
+    map.setPaintProperty('place_state', 'text-halo-color', '#ffffff');
+     map.setLayoutProperty('place_city_large', 'visibility', 'none');
+          
+  map.on('moveend', () => {
+    console.log(map.getCenter(), "map center");
+    console.log(map.getZoom(), "map zoom");
+    console.log(map.getBounds(), "map bbox");
+    
+  });
+
+    
+  })
+map.on('style.load', () => {
+  map.getStyle().layers.forEach(l => {
+    if (
+      l.source === 'openmaptiles' &&
+      l['source-layer'] === 'building'
+    ) {
+      map.setLayoutProperty(l.id, 'visibility', 'none');
+    }
+  });
+});
   /*map.on("load", () => {
     const miniMapConfig = {
       id: "myCustomMiniMap",
@@ -88,16 +137,18 @@ onMounted(() => {
       collapsedWidth: "30px",
       collapsedHeight: "30px",
       borderRadius: "5px",
-  };
+    };
     map.addControl(new MinimapControl(miniMapConfig), 'top-right');
-  });*/
+  });
 
   map.on('moveend', () => {
     console.log(map.getCenter(), "map center");
     console.log(map.getZoom(), "map zoom");
     console.log(map.getBounds(), "map bbox");
     
-  });
+  });*/
+  
+      
 })
 
 const addLayerToMap = (layerSpecification)=>{
@@ -145,7 +196,629 @@ const addLayerToMap = (layerSpecification)=>{
  
 }
 
+const addDynamicTernaryGridToMap = (name, features) => {
 
+  
+  name = JSON.parse(JSON.stringify(name));
+
+  // build source name
+  const sourceName = `${name}_summary`;
+
+  // build tile URLs
+  const vectorSourceLayer = `public.${sourceName}`;
+  const vectorUrl = `http://localhost:7800/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+  for (let i=0; i<features.length; i++){
+        let layerToRemove = features[i].value+"_summary"
+        let layerToRemove2 = features[i].value+"_moran_summary"
+      let layer2 = map.getLayer(layerToRemove2);
+        let layer = map.getLayer(layerToRemove);
+        if(typeof layer !== 'undefined') {
+            map.removeLayer(layerToRemove).removeSource(layerToRemove);
+        }
+        if(typeof layer2 !== 'undefined') {
+            map.removeLayer(layerToRemove2).removeSource(layerToRemove2);
+        }
+    }
+  map.addSource(sourceName, {
+    type: "vector",
+    tiles: [vectorUrl],
+    promoteId: "id",
+    minzoom: 0,
+    maxzoom: 22,
+  });
+
+  // Remove the prefix "uhi_"
+  const str = name.replace(/^uhi_/, "");
+
+  // Build your fill layer dynamically
+  map.addLayer({
+    id: sourceName,
+    source: sourceName,
+    "source-layer": "default",
+    type: "fill",
+    paint: {
+      "fill-color": [
+        "rgb",
+        ["*", 255, ["get", "prediction_ternary"]],     // RED
+        ["*", 255, ["get", `${str}_ternary`]],        // GREEN
+        ["*", 255, ["get", `${str}_shap_ternary`]]    // BLUE
+      ],
+      "fill-opacity": 1,
+      "fill-outline-color": "#ffffff",
+      
+    },
+  }, 'place_suburb');
+  
+
+  map.on('idle', () => {
+    
+    if(!map.getLayer(sourceName)) return;
+    const features = map.queryRenderedFeatures({ layers: [sourceName] });
+    let ternaryData = [];
+    let uncertaintyData = [];
+    features.forEach(f => {
+        const P = f.properties.prediction_ternary;
+        const F = f.properties[`${str}_ternary`];
+        const S = f.properties[`${str}_shap_ternary`];
+        const hex_id= f.properties.hex_id
+        ternaryData.push({P, F, S, hex_id});
+       // 👉 convert vector tile feature → GeoJSON
+        
+
+        uncertaintyData.push({
+          type: "Feature",
+          geometry: f.geometry,
+          properties: {
+            uncertainty: f.properties.uncertainty ?? f.properties.prediction,
+            hex_id
+          }
+        });
+        
+      });
+      const uncertaintyGeoJSON = {
+        type: "FeatureCollection",
+        features: uncertaintyData
+      };
+     uhiStore.assignTernaryArray({ternaryArray: ternaryData})
+     uhiStore.assignUncertaintyArray({uncertaintyArray: uncertaintyGeoJSON})
+    
+     
+  });
+ 
+    map.on('dataloading', (e) => {
+      // Only trigger if it's our specific vector source
+      if (e.sourceId === sourceName && uhi_activated_tab.value === 'ternary') {
+          progressStore.setProgressBar({
+              text: "Retrieving tiles...",
+              progress: true
+          });
+      }
+    });
+
+    map.on('data', (e) => {
+      if (e.sourceId !== sourceName) return;
+
+      // Check if the source is fully loaded and tiles are ready
+      if (e.dataType === 'source' && e.isSourceLoaded) {
+          progressStore.setProgressBar({
+              progress: false
+          });
+      }
+    });
+    // Hide the progress bar if the source is removed manually
+    map.on('sourcedata', (e) => {
+        if (e.sourceId === sourceName && !map.getSource(sourceName)) {
+            progressStore.setProgressBar({ progress: false });
+        }
+    });
+  
+
+  map.on("click", sourceName, (e) => {
+    const f = e.features[0];
+
+    const P = f.properties.prediction_ternary;
+    const F = f.properties[`${str}_ternary`];
+    const S = f.properties[`${str}_shap_ternary`];
+
+    // Save in store if needed
+    uhiStore.setSelectedTernary({ P, F, S });
+    //highlightMapHex({hex_id: f.properties.hex_id, selected_feature: name})
+    highlightMapHex({ hex_id: f.properties.hex_id, selected_feature: name });
+
+  });
+  
+};
+const highlightMapHex = (payload)=>{
+   //map.setFilter(payload.selected_feature+"_summary", ["==", "hex_id", payload.hex_id]);
+   const feature = map.queryRenderedFeatures({ layers: [payload.selected_feature+"_summary"] });
+   let selectedHighlightFeature 
+    feature.forEach(f => {
+        if(f.properties.hex_id === payload.hex_id){
+            selectedHighlightFeature = f
+        }
+    });
+    const sourceId = 'highlight-outline-source';
+    const layerId = 'highlight-outline-layer';
+
+    if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+    }
+    if (map.getSource(sourceId)) {
+        map.removeSource(sourceId);
+    }
+
+    // Check if a geometry exists
+    if (!selectedHighlightFeature || !selectedHighlightFeature.geometry) {
+        return;
+    }
+
+    // 2. DEFINE SOURCE
+    map.addSource(sourceId, {
+        type: 'geojson',
+        data: selectedHighlightFeature.geometry
+    });
+
+    // 3. ADD LINE LAYER
+    map.addLayer({
+        id: layerId,
+        type: 'line',
+        source: sourceId,
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: {
+            'line-color': '#FF0000', // Red
+            'line-width': 3,
+            'line-opacity': 1
+        }
+    });
+}
+const addDynamicUncertaintyOverlay =(geojson)=>{
+  if (map.getLayer('uncertainty-noise-layer')!== undefined){
+    map.removeLayer('uncertainty-noise-layer')
+  }
+  addNoiseMapWithGrainSizeToMap(geojson, map)
+}
+const addDynamicMoranUncertaintyOverlay = (geojson)=>{
+  if (map.getLayer("moran-uncertainty-noise-layer")!== undefined){
+    map.removeLayer("moran-uncertainty-noise-layer")
+   }
+  addNoiseMapWithGrainSizeForMoranPValueToMap(geojson, map)
+}
+const addMoranFeatureToMap = (name, attribute, features)=>{
+  
+    name = JSON.parse(JSON.stringify(name));
+
+    // build source name
+    const sourceName = `uhi_${name}_moran_summary`;
+  for (let i=0; i<features.value.length; i++){
+   
+      let layerToRemove = "uhi_"+features.value[i].value+"_moran_summary"
+      let layerToRemove2 = "uhi_"+features.value[i].value+"_summary"
+      let layer = map.getLayer(layerToRemove);
+      let layer2 = map.getLayer(layerToRemove2);
+      if(typeof layer !== 'undefined') {
+          map.removeLayer(layerToRemove).removeSource(layerToRemove);
+      }
+      if(typeof layer2 !== 'undefined') {
+          map.removeLayer(layerToRemove2).removeSource(layerToRemove2);
+      }
+  }
+  
+    // build tile URLs
+    const vectorSourceLayer = `public.${sourceName}`;
+    const vectorUrl = `http://localhost:7800/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+
+    map.addSource(sourceName, {
+      type: "vector",
+      tiles: [vectorUrl],
+      promoteId: "id",
+      minzoom: 0,
+      maxzoom: 22,
+    });
+    
+
+    // Build your fill layer dynamically
+    map.addLayer({
+      id: sourceName,
+      source: sourceName,
+      "source-layer": "default",
+      type: "fill",
+      paint: {
+        "fill-color": [
+          "match",
+          ["get",  `${attribute}_local_q`],
+            1, "#ff0000", // HH - Red
+            2, "#6ecff5", // LH - light Blue
+            3, "#0000ff", // LL - blue
+            4, "#f2aa1b", // HL - Yellow
+          "#ffffff"   // Default color (white)
+        ],
+        "fill-opacity": 1,
+        "fill-outline-color": "#ffffff",
+        
+      },
+    }, 'place_suburb');
+     map.on('idle', () => {
+    
+      if(!map.getLayer(sourceName)) return;
+        const features = map.queryRenderedFeatures({ layers: [sourceName] });
+        let moranUncertaintyData = [];
+        features.forEach(f => {
+            //tcd_local_p
+
+            moranUncertaintyData.push({
+              type: "Feature",
+              geometry: f.geometry,
+              properties: {
+                uncertainty: f.properties[`${attribute}_local_p`],
+                hex_id: f.properties.hex_id
+              }
+            });
+            
+          });
+          const uncertaintyGeoJSON = {
+            type: "FeatureCollection",
+            features: moranUncertaintyData
+          };
+          uhiStore.assignMoranUncertaintyArray({moranUncertaintyArray: uncertaintyGeoJSON})
+      });
+       map.on('data', (e) => {
+    if (uhi_activated_tab.value !== 'moran') return; 
+    if (e.dataType !== 'source' ) return; 
+    if (e.source.type!== 'vector' ) return; 
+      progressStore.setProgressBar({
+          text: `Retrieving the tiles..`,
+          progress: true
+      })
+    if (
+      e.sourceId === sourceName &&
+      e.dataType === 'source' &&
+      e.tile &&
+      e.tile.state === 'loaded'
+    ) {
+       progressStore.setProgressBar({
+        progress: false
+      })
+    }
+  })
+  map.on("click", sourceName, (e) => {
+    const f = e.features[0];
+
+    highlightMapHex({ hex_id: f.properties.hex_id, selected_feature: name });
+
+  });
+    
+}
+const addDynamicFeatureGridToMap = (feature, features) => {
+  let name = JSON.parse(JSON.stringify(feature.value));
+
+  // build source name
+  const sourceName = `${name}_summary`;
+  let str
+  if (name==='uhi'){
+    str = 'prediction'
+  }
+  else {
+    str = name.replace(/^uhi_/, "");
+  }
+  
+  // build tile URLs
+  for (let i=0; i<features.length; i++){
+   
+      let layerToRemove = features[i].value+"_summary"
+       let layerToRemove2 = features[i].value+"_moran_summary"
+      let layer = map.getLayer(layerToRemove);
+      let layer2 = map.getLayer(layerToRemove2);
+      if(typeof layer2 !== 'undefined') {
+          map.removeLayer(layerToRemove2).removeSource(layerToRemove2);
+      }
+      if(typeof layer !== 'undefined') {
+          map.removeLayer(layerToRemove).removeSource(layerToRemove);
+      }
+  }
+  const vectorSourceLayer = `public.${sourceName}`;
+  const vectorUrl = `http://localhost:7800/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+
+  map.addSource(sourceName, {
+    type: "vector",
+    tiles: [vectorUrl],
+    promoteId: "id",
+    minzoom: 0,
+    maxzoom: 22,
+  });
+
+  // Remove the prefix "uhi_"
+  // Build your fill layer dynamically
+  map.addLayer({
+    id: sourceName,
+    source: sourceName,
+    "source-layer": "default",
+    type: "fill",
+    paint: {
+      "fill-color": [
+        "step",
+        ["get", str],
+          feature.feature_color_palette[0],          // Class 1 (≤ 38.59)
+          feature.feature_classes[1], feature.feature_color_palette[1],  // Class 2
+          feature.feature_classes[2], feature.feature_color_palette[2],  // Class 3
+          feature.feature_classes[3], feature.feature_color_palette[3],  // Class 4
+          feature.feature_classes[4], feature.feature_color_palette[4]   // Class 5
+      ],
+      "fill-opacity": 1,
+      "fill-outline-color": "#969696",
+      
+    },
+  }, 'place_suburb');
+
+    map.on('dataloading', (e) => {
+      // Only trigger if it's our specific vector source
+      if (e.sourceId === sourceName && uhi_activated_tab.value === 'feature') {
+          progressStore.setProgressBar({
+              text: `Retrieving ${feature.name} tiles...`,
+              progress: true
+          });
+      }
+    });
+
+    map.on('data', (e) => {
+      if (e.sourceId !== sourceName) return;
+
+      // Check if the source is fully loaded and tiles are ready
+      if (e.dataType === 'source' && e.isSourceLoaded) {
+          progressStore.setProgressBar({
+              progress: false
+          });
+      }
+    });
+
+    // Hide the progress bar if the source is removed manually
+    map.on('sourcedata', (e) => {
+        if (e.sourceId === sourceName && !map.getSource(sourceName)) {
+            progressStore.setProgressBar({ progress: false });
+        }
+    });
+  map.on("click", sourceName, (e) => {
+    const f = e.features[0];
+
+   
+
+    //highlightMapHex({hex_id: f.properties.hex_id, selected_feature: name})
+    highlightMapHex({ hex_id: f.properties.hex_id, selected_feature: name });
+
+  });
+   
+    
+  
+  
+
+}
+const addDynamicShapGridToMap = (feature, features) => {
+  console.log(feature, "feature in addDynamicFeatureGridToMap")
+  let name = JSON.parse(JSON.stringify(feature.value));
+
+  // build source name
+  const sourceName = `${name}_summary`;
+  let str = name.replace(/^uhi_/, "");
+  str = str+"_shap"
+  // build tile URLs
+  for (let i=0; i<features.length; i++){
+    
+    let layerToRemove = features[i].value+"_summary"
+    let layerToRemove2 = features[i].value+"_moran_summary"
+    let layer2 = map.getLayer(layerToRemove2);
+    let layer = map.getLayer(layerToRemove);
+    if(typeof layer !== 'undefined') {
+        map.removeLayer(layerToRemove).removeSource(layerToRemove);
+    }
+     if(typeof layer2 !== 'undefined') {
+          map.removeLayer(layerToRemove2).removeSource(layerToRemove2);
+      }
+  }
+  const vectorSourceLayer = `public.${sourceName}`;
+  const vectorUrl = `http://localhost:7800/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+
+  map.addSource(sourceName, {
+    type: "vector",
+    tiles: [vectorUrl],
+    promoteId: "id",
+    minzoom: 0,
+    maxzoom: 22,
+  });
+
+  // Remove the prefix "uhi_"
+  console.log(str, "str in addDynamicFeatureGridToMap")
+  // Build your fill layer dynamically
+  map.addLayer({
+    id: sourceName,
+    source: sourceName,
+    "source-layer": "default",
+    type: "fill",
+    paint: {
+      "fill-color": [
+        "step",
+        ["get", str],
+          feature.shap_color_palette[0],          // Class 1 (≤ 38.59)
+          feature.shap_classes[1], feature.shap_color_palette[1],  // Class 2
+          feature.shap_classes[2], feature.shap_color_palette[2],  // Class 3
+          feature.shap_classes[3], feature.shap_color_palette[3],  // Class 4
+          feature.shap_classes[4], feature.shap_color_palette[4]   // Class 5
+      ],
+      "fill-opacity": 1,
+      "fill-outline-color": "#969696",
+      
+    },
+  }, 'place_suburb');
+
+  map.on('data', (e) => {
+    if (uhi_activated_tab.value !== 'shap') return; 
+    if (e.dataType !== 'source' ) return; 
+    if (e.source.type!== 'vector' ) return; 
+    progressStore.setProgressBar({
+        text: `Retrieving the ${feature.name} tiles..`,
+        progress: true
+    })
+    if (
+      e.sourceId === sourceName &&
+      e.dataType === 'source' &&
+      e.tile &&
+      e.isSourceLoaded === true
+    ) {
+       progressStore.setProgressBar({
+        progress: false
+      })
+    }
+  })
+  map.on("click", sourceName, (e) => {
+    const f = e.features[0];
+
+    highlightMapHex({ hex_id: f.properties.hex_id, selected_feature: name });
+
+  });
+  
+  
+  
+}
+const addDynamicBivariateGridToMap = (feature, feature2, BIVARIATE_COLORS, features) => {
+  console.log(feature2, "feature2 in addDynamicBivariateGridToMap")
+  let name = JSON.parse(JSON.stringify(feature.value));
+  const sourceName = `${name}_summary`;
+  // build source name
+  const str = name.replace(/^uhi_/, "");
+  let secondvarname = null
+  if (feature2.value === "uhi"){
+    secondvarname = "prediction"
+  }
+  else {
+    secondvarname = feature2.value.replace(/^uhi_/, "")
+    secondvarname = str+"_shap"
+  }
+  for (let i=0; i<features.length; i++){
+   
+      let layerToRemove = features[i].value+"_summary"
+      let layer = map.getLayer(layerToRemove);
+      if(typeof layer !== 'undefined') {
+          map.removeLayer(layerToRemove).removeSource(layerToRemove);
+      }
+      let layerToRemove2 = features[i].value+"_moran_summary"
+      let layer2 = map.getLayer(layerToRemove2);
+      if(typeof layer2 !== 'undefined') {
+          map.removeLayer(layerToRemove2).removeSource(layerToRemove2);
+      }
+
+  }
+  const FEATURE_BREAKS = feature.feature_classes
+  const SHAP_BREAKS = feature2.shap_classes
+  const featureClass = [
+    "step",
+    ["get", str],
+    0,
+    FEATURE_BREAKS[1], 1,
+    FEATURE_BREAKS[2], 2,
+    FEATURE_BREAKS[3], 3,
+    FEATURE_BREAKS[4], 4
+  ];
+
+  const shapClass = [
+    "step",
+    ["get", secondvarname],
+    0,
+    SHAP_BREAKS[1], 1,
+    SHAP_BREAKS[2], 2,
+    SHAP_BREAKS[3], 3,
+    SHAP_BREAKS[4], 4
+  ];
+  
+  const bivariateIndex = [
+    "+",
+    ["*", featureClass, 5],
+    shapClass
+  ];
+  
+  const vectorSourceLayer = `public.${sourceName}`;
+  const vectorUrl = `http://localhost:7800/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+  map.addSource(sourceName, {
+    type: "vector",
+    tiles: [vectorUrl],
+    promoteId: "id",
+    minzoom: 0,
+    maxzoom: 22,
+  });
+
+  // Remove the prefix "uhi_"
+  console.log(str, "str in addDynamicFeatureGridToMap")
+  // Build your fill layer dynamically
+  map.addLayer({
+    id: sourceName,
+    source: sourceName,
+    "source-layer": "default",
+    type: "fill",
+    paint: {
+      "fill-color": [
+        "match",
+        bivariateIndex,
+        0,  BIVARIATE_COLORS[0],
+        1,  BIVARIATE_COLORS[1],
+        2,  BIVARIATE_COLORS[2],
+        3,  BIVARIATE_COLORS[3],
+        4,  BIVARIATE_COLORS[4],
+        5,  BIVARIATE_COLORS[5],
+        6,  BIVARIATE_COLORS[6],
+        7,  BIVARIATE_COLORS[7],
+        8,  BIVARIATE_COLORS[8],
+        9,  BIVARIATE_COLORS[9],
+        10, BIVARIATE_COLORS[10],
+        11, BIVARIATE_COLORS[11],
+        12, BIVARIATE_COLORS[12],
+        13, BIVARIATE_COLORS[13],
+        14, BIVARIATE_COLORS[14],
+        15, BIVARIATE_COLORS[15],
+        16, BIVARIATE_COLORS[16],
+        17, BIVARIATE_COLORS[17],
+        18, BIVARIATE_COLORS[18],
+        19, BIVARIATE_COLORS[19],
+        20, BIVARIATE_COLORS[20],
+        21, BIVARIATE_COLORS[21],
+        22, BIVARIATE_COLORS[22],
+        23, BIVARIATE_COLORS[23],
+        24, BIVARIATE_COLORS[24],
+        "#000000"
+      ],
+      "fill-opacity": 1,
+      "fill-outline-color": "#ffffff",
+      
+    },
+  }, 'place_suburb');
+
+   map.on('data', (e) => {
+    if (uhi_activated_tab.value !== 'bivariate') return; 
+    if (e.dataType !== 'source' ) return; 
+    if (e.source.type!== 'vector' ) return; 
+
+    progressStore.setProgressBar({
+        text: "Retrieving the tiles..",
+        progress: true
+    })
+    if (
+      e.sourceId === sourceName &&
+      e.dataType === 'source' &&
+      e.tile &&
+      e.tile.state === 'loaded'
+    ) {
+       progressStore.setProgressBar({
+        progress: false
+      })
+    }
+  })
+  map.on("click", sourceName, (e) => {
+    const f = e.features[0];
+
+    highlightMapHex({ hex_id: f.properties.hex_id, selected_feature: name });
+
+  });
+
+}
 const toggleLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
     clickedLayerName,
@@ -165,14 +838,19 @@ const toggleLayerVisibility = (clickedLayerName)=>{
 
 const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
   let coverageLayer = map.getLayer(clickedLayerName);
-  console.log(clickedLayerName, "raster")
+  let workspace
+  if (activeMenu.value=="xai"){
+      workspace="geoxai"
+  }
+  else if (activeMenu.value=="uhi"){
+      workspace="uhi"
+  }
   if(typeof coverageLayer == 'undefined') {
     let geoserver_base_url= process.env.VUE_APP_GEOSERVER_URL
-    console.log(geoserver_base_url, "geoserver_base_url")
     map.addSource(clickedLayerName, {
       'type': layerType.value,
       'tiles': [
-        geoserver_base_url+'/geoxai/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=geoxai:'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
+        geoserver_base_url+'/'+workspace+'/wms?BBOX={bbox-epsg-3857}&SERVICE=WMS&REQUEST=GetMap&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS='+workspace+':'+clickedLayerName+'&FORMAT=image/PNG&transparent=true'
       ],
       'tileSize': 256
     });
@@ -184,7 +862,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
       }
     );
   }
-  map.moveLayer(clickedLayerName, /*'road_major'*/);
+  map.moveLayer(clickedLayerName, "place_suburb");
 }
 const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
@@ -205,6 +883,14 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
   
 
 }
+const setLayerPaintProperty = (layerId, styleProperty, fillStyle)=>{
+  console.log(layerId, styleProperty, fillStyle, "setLayerPaintProperty");
+  map.setPaintProperty(
+    layerId,
+    styleProperty,
+    fillStyle
+  );
+}
 
 const removeLayerFromMap = (layerId)=>{
   let layer = map.getLayer(layerId);
@@ -214,13 +900,21 @@ const removeLayerFromMap = (layerId)=>{
       map.removeLayer(layerId).removeSource(layerId);
   }
 }
+const removeCustomLayerFromMap = (layerId)=>{
+  let layer = map.getLayer(layerId);
+
+  if(typeof layer !== 'undefined') {
+
+      map.removeLayer(layerId);
+  }
+}
 
 const getClickedCoordinate = ()=>{
   
   map.on('click', (e) => {
     //const canvasCoords = [e.point.x, e.point.y];
     //const picked = map.getLayer("cube")?.implementation?.scene.pick(canvasCoords[0], canvasCoords[1]);
-    if (activeMenu.value=='xai'){
+    if (activeMenu.value=='xai' || activeMenu.value=='uhi'){
       XAIStore.assignClickedCoordinates({
         clickedCoordinates: [e.lngLat.lng,  e.lngLat.lat]
       })
