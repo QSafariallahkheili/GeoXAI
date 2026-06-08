@@ -3224,3 +3224,449 @@ const pieLayer = new MapboxLayer({
   
   map.addLayer(pieLayer);
 }
+
+export function addNoiseMapWithGrainSizeToMap(geojson, map) {
+
+  // -------------------------------
+  // 1. Uncertainty normalization
+  // -------------------------------
+  const U_MIN = 0.0027;   // ignore near-zero noise
+  const U_MAX = 0.67;    // cap extremes
+
+  function normalizeUncertainty(u) {
+    if (u === 0) u = 0.0001;
+    return Math.min(Math.max((u - U_MIN) / (U_MAX - U_MIN), 0), 1);
+  }
+
+  // -------------------------------
+  // 2. Prepare buffers
+  // -------------------------------
+  const vertices = [];
+  const localCoords = [];
+  const uncertainties = [];
+  const colors = [];
+
+  const squareLocal = [
+    [-1, -1],
+    [ 1, -1],
+    [ 1,  1],
+    [-1,  1]
+  ];
+
+  geojson.features.forEach(feature => {
+    const coords = feature.geometry.coordinates[0];
+    const uNorm = normalizeUncertainty(feature.properties.uncertainty);
+
+    for (let i = 0; i < 4; i++) {
+      const merc = MercatorCoordinate.fromLngLat({
+        lng: coords[i][0],
+        lat: coords[i][1]
+      });
+
+      vertices.push(merc.x, merc.y);
+      localCoords.push(...squareLocal[i]);
+      uncertainties.push(uNorm);
+
+      // neutral fill color (can be changed later)
+      colors.push(0, 0, 0);
+    }
+  });
+
+  const vertexCount = geojson.features.length;
+
+  // -------------------------------
+  // 3. Custom WebGL layer
+  // -------------------------------
+  const layer = {
+    id: "uncertainty-noise-layer",
+    type: "custom",
+
+    onAdd(map, gl) {
+
+      const vertexSource = `#version 300 es
+        uniform mat4 u_matrix;
+
+        in vec2 a_pos;
+        in vec2 a_local;
+        in float a_uncertainty;
+        in vec3 a_color;
+
+        out vec2 v_local;
+        out float v_uncertainty;
+        out vec3 v_color;
+
+        void main() {
+          gl_Position = u_matrix * vec4(a_pos, 0.0, 1.0);
+          v_local = a_local;
+          v_uncertainty = a_uncertainty;
+          v_color = a_color;
+        }
+      `;
+
+      const fragmentSource = `#version 300 es
+        precision highp float;
+
+        in vec2 v_local;
+        in float v_uncertainty;
+        in vec3 v_color;
+
+        out vec4 fragColor;
+
+        // cellular noise helpers
+        vec4 permute(vec4 x) {
+          return mod((34.0 * x + 1.0) * x, 289.0);
+        }
+
+        vec2 cellular2x2(vec2 P) {
+          #define K 0.142857142857
+          #define K2 0.0714285714285
+          #define jitter 0.8
+
+          vec2 Pi = mod(floor(P), 289.0);
+          vec2 Pf = fract(P);
+
+          vec4 Pfx = Pf.x + vec4(-0.5, -1.5, -0.5, -1.5);
+          vec4 Pfy = Pf.y + vec4(-0.5, -0.5, -1.5, -1.5);
+
+          vec4 p = permute(Pi.x + vec4(0.0, 1.0, 0.0, 1.0));
+          p = permute(p + Pi.y + vec4(0.0, 0.0, 1.0, 1.0));
+
+          vec4 ox = mod(p, 7.0) * K + K2;
+          vec4 oy = mod(floor(p * K), 7.0) * K + K2;
+
+          vec4 dx = Pfx + jitter * ox;
+          vec4 dy = Pfy + jitter * oy;
+
+          vec4 d = dx * dx + dy * dy;
+
+          d.xy = (d.x < d.y) ? d.xy : d.yx;
+          d.xz = (d.x < d.z) ? d.xz : d.zx;
+          d.xw = (d.x < d.w) ? d.xw : d.wx;
+          d.y = min(d.y, d.z);
+          d.y = min(d.y, d.w);
+
+          return sqrt(d.xy);
+        }
+
+        void main() {
+    vec2 uv = (v_local + 1.0) / 2.0;
+
+    float distX = min(uv.x, 1.0 - uv.x);
+    float distY = min(uv.y, 1.0 - uv.y);
+    float distToEdge = min(distX, distY);
+
+    float borderWidth = 0.2;
+
+    if (distToEdge <= borderWidth) {
+        // Cellular noise
+        float freq = 5.0;
+        vec2 F = cellular2x2(uv * freq);
+
+        // Noise intensity scaled by uncertainty
+        float n = smoothstep(0.0, v_uncertainty, F.x); // n ∈ [0,1]
+
+        // --- THE KEY CHANGE IS HERE ---
+        // Invert noise intensity for the alpha channel.
+        // n=1 (grain) -> invertedAlpha=0 (transparent)
+        // n=0 (no grain/background) -> invertedAlpha=1 (opaque black)
+        float invertedAlpha = 1.0 - n;
+        
+        // Output black color (v_color=0,0,0) with inverted alpha.
+        fragColor = vec4(v_color, invertedAlpha);
+    } else {
+        discard; // outside border fully transparent
+    }
+}
+
+
+
+      `;
+
+      // compile shaders
+      const vs = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vs, vertexSource);
+      gl.compileShader(vs);
+
+      const fs = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fs, fragmentSource);
+      gl.compileShader(fs);
+
+      this.program = gl.createProgram();
+      gl.attachShader(this.program, vs);
+      gl.attachShader(this.program, fs);
+      gl.linkProgram(this.program);
+
+      // buffers
+      this.posBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+      this.localBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.localBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(localCoords), gl.STATIC_DRAW);
+
+      this.uncBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.uncBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uncertainties), gl.STATIC_DRAW);
+
+      this.colorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    },
+
+    render(gl, args) {
+      gl.useProgram(this.program);
+
+      gl.uniformMatrix4fv(
+        gl.getUniformLocation(this.program, "u_matrix"),
+        false,
+        args.defaultProjectionData.mainMatrix
+      );
+
+      const bind = (name, buffer, size) => {
+        const loc = gl.getAttribLocation(this.program, name);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+      };
+
+      bind("a_pos", this.posBuffer, 2);
+      bind("a_local", this.localBuffer, 2);
+      bind("a_uncertainty", this.uncBuffer, 1);
+      bind("a_color", this.colorBuffer, 3);
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+      for (let i = 0; i < vertexCount; i++) {
+        gl.drawArrays(gl.TRIANGLE_FAN, i * 4, 4);
+      }
+    }
+  };
+
+  map.addLayer(layer);
+}
+
+
+export function addNoiseMapWithGrainSizeForMoranPValueToMap(geojson, map) {
+
+  // -------------------------------
+  // 1. Uncertainty normalization
+  // -------------------------------
+  const U_MIN = 0.01;   // ignore near-zero noise
+  const U_MAX = 0.5;    // cap extremes
+
+  function normalizeUncertainty(u) {
+    if (u === 0) u = 0.0001;
+    return Math.min(Math.max((u - U_MIN) / (U_MAX - U_MIN), 0), 1);
+  }
+
+  // -------------------------------
+  // 2. Prepare buffers
+  // -------------------------------
+  const vertices = [];
+  const localCoords = [];
+  const uncertainties = [];
+  const colors = [];
+
+  const squareLocal = [
+    [-1, -1],
+    [ 1, -1],
+    [ 1,  1],
+    [-1,  1]
+  ];
+
+  geojson.features.forEach(feature => {
+    const coords = feature.geometry.coordinates[0];
+    const uNorm = normalizeUncertainty(feature.properties.uncertainty);
+
+    for (let i = 0; i < 4; i++) {
+      const merc = MercatorCoordinate.fromLngLat({
+        lng: coords[i][0],
+        lat: coords[i][1]
+      });
+
+      vertices.push(merc.x, merc.y);
+      localCoords.push(...squareLocal[i]);
+      uncertainties.push(uNorm);
+
+      // neutral fill color (can be changed later)
+      colors.push(255, 255, 255);
+    }
+  });
+
+  const vertexCount = geojson.features.length;
+
+  // -------------------------------
+  // 3. Custom WebGL layer
+  // -------------------------------
+  const layer = {
+    id: "moran-uncertainty-noise-layer",
+    type: "custom",
+
+    onAdd(map, gl) {
+
+      const vertexSource = `#version 300 es
+        uniform mat4 u_matrix;
+
+        in vec2 a_pos;
+        in vec2 a_local;
+        in float a_uncertainty;
+        in vec3 a_color;
+
+        out vec2 v_local;
+        out float v_uncertainty;
+        out vec3 v_color;
+
+        void main() {
+          gl_Position = u_matrix * vec4(a_pos, 0.0, 1.0);
+          v_local = a_local;
+          v_uncertainty = a_uncertainty;
+          v_color = a_color;
+        }
+      `;
+
+      const fragmentSource = `#version 300 es
+        precision highp float;
+
+        in vec2 v_local;
+        in float v_uncertainty;
+        in vec3 v_color;
+
+        out vec4 fragColor;
+
+        // cellular noise helpers
+        vec4 permute(vec4 x) {
+          return mod((34.0 * x + 1.0) * x, 289.0);
+        }
+
+        vec2 cellular2x2(vec2 P) {
+          #define K 0.142857142857
+          #define K2 0.0714285714285
+          #define jitter 0.8
+
+          vec2 Pi = mod(floor(P), 289.0);
+          vec2 Pf = fract(P);
+
+          vec4 Pfx = Pf.x + vec4(-0.5, -1.5, -0.5, -1.5);
+          vec4 Pfy = Pf.y + vec4(-0.5, -0.5, -1.5, -1.5);
+
+          vec4 p = permute(Pi.x + vec4(0.0, 1.0, 0.0, 1.0));
+          p = permute(p + Pi.y + vec4(0.0, 0.0, 1.0, 1.0));
+
+          vec4 ox = mod(p, 7.0) * K + K2;
+          vec4 oy = mod(floor(p * K), 7.0) * K + K2;
+
+          vec4 dx = Pfx + jitter * ox;
+          vec4 dy = Pfy + jitter * oy;
+
+          vec4 d = dx * dx + dy * dy;
+
+          d.xy = (d.x < d.y) ? d.xy : d.yx;
+          d.xz = (d.x < d.z) ? d.xz : d.zx;
+          d.xw = (d.x < d.w) ? d.xw : d.wx;
+          d.y = min(d.y, d.z);
+          d.y = min(d.y, d.w);
+
+          return sqrt(d.xy);
+        }
+
+        void main() {
+    vec2 uv = (v_local + 1.0) / 2.0;
+
+    float distX = min(uv.x, 1.0 - uv.x);
+    float distY = min(uv.y, 1.0 - uv.y);
+    float distToEdge = min(distX, distY);
+
+    float borderWidth = 0.2;
+
+    if (distToEdge <= borderWidth) {
+        // Cellular noise
+        float freq = 5.0;
+        vec2 F = cellular2x2(uv * freq);
+
+        // Noise intensity scaled by uncertainty
+        float n = smoothstep(0.0, v_uncertainty, F.x); // n ∈ [0,1]
+
+        // --- THE KEY CHANGE IS HERE ---
+        // Invert noise intensity for the alpha channel.
+        // n=1 (grain) -> invertedAlpha=0 (transparent)
+        // n=0 (no grain/background) -> invertedAlpha=1 (opaque black)
+        float invertedAlpha = 1.0 - n;
+        
+        // Output black color (v_color=0,0,0) with inverted alpha.
+        fragColor = vec4(v_color, invertedAlpha);
+    } else {
+        discard; // outside border fully transparent
+    }
+}
+
+
+
+      `;
+
+      // compile shaders
+      const vs = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vs, vertexSource);
+      gl.compileShader(vs);
+
+      const fs = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fs, fragmentSource);
+      gl.compileShader(fs);
+
+      this.program = gl.createProgram();
+      gl.attachShader(this.program, vs);
+      gl.attachShader(this.program, fs);
+      gl.linkProgram(this.program);
+
+      // buffers
+      this.posBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+      this.localBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.localBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(localCoords), gl.STATIC_DRAW);
+
+      this.uncBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.uncBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uncertainties), gl.STATIC_DRAW);
+
+      this.colorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    },
+
+    render(gl, args) {
+      gl.useProgram(this.program);
+
+      gl.uniformMatrix4fv(
+        gl.getUniformLocation(this.program, "u_matrix"),
+        false,
+        args.defaultProjectionData.mainMatrix
+      );
+
+      const bind = (name, buffer, size) => {
+        const loc = gl.getAttribLocation(this.program, name);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+      };
+
+      bind("a_pos", this.posBuffer, 2);
+      bind("a_local", this.localBuffer, 2);
+      bind("a_uncertainty", this.uncBuffer, 1);
+      bind("a_color", this.colorBuffer, 3);
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+      for (let i = 0; i < vertexCount; i++) {
+        gl.drawArrays(gl.TRIANGLE_FAN, i * 4, 4);
+      }
+    }
+  };
+
+  map.addLayer(layer);
+}
+
