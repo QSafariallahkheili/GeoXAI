@@ -399,7 +399,161 @@
             </div>
             
       </v-card-item>
+      <!-- Legend for UHI -->
+      <v-card-item v-if="uhi_layer_activated===true">
+            <div class="legend-item">
+                <div class="color-strip strip1"  :style="{ backgroundColor: uhiColors[0]}"></div>
+                <div class="legend-label">{{  uhiClasses[0] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip2" :style="{ backgroundColor:  uhiColors[1]}"></div>
+                <div class="legend-label">{{ uhiClasses[1] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip3" :style="{ backgroundColor:  uhiColors[2]}"></div>
+                <div class="legend-label">{{ uhiClasses[2] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip4" :style="{ backgroundColor:  uhiColors[3]}"></div>
+                <div class="legend-label">{{ uhiClasses[3] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip5" :style="{ backgroundColor:  uhiColors[4]}"></div>
+                <div class="legend-label">{{ uhiClasses[4] }}</div>
+                <div class="legend-label-max">{{ uhiClasses[5] }}</div>
+            </div>
+            <div class="mb-0 font-weight-bold">
+               Urban Heat Island Intensity 
+            </div>
+            
+      </v-card-item>
+       <!-- Legend for Moran's I -->
+      <v-card-item v-if ="uhi_activated_tab==='moran' && selectedMoranFeature!==null">
+            <div class="legend-item">
+                <div class="color-strip strip1"  style="background-color: #ff0000;"></div>
+                <div >HH</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip2" style="background-color: #f2aa1b;"></div>
+                <div >HL</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip3" style="background-color: #0000ff;"></div>
+                <div >LL</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip4" style="background-color: #6ecff5;"></div>
+                <div class="">LH</div>
+            </div>
+            
+            <div class="mb-0 font-weight-bold">
+              Moran's I Clusters for {{selectedMoranFeature}}
+            </div>
+            
+      </v-card-item>
+       <!-- Legend for UHI Features -->
+      <v-card-item v-if="uhi_activated_tab==='feature' && selectedUHIFeatureSpecification!==null">
+            <div class="legend-item">
+                <div class="color-strip strip1"  :style="{ backgroundColor: selectedUHIFeatureSpecification.feature_color_palette[0]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIFeatureSpecification.feature_classes[1].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip2" :style="{ backgroundColor:  selectedUHIFeatureSpecification.feature_color_palette[1]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIFeatureSpecification.feature_classes[2].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip3" :style="{ backgroundColor:  selectedUHIFeatureSpecification.feature_color_palette[2]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIFeatureSpecification.feature_classes[3].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip4" :style="{ backgroundColor:  selectedUHIFeatureSpecification.feature_color_palette[3]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIFeatureSpecification.feature_classes[4].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip5" :style="{ backgroundColor:  selectedUHIFeatureSpecification.feature_color_palette[4]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIFeatureSpecification.feature_classes[5].toFixed(2) }}</div>
+            </div>
+            <div class="mb-0 font-weight-bold">
+               {{ selectedUHIFeatureSpecification.name }}
+            </div>
+            
+      </v-card-item>
+       <!-- Legend for UHI SHAP -->
+      <v-card-item v-if="uhi_activated_tab==='shap' && selectedUHIShapSpecification!==null">
+            <div class="legend-item">
+                <div class="color-strip strip1"  :style="{ backgroundColor: selectedUHIShapSpecification.shap_color_palette[0]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIShapSpecification.shap_classes[1].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip2" :style="{ backgroundColor:  selectedUHIShapSpecification.shap_color_palette[1]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIShapSpecification.shap_classes[2].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip3" :style="{ backgroundColor:  selectedUHIShapSpecification.shap_color_palette[2]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIShapSpecification.shap_classes[3].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip4" :style="{ backgroundColor:  selectedUHIShapSpecification.shap_color_palette[3]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIShapSpecification.shap_classes[4].toFixed(2) }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="color-strip strip5" :style="{ backgroundColor:  selectedUHIShapSpecification.shap_color_palette[4]}"></div>
+                <div class="legend-label-upper-bounds">{{  selectedUHIShapSpecification.shap_classes[5].toFixed(2) }}</div>
+            </div>
+            <div class="mb-0 font-weight-bold">
+               {{ selectedUHIShapSpecification.name }} SHAP Values
+            </div>
+            
+      </v-card-item>
+       <v-card-item  v-if="uhi_activated_tab==='bivariate'">
+            <div class="bivariate-legend-container">
+                <span style="text-orientation: mixed;  writing-mode: vertical-rl; margin-top: -35px;"> 
 
+                       {{selectedUHIBivariateFeatureSpecification.name }}
+                </span>
+                    
+                <div class="bivariate-y-axis">
+                    <span style="margin-top: -20px;">High</span>
+                    <span style="font-weight: bold; font-size: 1.5rem; margin-top: -15px;">&uarr;</span>
+                    <span>Low</span>
+                        
+                 </div>
+                    
+                    
+
+                <!-- Legend Grid -->
+                <div class="bivariate-legend">
+                
+                    <div class="uhi-bivariate-legend-grid">
+                        <div
+                            v-for="(color, index) in selectedUHIBivariateFeatureSpecification.colorPalette"
+                            :key="index"
+                            :id="'bivariate'+index"
+                            :style="{ backgroundColor: color }"
+                            class="uhi-bivariate-legend-cell"
+                        >
+                        <!--<span class="bivariate-legend-label">{{ key.replace('_', ' / ') }}</span>-->
+                        </div>
+                    </div>
+
+                    <!-- X-axis Labels and Arrow -->
+                    <div class="bivariate-x-axis">
+                        <span>Low</span>
+                        
+                        <span style="font-weight: bold; font-size: 1.5rem;">&rarr;</span>
+                        
+                        <span>High</span>
+                    </div>
+                    <span> 
+                    
+                   {{selectedUHIBivariateFeatureSpecification.secondVariable.name }}
+                    </span>
+                    
+                
+                    
+                </div>
+            </div>
+        </v-card-item>
         
     </v-card>
 </template>
@@ -440,21 +594,23 @@ function getStripeAngleStyle(angle) {
 const arrowVisHeights = [10, 15, 20, 25, 30]; // Adjust heights as needed
 const arrowVisWidth = [5, 10, 15, 20, 25]; // Adjust heights as needed
 const metadataDialogStore = useMetadataDialogStore();
-let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, ffs_layer_activated} = storeToRefs(useMapLegendStore())
+let { minMax, classIntervalsAndColor, rasterLegendUrl, rasterLegendTitle, activatedGeovisStyle, firstProperties, firstPropertiesClassIntervals, secondProperties,secondPropertiesClassIntervals, selectedColorPalette, uncertaintyStyle, legendVisVar1, legendVisVar2, ffs_layer_activated, selectedMoranFeature, uhi_layer_activated, uhi_activated_tab, selectedUHIFeatureSpecification, selectedUHIShapSpecification, selectedUHIBivariateFeatureSpecification} = storeToRefs(useMapLegendStore())
 let  bivariateColorpalette= ref({
-             'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
-             'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
-            'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
-        }) 
+  'high_low': '#be64ac', 'high_medium': '#8c62aa', 'high_high':'#3b4994',
+  'medium_low': '#dfb0d6', 'medium_medium': '#a5add3', 'medium_high':'#5698b9',
+  'low_low': '#e8e8e8', 'low_medium': '#ace4e4', 'low_high':'#5ac8c8'
+}) 
 
 let accumulativeFeatureColor = ref({
     'aspect':'#a6cee3', 'dem':'#1f78b4', 'ndvi':'#b2df8a', 'slope':'#33a02c', 'drought_index':'#fb9a99',
     'global_radiation':'#e31a1c', 'gndvi':'#fdbf6f', 'landcover':'#ff7f00', 'ndmi':'#cab2d6', 'precipitation':'#6a3d9a', 'lst':'#ffff99'
 })
 let ffsClasses = [0, 0.016, 0.068, 0.08, 0.147, 1]
+let uhiClasses = [23.02, 27.44, 30.74, 33.24, 35.52, 50.74]
 
     //5-class Reds from ColorBrewer
-    let ffsColors =['#fee5d9','#fcae91','#fb6a4a','#de2d26','#a50f15']
+let ffsColors =['#fee5d9','#fcae91','#fb6a4a','#de2d26','#a50f15']
+let uhiColors =["#2b83ba","#abdda4","#ffffbf","#fdae61","#d7191c"]
 const showMetadata = (featureName) =>{
     metadataDialogStore.assignMetadata(featureMetadata[featureName].metadata, featureName)
 
@@ -465,11 +621,12 @@ const showMetadata = (featureName) =>{
 
 .legend-ui {
     position: absolute;
-    right: 10px;
+    scale: 1.18;
+    right: 35px;
     bottom: 10px;
     z-index:10;
     background: white;
-    background-color: rgba(255,255,255,0.6);
+    background-color: rgba(255,255,255,1);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     -moz-backdrop-filter: blur(5px);
@@ -491,6 +648,10 @@ const showMetadata = (featureName) =>{
 
 .legend-label {
   text-align: left;
+  font-size: 0.7rem;
+}
+.legend-label-upper-bounds {
+  text-align: right;
   font-size: 0.7rem;
 }
 .legend-label-max {
@@ -518,6 +679,17 @@ const showMetadata = (featureName) =>{
   grid-template-columns: repeat(3, 50px); /* 3 columns */
   grid-template-rows: repeat(3, 50px); /* 3 rows */
   gap: 0px;
+}
+
+.uhi-bivariate-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 30px);
+  grid-template-rows: repeat(5, 30px);
+  transform: rotateX(180deg);
+}
+
+.uhi-bivariate-legend-cell {
+  transform: rotateX(180deg);
 }
 
 .bivariate-legend-cell {
