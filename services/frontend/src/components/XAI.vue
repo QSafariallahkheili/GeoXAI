@@ -1,5 +1,5 @@
 <template >
-    <XAILineChart @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addXaiPulseLayer"> </XAILineChart>
+    <XAILineChart :key="activeMenu" @addHoveredLayerToMap="addHoveredLayerToMap" @toggleCoverageLayerVisibilityWithValue ="toggleCoverageLayerVisibilityWithValue" @addXaiPulseLayer="addXaiPulseLayer"> </XAILineChart>
           
 </template>
 <script setup>
@@ -8,13 +8,24 @@ import XAILineChart from "@/components/XAILineChart.vue";
 import { useLayersStore } from '../stores/layers'
 import { storeToRefs } from 'pinia'
 import { useMapLegendStore } from '../stores/mapLegend'
+import { useMenuStore } from '../stores/menu'
+let { activeMenu, workspace } = storeToRefs(useMenuStore())
+
 const legendStore = useMapLegendStore();
+//let {uhi_layer_activated} = storeToRefs(useMapLegendStore())
+
 //import {getHistogram} from '../services/backend.calls'
 let { DBTableNames, addedLayers } = storeToRefs(useLayersStore())
 
-
 const emit = defineEmits(["addCoverageLayerToMap", "getClickedCoordinate", "toggleCoverageLayerVisibility", "removeLayerFromMap", "toggleCoverageLayerVisibilityWithValue", "addXaiPulseLayer"]);
-let layerName = "fire_susceptibility"
+let layerName
+if (activeMenu.value=="xai"){
+    
+    layerName="fire_susceptibility"
+}
+else if (activeMenu.value=="uhi"){
+    layerName="lst"
+}
 let layerType = ref("raster")
 let style = ref({'raster-opacity' : 1})
 
@@ -22,6 +33,12 @@ const addFireSusceptibilityToMap = () => {
     emit("addCoverageLayerToMap", layerName, layerType, style)
     emit("getClickedCoordinate")
 }
+/*const addUhiToMap = () => {
+    emit("addCoverageLayerToMap", layerName, layerType, style)
+    emit("getClickedCoordinate")
+    uhi_layer_activated.value=false
+
+}*/
 const addHoveredLayerToMap = (hoveredLayer) => {
     let index = DBTableNames.value.findIndex(obj => obj.name==hoveredLayer);
     console.log(index)
@@ -39,13 +56,13 @@ const addHoveredLayerToMap = (hoveredLayer) => {
 
     }
     
-    legendStore.setActivatedLegend('visible',hoveredLayer)
+    legendStore.setActivatedLegend('visible',hoveredLayer, workspace.value)
 }
 
 const toggleCoverageLayerVisibilityWithValue = (layerId, visStatus)=>{
     emit("toggleCoverageLayerVisibilityWithValue", layerId, visStatus)
     if (layerId){
-        legendStore.setActivatedLegend(visStatus,layerId)
+        legendStore.setActivatedLegend(visStatus,layerId, workspace.value)
         
     }
            
@@ -65,13 +82,19 @@ const addXaiPulseLayer = (clickedCoordinates) => {
     getHistogram()
 }*/
 onMounted(() => {
-    addFireSusceptibilityToMap()
+    if(activeMenu.value=="xai"){
+        addFireSusceptibilityToMap()
+
+    }
+    else if(activeMenu.value=="uhi"){
+        //addUhiToMap()
+        emit("getClickedCoordinate")
+    }
     //getHistogramFromBackend()
 
 })
 
 onUnmounted(()=>{
-    console.log("unmounted")
     emit("removeLayerFromMap", "xai-pulse")
 })
 

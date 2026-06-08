@@ -1,22 +1,29 @@
 <template >
    <!--<canvas v-show="shapValues!==null" class="xai-chart" id="shapChart" width="600" height="400" ></canvas>--> 
-   <div>
-    <svg v-show="shapValues !== null" class="xai-chart" id="shapChart"></svg>
+   <div v-show="shapValues !== null">
+    <v-btn 
+        density="compact" 
+        icon="mdi-close" 
+        style="position: absolute; top: 10px; right: 10px; z-index: 1000; background-color: transparent;"
+        @click="closeChart()"
+        ></v-btn>
+    <svg  class="xai-chart" id="shapChart"></svg>
   </div>
 </template>
 <script setup>
 import { ref, watch, onUnmounted, onMounted, defineEmits } from "vue"
 import { storeToRefs } from 'pinia'
 import { useXAIStore } from '../stores/xai'
-import { getLocalShapValues } from "../services/backend.calls";
+import { getLocalShapValues, getLocalShapValuesForUHI } from "../services/backend.calls";
 import { useMenuStore } from '../stores/menu'
 
 import * as turf from "@turf/turf";
 import * as d3 from "d3";
-import histogramValues from '../assets/histogramValues'
+import histogramValuesHUI from '../assets/UHIHistogramValues'
+import histogramValuesFFS from '../assets/histogramValues'
 let { clickedCoordinates, localShapValues } = storeToRefs(useXAIStore())
 let { activeMenu } = storeToRefs(useMenuStore())
-
+let histogramValues = ref(null)
 const xaiStore = useXAIStore();
 
 let shapValues = ref(null)
@@ -26,7 +33,16 @@ let chartInstance = null;
 let hoveredElement = ref(null)
 let clickedElement = ref(null)
 const emit = defineEmits(["addHoveredLayerToMap", "toggleCoverageLayerVisibilityWithValue", "addXaiPulseLayer"]);
+onMounted( async ()=>{
+  if(activeMenu.value==="xai"){
+    histogramValues.value = histogramValuesFFS
+  }
+  else if (activeMenu.value==="uhi"){
+    histogramValues.value = histogramValuesHUI
+  }
+  console.log(histogramValues.value,  "histogram values in on mounted" )
 
+})
 // Function to find the index of the closest value in an array
 const findClosestIndex = (array, targetValue)=> {
   let minDiff = Number.MAX_VALUE;
@@ -216,7 +232,7 @@ const renderChart = () => {
 const xAxis = d3.axisBottom(xScale);
 const yAxis = d3.axisLeft(yScale)
   .tickFormat(d => {
-    const maxLabelLength = 10;
+    const maxLabelLength = 30;
     const fullCapsLabels = ['ndvi', 'dem', 'gndvi', 'ndmi', 'lst'];
 
     // Replace underscores with spaces
@@ -242,8 +258,8 @@ chartGroup.append('g')
 
 // Draw histograms for each key AFTER axes
 const marginLeft = 160;
-Object.keys(histogramValues).forEach(key => {
-  const histogramData = histogramValues[key];
+Object.keys(histogramValues.value).forEach(key => {
+  const histogramData = histogramValues.value[key];
 
   const tickGroup = chartGroup.append('g')
     .attr('class', 'tick-group')
@@ -330,7 +346,7 @@ Object.keys(histogramValues).forEach(key => {
     .style('font-family', 'sans-serif')
     .style('font-weight', 'normal')
     .style('fill', 'black')
-    .text(histogramData.values[0].toFixed(2));
+    .text(histogramData.values[0].toFixed(1));
 
   tickGroup.append('text')
     .attr('x', chartWidth + 2)
@@ -340,7 +356,7 @@ Object.keys(histogramValues).forEach(key => {
     .style('font-family', 'sans-serif')
     .style('font-weight', 'normal')
     .style('fill', 'black')
-    .text(histogramData.values[histogramData.values.length - 1].toFixed(2));
+    .text(histogramData.values[histogramData.values.length - 1].toFixed(1));
 });
 
 
@@ -377,58 +393,53 @@ chartGroup.append('text')
   .attr('text-anchor', 'middle')
   .style('font-family', 'sans-serif')
 
-  .text(`SHAP Values (wildfire probability: ${predict_proba?.value?.toFixed(3)})`);
+  .text(`SHAP Values`);
 
-// Add SHAP values text and legend items at the bottom
-const bottomGroup = chartGroup.append('g')
+  // Add SHAP values text and legend items at the bottom
+  const bottomGroup = chartGroup.append('g')
   
   .attr('transform', `translate(${width / 2 - 100}, ${height + margin.bottom - 18})`); // Adjust positioning as needed
 
-// SHAP values text
-/*bottomGroup.append('text')
-  .attr('x', 0)
-  .attr('y', 0)
-  .attr('text-anchor', 'middle')
-  .text('SHAP values');*/
 
-// Legend items
-const legendData = [
-  { label: 'Fire', color: 'rgba(255, 99, 132, 0.8)' },
-  { label: 'Non-fire', color: 'rgba(75, 192, 192, 0.8)' }
-];
+  // Legend items
+  const legendData = [
+    { label: 'Negative', color: 'rgba(255, 99, 132, 0.8)' },
+    { label: 'Positive', color: 'rgba(75, 192, 192, 0.8)' }
+  ];
 
-const legendGroup = bottomGroup.selectAll('.legend-item')
-  .data(legendData)
-  .enter()
-  .append('g')
-  .attr('class', 'legend-item')
-  .attr('transform', (d, i) => `translate(${i * 80 + 40}, -12)`); // Adjust spacing between legend items
+  const legendGroup = bottomGroup.selectAll('.legend-item')
+    .data(legendData)
+    .enter()
+    .append('g')
+    .attr('class', 'legend-item')
+    .attr('transform', (d, i) => `translate(${i * 80 + 40}, -12)`); // Adjust spacing between legend items
 
-legendGroup.append('rect')
-  .attr('width', 35)
-  .attr('height', 15)
-  .attr('fill', d => d.color)
-  .attr('rx', 2) // Rounded corners for the legend color box
-  .attr('ry', 2);
+  legendGroup.append('rect')
+    .attr('width', 35)
+    .attr('height', 15)
+    .attr('fill', d => d.color)
+    .attr('rx', 2) // Rounded corners for the legend color box
+    .attr('ry', 2);
 
-legendGroup.append('text')
-  .attr('x', 40)
-    .attr('y', 12)
-   .style('font-size', '10px')
-    .style('font-family', 'sans-serif')
-    .style('font-weight', 'normal')
-    .style('fill', 'black')
+  legendGroup.append('text')
+    .attr('x', 40)
+      .attr('y', 12)
+    .style('font-size', '10px')
+      .style('font-family', 'sans-serif')
+      .style('font-weight', 'normal')
+      .style('fill', 'black')
 
-    .text(d => d.label);
+      .text(d => d.label);
 
   }
 };
 
+const closeChart = () => {
+    shapValues.value = null;
+   
+    d3.select('#shapChart').selectAll('*').remove();
+};
 
-onMounted( async ()=>{
-  console.log(histogramValues)
-
-})
 watch(clickedCoordinates, async () => {
   // check if the clicked coordinates are inside the AOI
   let layerBBOX = [11.266490630334411, 51.791199895877064, 14.4502996603007, 53.558814880433424]
@@ -456,6 +467,14 @@ watch(clickedCoordinates, async () => {
     shapValues.value = localShapValues.value.shap_values.class_not_fire
     raster_values_at_clicked_point.value = localShapValues.value.raster_values_at_clicked_point
     predict_proba.value = localShapValues.value.predicted_probability.probability_not_fire
+    renderChart();
+  }
+  else if (activeMenu.value==="uhi"){
+    const response = await getLocalShapValuesForUHI(clickedCoordinates.value)
+    shapValues.value = response.shap_values
+    raster_values_at_clicked_point.value = response.raster_values_at_clicked_point
+    predict_proba.value = response.predicted_probability
+    xaiStore.assignLocalShapValues(response)
     renderChart();
   }
   
