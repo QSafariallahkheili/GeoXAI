@@ -63,6 +63,19 @@
             </v-btn>
         </template>
     </v-tooltip>
+    <v-tooltip text="uhi" location="top">
+        <template v-slot:activator="{ props }">
+            <v-btn 
+                v-bind="props"
+                class="ml-2" 
+                v-ripple="{ class: 'primary--text' }"
+                @click="setActiveButton('uhi')"
+                :style="{ color: activeMenu === 'uhi' ? 'blue' : '' }"
+            >
+                UHI
+            </v-btn>
+        </template>
+    </v-tooltip>
 
 </div>    
 
@@ -76,12 +89,13 @@ import { useAlertStore } from '@/stores/alert'
 const menuStore = useMenuStore();
 const alertStore = useAlertStore()
 
-const emit = defineEmits(["removeLayerFromMap", "addLayerToMap"]);
+const emit = defineEmits(["removeLayerFromMap", "addLayerToMap", "toggleCoverageLayerVisibilityWithValue"]);
 let style = ref(null)
 let layerType = ref(null)
 const activeMenu = ref(null);
 
 function setActiveButton(button) {
+    
     if(activeMenu.value==button){
         activeMenu.value = null
     }
@@ -96,6 +110,7 @@ function setActiveButton(button) {
             btnColor: "blue"
         })
         emit("removeLayerFromMap", "grid")
+        menuStore.setWorkspace('geoxai')
     }
     else if (button==="filter"){
         emit("removeLayerFromMap", "xai-pulse")
@@ -118,7 +133,10 @@ function setActiveButton(button) {
         emit("addLayerToMap",layerSpecification)
         emit("removeLayerFromMap", "fire_susceptibility")
     }
-    
+    else if (button==="uhi"){
+        menuStore.setWorkspace('uhi')
+
+    }
 }
 
 </script>
