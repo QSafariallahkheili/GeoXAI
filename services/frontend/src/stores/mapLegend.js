@@ -21,7 +21,13 @@ export const useMapLegendStore = defineStore ({
         legendVisVar1: null,
         legendVisVar2: null,
         secondPropertiesClassIntervals: null,
-        ffs_layer_activated:false
+        ffs_layer_activated:false,
+        selectedMoranFeature:null,
+        uhi_activated_tab: "feature",
+        uhi_layer_activated:false,
+        selectedUHIFeatureSpecification: null,
+        selectedUHIShapSpecification: null,
+        selectedUHIBivariateFeatureSpecification: null,
     }),
     actions: {
         assignClassificationValues(data) {
@@ -29,9 +35,10 @@ export const useMapLegendStore = defineStore ({
             this.classIntervalsAndColor = data.classIntervalsAndColor
            
         },
-        setActivatedLegend(visStatus,layerId){
+        setActivatedLegend(visStatus,layerId, workspace) {
+            console.log("setActivatedLegend called with workspace:", workspace)
             if (visStatus=='visible'){
-                this.rasterLegendUrl=process.env.VUE_APP_GEOSERVER_URL+'/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=15&HEIGHT=15&LAYER=geoxai:'+layerId+'&legend_options=dx:10;dy:0;fontSize:12;countMatched:true;fontAntiAliasing:true&Transparent=True'
+                this.rasterLegendUrl=process.env.VUE_APP_GEOSERVER_URL+'/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=15&HEIGHT=15&LAYER='+workspace+':'+layerId+'&legend_options=dx:10;dy:0;fontSize:12;countMatched:true;fontAntiAliasing:true&Transparent=True'
                 this.rasterLegendTitle = layerId
             }
             else {
@@ -42,6 +49,24 @@ export const useMapLegendStore = defineStore ({
         },
         assignColorPalette(colorPalette) {
             this.selectedColorPalette = colorPalette
+        },
+        SetMoranLegendSpecifications(featureName) {
+           this.selectedMoranFeature = featureName
+        },
+        SetActivatedUHITab(tabName){
+            this.uhi_activated_tab = tabName
+        },
+        SetLegendSpecifications(feature){
+            this.selectedUHIFeatureSpecification = feature
+        },
+        SetLegendSpecificationsforShap(feature){
+            this.selectedUHIShapSpecification = feature
+        },
+        SetUHIBivariateLegendSpecifications(feature, secondVariable, colorPalette){
+            this.selectedUHIBivariateFeatureSpecification = feature
+            console.log(this.selectedUHIBivariateFeatureSpecification, "selectedUHIBivariateFeatureSpecification in store")
+            this.selectedUHIBivariateFeatureSpecification['secondVariable'] = secondVariable
+            this.selectedUHIBivariateFeatureSpecification['colorPalette'] = colorPalette
         }
        
     }
