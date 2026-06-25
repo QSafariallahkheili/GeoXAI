@@ -285,31 +285,44 @@ const addDynamicTernaryGridToMap = (name, features) => {
      
   });
  
+    let isTernaryLoading = false;
+
     map.on('dataloading', (e) => {
-      // Only trigger if it's our specific vector source
-      if (e.sourceId === sourceName && uhi_activated_tab.value === 'ternary') {
-          progressStore.setProgressBar({
-              text: "Retrieving tiles...",
-              progress: true
-          });
-      }
+        // Only trigger if it's our specific vector source
+        if (e.sourceId === sourceName && uhi_activated_tab.value === 'ternary') {
+            isTernaryLoading = true;
+            progressStore.setProgressBar({
+                text: "Retrieving tiles...",
+                progress: true
+            });
+        }
     });
 
-    map.on('data', (e) => {
-      if (e.sourceId !== sourceName) return;
-
-      // Check if the source is fully loaded and tiles are ready
-      if (e.dataType === 'source' && e.isSourceLoaded) {
-          progressStore.setProgressBar({
-              progress: false
-          });
-      }
-    });
-    // Hide the progress bar if the source is removed manually
-    map.on('sourcedata', (e) => {
-        if (e.sourceId === sourceName && !map.getSource(sourceName)) {
+    // Clean helper to close the progress bar safely
+    const hideTernaryProgress = () => {
+        if (isTernaryLoading) {
+            isTernaryLoading = false;
             progressStore.setProgressBar({ progress: false });
         }
+    };
+
+    map.on('data', (e) => {
+        if (uhi_activated_tab.value !== 'ternary') return;
+
+        // Check if the source is fully loaded and tiles are ready
+        if (e.sourceId === sourceName && e.dataType === 'source' && e.isSourceLoaded) {
+            hideTernaryProgress();
+        }
+    });
+
+    // Safety Net 1: Map finishes rendering completely (handles cache hits perfectly)
+    map.on('idle', () => {
+        hideTernaryProgress();
+    });
+
+    // Safety Net 2: Network or tile rendering errors happen
+    map.on('error', () => {
+        hideTernaryProgress();
     });
   
 
@@ -464,25 +477,50 @@ const addMoranFeatureToMap = (name, attribute, features)=>{
           };
           uhiStore.assignMoranUncertaintyArray({moranUncertaintyArray: uncertaintyGeoJSON})
       });
-       map.on('data', (e) => {
-    if (uhi_activated_tab.value !== 'moran') return; 
-    if (e.dataType !== 'source' ) return; 
-    if (e.source.type!== 'vector' ) return; 
-      progressStore.setProgressBar({
-          text: `Retrieving the tiles..`,
-          progress: true
-      })
-    if (
-      e.sourceId === sourceName &&
-      e.dataType === 'source' &&
-      e.tile &&
-      e.tile.state === 'loaded'
-    ) {
-       progressStore.setProgressBar({
-        progress: false
-      })
-    }
-  })
+       let isMoranLoading = false;
+
+    // 1. Start the progress bar ONLY when your specific source starts loading
+    map.on('dataloading', (e) => {
+        if (uhi_activated_tab.value !== 'moran') return;
+        
+        if (e.sourceId === sourceName) {
+            isMoranLoading = true;
+            progressStore.setProgressBar({
+                text: "Retrieving the tiles..",
+                progress: true
+            });
+        }
+    });
+
+    // Helper to turn off progress bar safely
+    const hideMoranProgress = () => {
+        if (isMoranLoading) {
+            isMoranLoading = false;
+            progressStore.setProgressBar({ progress: false });
+        }
+    };
+
+    // 2. Stop the progress bar when the ENTIRE source is ready (not just one tile)
+    map.on('data', (e) => {
+        if (uhi_activated_tab.value !== 'moran') return;
+        
+        if (
+            e.sourceId === sourceName &&
+            e.dataType === 'source' &&
+            e.isSourceLoaded
+        ) {
+            hideMoranProgress();
+        }
+    });
+
+    // 3. Safety Nets to prevent hanging loaders on cache hits or network errors
+    map.on('idle', () => {
+        hideMoranProgress();
+    });
+
+    map.on('error', () => {
+        hideMoranProgress();
+    });
   map.on("click", sourceName, (e) => {
     const f = e.features[0];
 
@@ -552,32 +590,39 @@ const addDynamicFeatureGridToMap = (feature, features) => {
     },
   }, 'place_suburb');
 
+   let isTilesLoading = false;
+
     map.on('dataloading', (e) => {
-      // Only trigger if it's our specific vector source
-      if (e.sourceId === sourceName && uhi_activated_tab.value === 'feature') {
-          progressStore.setProgressBar({
-              text: `Retrieving ${feature.name} tiles...`,
-              progress: true
-          });
-      }
+        if (e.sourceId === sourceName && uhi_activated_tab.value === 'feature') {
+            isTilesLoading = true;
+            progressStore.setProgressBar({
+                text: `Retrieving ${feature.name} tiles...`,
+                progress: true
+            });
+        }
     });
 
-    map.on('data', (e) => {
-      if (e.sourceId !== sourceName) return;
-
-      // Check if the source is fully loaded and tiles are ready
-      if (e.dataType === 'source' && e.isSourceLoaded) {
-          progressStore.setProgressBar({
-              progress: false
-          });
-      }
-    });
-
-    // Hide the progress bar if the source is removed manually
-    map.on('sourcedata', (e) => {
-        if (e.sourceId === sourceName && !map.getSource(sourceName)) {
+    const hideProgressBar = () => {
+        if (isTilesLoading) {
+            isTilesLoading = false;
             progressStore.setProgressBar({ progress: false });
         }
+    };
+
+    map.on('data', (e) => {
+        if (e.sourceId === sourceName && e.dataType === 'source' && e.isSourceLoaded) {
+            hideProgressBar();
+        }
+    });
+
+    // Safety Net 1: Map has finished rendering and is doing nothing
+    map.on('idle', () => {
+        hideProgressBar();
+    });
+
+    // Safety Net 2: Network or tile loading errors happen
+    map.on('error', () => {
+        hideProgressBar();
     });
   map.on("click", sourceName, (e) => {
     const f = e.features[0];
@@ -651,25 +696,49 @@ const addDynamicShapGridToMap = (feature, features) => {
     },
   }, 'place_suburb');
 
+  let isShapLoading = false;
+
+  // 1. ONLY turn the progress bar ON when a source starts loading
+  map.on('dataloading', (e) => {
+      if (uhi_activated_tab.value !== 'shap') return;
+      if (e.sourceId === sourceName) {
+          isShapLoading = true;
+          progressStore.setProgressBar({
+              text: `Retrieving the ${feature.name} SHAP tiles..`,
+              progress: true
+          });
+      }
+  });
+
+  // Helper to turn off progress bar safely
+  const hideShapProgress = () => {
+      if (isShapLoading) {
+          isShapLoading = false;
+          progressStore.setProgressBar({ progress: false });
+      }
+  };
+
+  // 2. Turn it OFF when your specific source finishes loading
   map.on('data', (e) => {
-    if (uhi_activated_tab.value !== 'shap') return; 
-    if (e.dataType !== 'source' ) return; 
-    if (e.source.type!== 'vector' ) return; 
-    progressStore.setProgressBar({
-        text: `Retrieving the ${feature.name} tiles..`,
-        progress: true
-    })
-    if (
-      e.sourceId === sourceName &&
-      e.dataType === 'source' &&
-      e.tile &&
-      e.isSourceLoaded === true
-    ) {
-       progressStore.setProgressBar({
-        progress: false
-      })
-    }
-  })
+      if (uhi_activated_tab.value !== 'shap') return;
+      
+      if (
+          e.sourceId === sourceName &&
+          e.dataType === 'source' &&
+          e.isSourceLoaded
+      ) {
+          hideShapProgress();
+      }
+  });
+
+  // 3. SAFETY NETS: Map finishes rendering completely or hits an error
+  map.on('idle', () => {
+      hideShapProgress();
+  });
+
+  map.on('error', () => {
+      hideShapProgress();
+  });
   map.on("click", sourceName, (e) => {
     const f = e.features[0];
 
@@ -791,26 +860,50 @@ const addDynamicBivariateGridToMap = (feature, feature2, BIVARIATE_COLORS, featu
     },
   }, 'place_suburb');
 
-   map.on('data', (e) => {
-    if (uhi_activated_tab.value !== 'bivariate') return; 
-    if (e.dataType !== 'source' ) return; 
-    if (e.source.type!== 'vector' ) return; 
+   let isBivariateLoading = false;
 
-    progressStore.setProgressBar({
-        text: "Retrieving the tiles..",
-        progress: true
-    })
-    if (
-      e.sourceId === sourceName &&
-      e.dataType === 'source' &&
-      e.tile &&
-      e.tile.state === 'loaded'
-    ) {
-       progressStore.setProgressBar({
-        progress: false
-      })
-    }
-  })
+    // 1. Start the progress bar ONLY when the source actually starts loading
+    map.on('dataloading', (e) => {
+        if (uhi_activated_tab.value !== 'bivariate') return;
+        
+        if (e.sourceId === sourceName) {
+            isBivariateLoading = true;
+            progressStore.setProgressBar({
+                text: "Retrieving the tiles..",
+                progress: true
+            });
+        }
+    });
+
+    // Helper to turn off progress bar safely
+    const hideBivariateProgress = () => {
+        if (isBivariateLoading) {
+            isBivariateLoading = false;
+            progressStore.setProgressBar({ progress: false });
+        }
+    };
+
+    // 2. Stop the progress bar when the entire source is finished
+    map.on('data', (e) => {
+        if (uhi_activated_tab.value !== 'bivariate') return;
+        
+        if (
+            e.sourceId === sourceName &&
+            e.dataType === 'source' &&
+            e.isSourceLoaded // Checks the whole source, not just one individual tile
+        ) {
+            hideBivariateProgress();
+        }
+    });
+
+    // 3. Safety Nets (Essential for Mapbox/Maplibre state stability)
+    map.on('idle', () => {
+        hideBivariateProgress();
+    });
+
+    map.on('error', () => {
+        hideBivariateProgress();
+    });
   map.on("click", sourceName, (e) => {
     const f = e.features[0];
 
