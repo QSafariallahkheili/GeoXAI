@@ -237,6 +237,7 @@
                 <v-row>
                     <v-checkbox
                         v-model="moranUncertainty"
+                        label="P-value"
                         class="ml-1"
                         @update:modelValue="applyMoranUncertaintyOverlay(uncertainty, selectedMoranFeature.value)"
                     ></v-checkbox>
@@ -288,6 +289,7 @@
                <v-row>
                     <v-checkbox
                         v-model="uncertainty"
+                         label="Uncertainty"
                         class="ml-1"
                         @update:modelValue="applyUncertaintyOverlay(uncertainty, selectedTernaryfeature.value)"
                     ></v-checkbox>
