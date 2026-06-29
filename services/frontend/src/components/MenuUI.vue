@@ -82,17 +82,27 @@
       
 </template>
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, watch } from 'vue';
 import { useMenuStore } from '../stores/menu'
 import IconXai from '../assets/icons/IconXai.vue';
 import { useAlertStore } from '@/stores/alert'
+import { useMapStore } from '../stores/map'
+import { storeToRefs } from 'pinia'
+
 const menuStore = useMenuStore();
 const alertStore = useAlertStore()
+const { mapLoaded } = storeToRefs(useMapStore())
 
 const emit = defineEmits(["removeLayerFromMap", "addLayerToMap", "toggleCoverageLayerVisibilityWithValue"]);
 let style = ref(null)
 let layerType = ref(null)
 const activeMenu = ref(null);
+
+watch(mapLoaded, (loaded) => {
+  if (loaded) {
+    setActiveButton('uhi')
+  }
+}, { immediate: true })
 
 function setActiveButton(button) {
     
@@ -134,6 +144,7 @@ function setActiveButton(button) {
         emit("removeLayerFromMap", "fire_susceptibility")
     }
     else if (button==="uhi"){
+        console.log(button)
         menuStore.setWorkspace('uhi')
 
     }
@@ -143,6 +154,7 @@ function setActiveButton(button) {
 
 <style scoped>
 .menue-ui{
+    visibility: hidden;
     display: flex;
   justify-content: space-between;
   position: absolute;
