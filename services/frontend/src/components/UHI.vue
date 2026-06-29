@@ -33,7 +33,7 @@
                             v-model="selectedFeature"
                             :items="features"
                             hide-details
-                            
+                            placeholder="Please select 2nd feature"
                             item-title="name" 
                             return-object
                             variant="outlined"
@@ -86,6 +86,7 @@
                         <v-select
                             v-model="selectedShapFeature"
                             :items="features"
+                            placeholder="Please select"
                             hide-details
                             item-title="name" 
                             return-object
@@ -142,6 +143,7 @@
                         <v-select
                             v-model="selectedBivariateFeature"
                             :items="bivariateFeatures1"
+                            placeholder="Please select 1st feature"
                             hide-details
                             item-title="name" 
                             return-object
@@ -152,6 +154,7 @@
                         <v-select
                             v-model="selectedBivariateFeature2"
                             :items="filteredBivariateFeatures2"
+                            placeholder="Please select 2nd feature"
                             hide-details
                             item-title="name" 
                             return-object
@@ -199,6 +202,7 @@
                        <v-select
                             v-model="selectedMoranFeature"
                             :items="moranFeatures"
+                            placeholder="Please select"
                             hide-details
                             item-title="name" 
                             return-object
@@ -250,6 +254,7 @@
                         <v-select
                             v-model="selectedTernaryfeature"
                             :items="features"
+                            placeholder="Please select a feature"
                             hide-details
                             item-title="name" 
                             return-object
@@ -290,6 +295,7 @@
                     <v-checkbox
                         v-model="uncertainty"
                          label="Uncertainty"
+                          :disabled="!selectedTernaryfeature"
                         class="ml-1"
                         @update:modelValue="applyUncertaintyOverlay(uncertainty, selectedTernaryfeature.value)"
                     ></v-checkbox>
