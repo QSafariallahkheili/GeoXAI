@@ -61,7 +61,7 @@ const uhiStore = useUhiStore()
 
 
 
-const { center, zoom, style, maxPitch } = storeToRefs(useMapStore())
+const { center, zoom, style, maxPitch, mapLoaded } = storeToRefs(useMapStore())
 
 const mapContainer = ref(null);
 
@@ -79,6 +79,7 @@ onMounted(() => {
     zoom: zoom.value,
     maxPitch: maxPitch.value
   });
+  
   drawControl = new MaplibreTerradrawControl({
       modes: ['circle', 'polygon'], // Drawing modes to enable
       open: false, 
@@ -87,6 +88,7 @@ onMounted(() => {
     // Add the drawing control to the map
   map.addControl(drawControl, 'bottom-left');
   map.on("load", ()=>{
+    mapLoaded.value= true
     //map.setPaintProperty('place_suburb', 'text-halo-width', 0);
     //map.setPaintProperty('place_suburb', 'text-halo-blur', 0);
     map.setLayoutProperty('place_suburb', 'text-font', [
