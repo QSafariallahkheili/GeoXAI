@@ -355,6 +355,30 @@ onMounted(() => {
     legendStore.SetActivatedUHITab(activeTab.value);
     legendStore.SetLegendSpecifications(UHIVectorSpecification.value);
 })
+const selectedRefs = [
+  selectedTernaryfeature,
+  selectedMoranFeature,
+  selectedFeature,
+  selectedShapFeature,
+  selectedBivariateFeature,
+  selectedBivariateFeature2,
+];
+
+watch(
+  selectedRefs,
+  (newValues, oldValues) => {
+    newValues.forEach((value, index) => {
+      // Only react when a ref has just been assigned a non-null value
+      if (value !== null && value !== oldValues[index]) {
+        selectedRefs.forEach((refItem, i) => {
+          if (i !== index) {
+            refItem.value = null;
+          }
+        });
+      }
+    });
+  }
+);
 const filteredBivariateFeatures2 = computed(() => {
   if (!selectedBivariateFeature.value) {
     return bivariateFeatures2
@@ -657,7 +681,6 @@ const addUHIPredictorToMap = ()=>{
     emit('addDynamicFeatureGridToMap', selectedFeature.value, features.value)
 }
 const addUHIShapToMap = ()=>{
-    console.log("activeTab", activeTab);
     legendStore.SetActivatedUHITab(activeTab.value);
     legendStore.SetLegendSpecificationsforShap(selectedShapFeature.value);
 
@@ -681,7 +704,6 @@ const addUHIBivariateToMap = ()=>{
     
     legendStore.SetActivatedUHITab(activeTab.value);
     legendStore.SetUHIBivariateLegendSpecifications(selectedBivariateFeature.value, selectedBivariateFeature2.value, UHI_BIVARIATE_COLORS.value);
-    console.log(selectedBivariateFeature.value, "selectedBivariateFeature.value")
     emit('addDynamicBivariateGridToMap', selectedBivariateFeature.value, selectedBivariateFeature2.value, UHI_BIVARIATE_COLORS.value, features.value)
 }
 watch(ternaryArray, (newVal) => {
