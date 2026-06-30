@@ -156,7 +156,6 @@ map.on('style.load', () => {
 const addLayerToMap = (layerSpecification)=>{
   let vectorSourceLayer = "public"+"."+layerSpecification.layerNameInDatabase;
   let vectorUrl = vectorServer + vectorSourceLayer + "/{z}/{x}/{y}.pbf";
-  console.log(layerSpecification, "layerSpecification")
   if(map.getSource(layerSpecification.id)==undefined){
     map.addSource(layerSpecification.id, {
         "type": "vector",
@@ -352,7 +351,7 @@ const highlightMapHex = (payload)=>{
             selectedHighlightFeature = f
         }
     });
-    const sourceId = 'highlight-outline-source';
+    const sourceId = 'highlight-outline-layer';
     const layerId = 'highlight-outline-layer';
 
     if (map.getLayer(layerId)) {
@@ -642,7 +641,6 @@ const addDynamicFeatureGridToMap = (feature, features) => {
 
 }
 const addDynamicShapGridToMap = (feature, features) => {
-  console.log(feature, "feature in addDynamicFeatureGridToMap")
   let name = JSON.parse(JSON.stringify(feature.value));
 
   // build source name
@@ -675,7 +673,6 @@ const addDynamicShapGridToMap = (feature, features) => {
   });
 
   // Remove the prefix "uhi_"
-  console.log(str, "str in addDynamicFeatureGridToMap")
   // Build your fill layer dynamically
   map.addLayer({
     id: sourceName,
@@ -752,7 +749,6 @@ const addDynamicShapGridToMap = (feature, features) => {
   
 }
 const addDynamicBivariateGridToMap = (feature, feature2, BIVARIATE_COLORS, features) => {
-  console.log(feature2, "feature2 in addDynamicBivariateGridToMap")
   let name = JSON.parse(JSON.stringify(feature.value));
   const sourceName = `${name}_summary`;
   // build source name
@@ -818,7 +814,6 @@ const addDynamicBivariateGridToMap = (feature, feature2, BIVARIATE_COLORS, featu
   });
 
   // Remove the prefix "uhi_"
-  console.log(str, "str in addDynamicFeatureGridToMap")
   // Build your fill layer dynamically
   map.addLayer({
     id: sourceName,
@@ -979,7 +974,6 @@ const toggleCoverageLayerVisibility = (clickedLayerName)=>{
 
 }
 const setLayerPaintProperty = (layerId, styleProperty, fillStyle)=>{
-  console.log(layerId, styleProperty, fillStyle, "setLayerPaintProperty");
   map.setPaintProperty(
     layerId,
     styleProperty,

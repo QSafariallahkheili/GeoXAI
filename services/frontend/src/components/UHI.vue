@@ -376,7 +376,9 @@ watch(
         });
       }
     });
+    emit("removeLayerFromMap", "highlight-outline-layer");
   }
+
 );
 const filteredBivariateFeatures2 = computed(() => {
   if (!selectedBivariateFeature.value) {
@@ -509,6 +511,7 @@ function drawTernaryBase(selector, size = 260) {
 
   return svg;
 }
+const selectedHexId = ref(null);
 function updateTernaryPoints(svg, data, size = 260) {
   if (!svg) return;
 
@@ -533,8 +536,36 @@ function updateTernaryPoints(svg, data, size = 260) {
     .attr("opacity", 0)
     .attr("cx", size / 2)    // start from center
     .attr("cy", size / 2)
-    .on("mouseover", function(event, d) {
+    .on("mouseover", function() {
         d3.select(this)
+            .attr("r", 7)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+
+        
+    })
+    .on("mouseout", function (event, d) {
+
+        if (event, d){
+            if(selectedHexId.value==null){
+                emit("highlightMapHex", {
+                    hex_id: null,
+                    selected_feature: selectedTernaryfeature.value.value
+                });
+            }
+        
+            
+        }
+        d3.select(this)
+                .attr("r", 4)
+                .attr("stroke", "none");
+        
+
+    })
+    .on("click", function(event, d) {
+        selectedHexId.value = d.hex_id;
+
+         d3.select(this)
             .attr("r", 7)
             .attr("stroke", "black")
             .attr("stroke-width", 2);
@@ -543,19 +574,7 @@ function updateTernaryPoints(svg, data, size = 260) {
             hex_id: d.hex_id,
             selected_feature: selectedTernaryfeature.value.value
         });
-    })
-    .on("mouseout", function (event, d) {
-        if (event, d){
-            emit("highlightMapHex", {
-            hex_id: null,
-            selected_feature: selectedTernaryfeature.value.value
-        });
-        d3.select(this)
-            .attr("r", 4)
-            .attr("stroke", "none");
-        }
-        
-
+        highlightTernaryPoint(svgRef, d.P, d.F, d.S);
     })
     .attr("fill", "black");  // temporary color
 
