@@ -361,7 +361,6 @@ const selectedRefs = [
   selectedFeature,
   selectedShapFeature,
   selectedBivariateFeature,
-  selectedBivariateFeature2,
 ];
 
 watch(
