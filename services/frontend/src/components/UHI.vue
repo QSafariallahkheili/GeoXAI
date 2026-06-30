@@ -3,7 +3,7 @@
         <v-card class="uhi-ui" v-if="activeMenu=='uhi'" width="350" max-height="900">
             <v-tabs
                 v-model="activeTab"
-                color="deep-purple-accent-400"
+                color="deep-purple-accent-4"
                 grow
                 align-tabs="center"
             >
@@ -377,6 +377,8 @@ watch(
       }
     });
     emit("removeLayerFromMap", "highlight-outline-layer");
+    emit("removeCustomLayerFromMap", "moran-uncertainty-noise-layer");
+    emit("removeCustomLayerFromMap", "uncertainty-noise-layer");
   }
 
 );
