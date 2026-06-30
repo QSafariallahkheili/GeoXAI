@@ -98,7 +98,7 @@
                     
                      
                 </v-row>
-                <v-row  v-if="selectedShapFeature">
+                <v-row  >
                     <v-col cols="12" sm="3" style="float: left;" class="mt-1">
                         <div class="v-label" >Opacity</div>
                     </v-col>
@@ -115,7 +115,7 @@
                             color="#54B8C4"
                             track-color="#000000"
                             thumb-color="black"
-                        
+                            :disabled="!selectedShapFeature"
                             v-model="shapLayerOpacity"
                             @update:modelValue="changeShapLayerOpacity"
                         >
@@ -230,6 +230,7 @@
                             color="#54B8C4"
                             track-color="#000000"
                             thumb-color="black"
+                            :disabled="!selectedMoranFeature"
                             v-model="moranLayerOpacity"
                             @update:modelValue="changeMoranLayerOpacity"
                         >
@@ -243,6 +244,7 @@
                         v-model="moranUncertainty"
                         label="P-value"
                         class="ml-1"
+                        :disabled="!selectedMoranFeature"
                         @update:modelValue="applyMoranUncertaintyOverlay(uncertainty, selectedMoranFeature.value)"
                     ></v-checkbox>
                 </v-row>
@@ -283,7 +285,7 @@
                             color="#54B8C4"
                             track-color="#000000"
                             thumb-color="black"
-                        
+                            :disabled="!selectedTernaryfeature"
                             v-model="ternaryLayerOpacity"
                             @update:modelValue="changeTernaryLayerOpacity"
                         >
