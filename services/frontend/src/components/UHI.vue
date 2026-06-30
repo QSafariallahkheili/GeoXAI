@@ -116,8 +116,8 @@
                             track-color="#000000"
                             thumb-color="black"
                         
-                            v-model="featureLayerOpacity"
-                            @update:modelValue="changeFeatureLayerOpacity"
+                            v-model="shapLayerOpacity"
+                            @update:modelValue="changeShapLayerOpacity"
                         >
                         </v-slider>
 
@@ -340,6 +340,7 @@ let moranUncertainty = ref(false)
 let ternaryLayerOpacity = ref(1)
 let moranLayerOpacity = ref(1)
 let featureLayerOpacity = ref(1)
+let shapLayerOpacity = ref(1)
 let bivariateLayerOpacity = ref(1)
 let uhiVector = ref(true)
 
@@ -635,6 +636,9 @@ const changeTernaryLayerOpacity = (value) => {
 }
 const changeFeatureLayerOpacity = (value) => {
     emit('setLayerPaintProperty', `${selectedFeature.value.value}_summary`, "fill-opacity", value )
+}
+const changeShapLayerOpacity = (value)=>{
+    emit('setLayerPaintProperty', `${selectedShapFeature.value.value}_summary`, "fill-opacity", value )
 }
 const changeMoranLayerOpacity = (value) => {
     emit('setLayerPaintProperty', `uhi_${selectedMoranFeature.value.value}_moran_summary`, "fill-opacity", value )
