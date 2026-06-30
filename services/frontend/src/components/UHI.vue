@@ -309,7 +309,7 @@
            
         
         </v-card>
-        <v-card  class="uhi-legend-ui" v-if="activeMenu=='uhi' && activeTab==='ternary'">
+        <v-card  class="uhi-legend-ui" v-show="activeMenu=='uhi'  && selectedTernaryfeature">
              <div id="ternary-legend" style="width: 350px; height: 300px;"></div>
         </v-card>
         
