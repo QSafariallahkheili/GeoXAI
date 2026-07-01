@@ -88,9 +88,11 @@ onMounted(() => {
     // Add the drawing control to the map
   map.addControl(drawControl, 'bottom-left');
   map.on("load", ()=>{
+    console.log(map.getStyle().layers, "map layers")
     mapLoaded.value= true
     //map.setPaintProperty('place_suburb', 'text-halo-width', 0);
     //map.setPaintProperty('place_suburb', 'text-halo-blur', 0);
+    /*
     map.setLayoutProperty('place_suburb', 'text-font', [
       'Open Sans Bold',
       'Arial Unicode MS Bold'
@@ -108,7 +110,7 @@ onMounted(() => {
     map.setPaintProperty('place_state', 'text-color', '#1f1f1f');
     map.setPaintProperty('place_state', 'text-halo-color', '#ffffff');
      map.setLayoutProperty('place_city_large', 'visibility', 'none');
-          
+          */
   map.on('moveend', () => {
     console.log(map.getCenter(), "map center");
     console.log(map.getZoom(), "map zoom");
@@ -248,7 +250,7 @@ const addDynamicTernaryGridToMap = (name, features) => {
       "fill-outline-color": "#ffffff",
       
     },
-  }, 'place_suburb');
+  }, "Other labels");
   
 
   map.on('idle', () => {
@@ -453,7 +455,7 @@ const addMoranFeatureToMap = (name, attribute, features)=>{
         "fill-outline-color": "#ffffff",
         
       },
-    }, 'place_suburb');
+    },  "Other labels");
      map.on('idle', () => {
     
       if(!map.getLayer(sourceName)) return;
@@ -592,7 +594,7 @@ const addDynamicFeatureGridToMap = (feature, features) => {
       "fill-outline-color": "#969696",
       
     },
-  }, 'place_suburb');
+  }, "Other labels");
 
    let isTilesLoading = false;
 
@@ -696,7 +698,7 @@ const addDynamicShapGridToMap = (feature, features) => {
       "fill-outline-color": "#969696",
       
     },
-  }, 'place_suburb');
+  }, "Other labels");
 
   let isShapLoading = false;
 
@@ -858,7 +860,7 @@ const addDynamicBivariateGridToMap = (feature, feature2, BIVARIATE_COLORS, featu
       "fill-outline-color": "#ffffff",
       
     },
-  }, 'place_suburb');
+  }, "Other labels");
 
    let isBivariateLoading = false;
 
@@ -955,7 +957,7 @@ const addCoverageLayerToMap = (clickedLayerName, layerType, style) =>{
       }
     );
   }
-  map.moveLayer(clickedLayerName, "place_suburb");
+  map.moveLayer(clickedLayerName);
 }
 const toggleCoverageLayerVisibility = (clickedLayerName)=>{
     let visibility = map.getLayoutProperty(
