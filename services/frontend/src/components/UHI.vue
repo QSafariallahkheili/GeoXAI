@@ -33,7 +33,7 @@
                             v-model="selectedFeature"
                             :items="features"
                             hide-details
-                            placeholder="Please select 2nd feature"
+                            placeholder="Please select a feature"
                             item-title="name" 
                             return-object
                             variant="outlined"
