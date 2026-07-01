@@ -289,7 +289,7 @@
                <v-row>
                     <v-checkbox
                         v-model="uncertainty"
-                         label="Uncertainty"
+                         label="Model Uncertainty"
                           :disabled="!selectedTernaryfeature"
                         class="ml-1"
                         @update:modelValue="applyUncertaintyOverlay(uncertainty, selectedTernaryfeature.value)"
@@ -298,11 +298,12 @@
             
                 
             </v-card-text>
+            <v-divider style="margin-left: 15px; margin-right: 15px;" class="mt-2 mb-2"></v-divider>
             <div class="ml-3 mb-3">
                 <v-row >
                     <v-checkbox
                         v-model="uhiVector"
-                        label="UHI Overlay"
+                        label="UHI Overlay (model prediction )"
                         class="ml-1"
                         hide-details
                         @update:modelValue="addUHIVectorOverlay"
@@ -340,6 +341,12 @@
         </v-card>
         <v-card  class="uhi-legend-ui" v-show="activeMenu=='uhi'  && selectedTernaryfeature">
              <div id="ternary-legend" style="width: 350px; height: 300px;"></div>
+             <span
+                v-if="uncertainty"
+            >
+                <v-icon size="16" color="warning" class="mr-1">mdi-information-outline</v-icon>
+                The larger the grain size, the higher the uncertainty.
+            </span>
         </v-card>
         
 </template>
