@@ -44,7 +44,7 @@
                     
                      
                 </v-row>
-                <v-row  v-if="selectedFeature">
+                <v-row>
                     <v-col cols="12" sm="3" style="float: left;" class="mt-1">
                         <div class="v-label" >Opacity</div>
                     </v-col>
@@ -61,7 +61,7 @@
                             color="#54B8C4"
                             track-color="#000000"
                             thumb-color="black"
-                        
+                            :disabled="!selectedFeature"
                             v-model="featureLayerOpacity"
                             @update:modelValue="changeFeatureLayerOpacity"
                         >
@@ -69,14 +69,7 @@
 
                     </v-col>
                 </v-row>
-                <v-row>
-                    <v-checkbox
-                        v-model="uhiVector"
-                        label="UHI Overlay"
-                        class="ml-1"
-                        @update:modelValue="addUHIVectorOverlay"
-                    ></v-checkbox>
-                </v-row>
+                
             
                 
             </v-card-text>
@@ -305,6 +298,42 @@
             
                 
             </v-card-text>
+            <div class="ml-3 mb-3">
+                <v-row >
+                    <v-checkbox
+                        v-model="uhiVector"
+                        label="UHI Overlay"
+                        class="ml-1"
+                        hide-details
+                        @update:modelValue="addUHIVectorOverlay"
+                    ></v-checkbox>
+                </v-row>
+                <v-row >
+                    <v-col cols="12" sm="3" style="float: left;" class="mt-0">
+                        <div class="v-label" >UHI Opacity</div>
+                    </v-col>
+                 
+                    <v-col  cols="12" sm="8" style="float: left;" class="mt-0" >
+                    
+                        <v-slider
+                            min="0"
+                            max="1"
+                            step="0.05"
+                            hide-details
+                            tick-size="4"
+                            :thumb-size="0"
+                            color="#54B8C4"
+                            track-color="#000000"
+                            thumb-color="black"
+                            :disabled="!uhiVector"
+                            v-model="UHILayerOpacity"
+                            @update:modelValue="changeUHILayerOpacity"
+                        >
+                        </v-slider>
+
+                    </v-col>
+                </v-row>
+            </div>
             
            
         
@@ -343,6 +372,7 @@ let ternaryLayerOpacity = ref(1)
 let moranLayerOpacity = ref(1)
 let featureLayerOpacity = ref(1)
 let shapLayerOpacity = ref(1)
+let UHILayerOpacity = ref(1)
 let bivariateLayerOpacity = ref(1)
 let uhiVector = ref(true)
 
@@ -691,6 +721,9 @@ const changeMoranLayerOpacity = (value) => {
 }
 const changeBivariateLayerOpacity = (value) => {
     emit('setLayerPaintProperty', `${selectedBivariateFeature.value.value}_summary`, "fill-opacity", value )
+}
+const changeUHILayerOpacity = (value) => {
+    emit('setLayerPaintProperty', `uhi_summary`, "fill-opacity", value )
 }
 const addUHIPredictorToMap = ()=>{
     featureLayerOpacity.value = 1

@@ -543,8 +543,9 @@ const addDynamicFeatureGridToMap = (feature, features) => {
     str = name.replace(/^uhi_/, "");
   }
   
-  // build tile URLs
-  for (let i=0; i<features.length; i++){
+  console.log(sourceName, "sourceName")
+  if (sourceName!=='uhi_summary'){
+    for (let i=0; i<features.length; i++){
    
       let layerToRemove = features[i].value+"_summary"
        let layerToRemove2 = features[i].value+"_moran_summary"
@@ -556,7 +557,9 @@ const addDynamicFeatureGridToMap = (feature, features) => {
       if(typeof layer !== 'undefined') {
           map.removeLayer(layerToRemove).removeSource(layerToRemove);
       }
+    }
   }
+  
   const vectorSourceLayer = `public.${sourceName}`;
   const vectorUrl = `http://localhost:7800/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
 
