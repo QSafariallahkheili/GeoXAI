@@ -291,6 +291,7 @@
                         v-model="uncertainty"
                          label="Model Uncertainty"
                           :disabled="!selectedTernaryfeature"
+                          hide-details
                         class="ml-1"
                         @update:modelValue="applyUncertaintyOverlay(uncertainty, selectedTernaryfeature.value)"
                     ></v-checkbox>
