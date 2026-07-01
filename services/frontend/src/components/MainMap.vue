@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { Map } from 'maplibre-gl';
+import { Map, ScaleControl } from 'maplibre-gl';
 import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from 'pinia'
 import { useMapStore } from '../stores/map'
@@ -87,8 +87,13 @@ onMounted(() => {
 
     // Add the drawing control to the map
   map.addControl(drawControl, 'bottom-left');
+  const scale = new ScaleControl({
+    maxWidth: 100, // Maximum width of the control in pixels
+    unit: 'metric' // Options: 'metric', 'imperial', or 'nautical'
+  });
+
+  map.addControl(scale, 'bottom-left'); // Position the scale
   map.on("load", ()=>{
-    console.log(map.getStyle().layers, "map layers")
     mapLoaded.value= true
     //map.setPaintProperty('place_suburb', 'text-halo-width', 0);
     //map.setPaintProperty('place_suburb', 'text-halo-blur', 0);
