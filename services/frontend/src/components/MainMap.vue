@@ -214,7 +214,7 @@ const addDynamicTernaryGridToMap = (name, features) => {
 
   // build tile URLs
   const vectorSourceLayer = `public.${sourceName}`;
-      const vectorUrl = `https://tv4-geo-xai.innowest-brandenburg.de/tileserv/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+  const vectorUrl = `${vectorServer}${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
 
   for (let i=0; i<features.length; i++){
         let layerToRemove = features[i].value+"_summary"
@@ -430,7 +430,7 @@ const addMoranFeatureToMap = (name, attribute, features)=>{
   
     // build tile URLs
     const vectorSourceLayer = `public.${sourceName}`;
-    const vectorUrl = `https://tv4-geo-xai.innowest-brandenburg.de/tileserv/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+    const vectorUrl = `${vectorServer}${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
 
     map.addSource(sourceName, {
       type: "vector",
@@ -569,7 +569,7 @@ const addDynamicFeatureGridToMap = (feature, features) => {
   }
   
   const vectorSourceLayer = `public.${sourceName}`;
-  const vectorUrl = `https://tv4-geo-xai.innowest-brandenburg.de/tileserv/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+  const vectorUrl = `${vectorServer}${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
 
   map.addSource(sourceName, {
     type: "vector",
@@ -673,7 +673,7 @@ const addDynamicShapGridToMap = (feature, features) => {
       }
   }
   const vectorSourceLayer = `public.${sourceName}`;
-      const vectorUrl = `https://tv4-geo-xai.innowest-brandenburg.de/tileserv/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+      const vectorUrl = `${vectorServer}${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
 
 
   map.addSource(sourceName, {
@@ -816,7 +816,7 @@ const addDynamicBivariateGridToMap = (feature, feature2, BIVARIATE_COLORS, featu
   ];
   
   const vectorSourceLayer = `public.${sourceName}`;
-      const vectorUrl = `https://tv4-geo-xai.innowest-brandenburg.de/tileserv/${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
+  const vectorUrl = `${vectorServer}${vectorSourceLayer}/{z}/{x}/{y}.pbf`;
 
   map.addSource(sourceName, {
     type: "vector",
