@@ -1,5 +1,5 @@
 <template>
-    <v-card class="legend-ui" >
+    <v-card class="legend-ui" :style="{ scale: uncertainty ? '1' : '1.18' }">
 
        
         <v-card-item v-if="classIntervalsAndColor" >
@@ -554,6 +554,25 @@
                 </div>
             </div>
         </v-card-item>
+      <!-- Legend for noise grain size UHI -->
+      <v-card-item v-if="uhi_activated_tab=='ternary' && uncertainty==true">
+        <div  v-for="(thickness, index) in stripeThicknesses"
+            :key="index"
+            style="font-size: 0.7rem; display: inline-block;">
+            <img
+              class="legend-item"
+              :class="index === 4 ? 'mr-0' : 'mr-6'"
+              :src="`legend_items/noise_grain_${index+1}.png`"
+              style="width: 40px; height: 40px;"
+            />
+        </div>
+        <div class="legend-arrow-container mt-4">
+              <div class="legend-arrow-label" style="float: left;">Uncertain</div>
+              <div class="uncertainty-square-arrow"></div>
+              <div class="legend-arrow-label" style="float: right;">Certain</div>
+        </div>
+          
+      </v-card-item>
         
     </v-card>
 </template>
@@ -563,6 +582,9 @@ import { storeToRefs } from 'pinia'
 import { useMapLegendStore } from '../stores/mapLegend'
 import { useMetadataDialogStore } from '../stores/metadataDialog'
 import featureMetadata from '../assets/featureMetadata'
+import { useUhiStore } from '../stores/uhi'
+let {uncertainty}= storeToRefs( useUhiStore())
+
 const stripeSpacing = 9; // Constant spacing
 const stripeThicknesses = [1, 3, 5, 7, 9]; // Varying stripe widths
 

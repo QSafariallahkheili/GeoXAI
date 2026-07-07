@@ -3268,7 +3268,7 @@ export function addNoiseMapWithGrainSizeToMap(geojson, map) {
       uncertainties.push(uNorm);
 
       // neutral fill color (can be changed later)
-      colors.push(0, 0, 0);
+      colors.push(1, 1, 1);
     }
   });
 

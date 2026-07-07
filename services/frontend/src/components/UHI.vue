@@ -340,14 +340,11 @@
            
         
         </v-card>
-        <v-card  class="uhi-legend-ui" v-show="activeMenu=='uhi'  && selectedTernaryfeature">
+        <v-card  class="uhi-legend-ui" v-show="activeMenu=='uhi'  && selectedTernaryfeature" :style="{
+            bottom: uncertainty ? '110px' : '10px'
+        }">
              <div id="ternary-legend" style="width: 350px; height: 300px;"></div>
-             <span
-                v-if="uncertainty"
-            >
-                <v-icon size="16" color="warning" class="mr-1">mdi-information-outline</v-icon>
-                The larger the grain size, the higher the uncertainty.
-            </span>
+             
         </v-card>
         
 </template>
@@ -370,11 +367,11 @@ let selectedShapFeature = ref(null)
 let selectedBivariateFeature = ref(null)
 let selectedBivariateFeature2 = ref(null)
 let activeTab = ref('feature')
-let {ternaryArray, selectedHighlight, uncertaintyArray, moranUncertaintyArray, features, moranFeatures, UHI_BIVARIATE_COLORS,UHIVectorSpecification, bivariateFeatures1, bivariateFeatures2}= storeToRefs( useUhiStore())
+let {ternaryArray, selectedHighlight, uncertaintyArray, moranUncertaintyArray, features, moranFeatures, UHI_BIVARIATE_COLORS,UHIVectorSpecification, bivariateFeatures1, bivariateFeatures2, uncertainty}= storeToRefs( useUhiStore())
 
 
 let svgRef = null; 
-let uncertainty = ref(false)
+//let uncertainty = ref(false)
 let moranUncertainty = ref(false)
 let ternaryLayerOpacity = ref(1)
 let moranLayerOpacity = ref(1)

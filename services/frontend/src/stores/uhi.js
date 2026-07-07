@@ -7,6 +7,7 @@ export const useUhiStore = defineStore ({
         selectedHighlight:null,
         uncertaintyArray:[],
         moranUncertaintyArray:[],
+        uncertainty: false,
         features: [
             { 
                 name: 'Average Building Height',
